@@ -15,9 +15,11 @@ class ApiService {
   }
 
   getAuthHeaders() {
+    // Always get fresh token from localStorage to ensure we have the latest
+    const token = localStorage.getItem('token');
     return {
       'Content-Type': 'application/json',
-      ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
 
