@@ -156,7 +156,7 @@ async def update_character(
         )
 
     # Update fields
-    update_data = character_data.model_dump(exclude_unset=True)
+    update_data = character_data.dict(exclude_unset=True)
     for field, value in update_data.items():
         setattr(character, field, value)
 

@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(del NUL)",
+      "Bash(git push:*)",
+      "Bash(python.exe -m pip install:*)",
+      "Bash(./venv/Scripts/python.exe -m pip install:*)",
+      "Bash(./venv/bin/pip install:*)",
+      "Bash(./venv/bin/python.exe -m pip install:*)",
+      "Bash(timeout 10 ./venv/bin/uvicorn:*)"
     ]
   }
 }

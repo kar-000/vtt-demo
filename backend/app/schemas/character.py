@@ -98,7 +98,7 @@ class CharacterResponse(CharacterBase):
     charisma_modifier: int
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
     @classmethod
     def from_orm(cls, obj):
