@@ -1,11 +1,11 @@
 """Tests for authentication endpoints."""
+
 import pytest
+from app.core.database import Base, get_db
+from app.main import app
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from app.main import app
-from app.core.database import Base, get_db
 
 # Create test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
@@ -212,8 +212,8 @@ def test_token_contains_string_sub_claim():
     Test that JWT tokens contain 'sub' claim as a string.
     This is a regression test for the bug where integer user IDs caused JWTClaimsError.
     """
-    from jose import jwt
     from app.core.config import settings
+    from jose import jwt
 
     # Register user
     response = client.post(
@@ -240,8 +240,8 @@ def test_token_contains_string_sub_claim():
 
 def test_login_token_contains_string_sub_claim():
     """Test that login endpoint also creates tokens with string 'sub' claim."""
-    from jose import jwt
     from app.core.config import settings
+    from jose import jwt
 
     # Register user
     client.post(

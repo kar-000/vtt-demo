@@ -1,14 +1,13 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
-from sqlalchemy.orm import Session
-from datetime import datetime
-import random
 import logging
+import random
+from datetime import datetime
 
 from app.core.database import get_db
 from app.core.security import decode_access_token
 from app.models.user import User
-from app.schemas.dice import DiceRoll, DiceRollResult
 from app.websocket.manager import manager
+from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
+from sqlalchemy.orm import Session
 
 router = APIRouter(tags=["Dice"])
 logger = logging.getLogger(__name__)

@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
-import websocket from '../services/websocket';
-import { useAuth } from './AuthContext';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import api from "../services/api";
+import websocket from "../services/websocket";
+import { useAuth } from "./AuthContext";
 
 const GameContext = createContext(null);
 
@@ -24,7 +24,7 @@ export const GameProvider = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         connectWebSocket(token);
       }
@@ -38,24 +38,24 @@ export const GameProvider = ({ children }) => {
   const connectWebSocket = (token) => {
     websocket.connect(campaignId, token);
 
-    websocket.on('connected', () => {
+    websocket.on("connected", () => {
       setConnected(true);
     });
 
-    websocket.on('disconnected', () => {
+    websocket.on("disconnected", () => {
       setConnected(false);
     });
 
-    websocket.on('dice_roll_result', (data) => {
+    websocket.on("dice_roll_result", (data) => {
       setRollLog((prev) => [data, ...prev].slice(0, 100)); // Keep last 100 rolls
     });
 
-    websocket.on('user_connected', (data) => {
-      console.log('User connected:', data);
+    websocket.on("user_connected", (data) => {
+      console.log("User connected:", data);
     });
 
-    websocket.on('user_disconnected', (data) => {
-      console.log('User disconnected:', data);
+    websocket.on("user_disconnected", (data) => {
+      console.log("User disconnected:", data);
     });
   };
 
@@ -68,7 +68,7 @@ export const GameProvider = ({ children }) => {
         setCurrentCharacter(chars[0]);
       }
     } catch (error) {
-      console.error('Error loading characters:', error);
+      console.error("Error loading characters:", error);
     } finally {
       setLoading(false);
     }
@@ -83,7 +83,7 @@ export const GameProvider = ({ children }) => {
       }
       return newChar;
     } catch (error) {
-      console.error('Error creating character:', error);
+      console.error("Error creating character:", error);
       throw error;
     }
   };
@@ -91,13 +91,15 @@ export const GameProvider = ({ children }) => {
   const updateCharacter = async (id, characterData) => {
     try {
       const updated = await api.updateCharacter(id, characterData);
-      setCharacters((prev) => prev.map((char) => (char.id === id ? updated : char)));
+      setCharacters((prev) =>
+        prev.map((char) => (char.id === id ? updated : char)),
+      );
       if (currentCharacter?.id === id) {
         setCurrentCharacter(updated);
       }
       return updated;
     } catch (error) {
-      console.error('Error updating character:', error);
+      console.error("Error updating character:", error);
       throw error;
     }
   };
@@ -110,14 +112,20 @@ export const GameProvider = ({ children }) => {
         setCurrentCharacter(characters[0] || null);
       }
     } catch (error) {
-      console.error('Error deleting character:', error);
+      console.error("Error deleting character:", error);
       throw error;
     }
   };
 
-  const rollDice = (diceType, numDice = 1, modifier = 0, rollType = 'manual', label = null) => {
+  const rollDice = (
+    diceType,
+    numDice = 1,
+    modifier = 0,
+    rollType = "manual",
+    label = null,
+  ) => {
     if (!currentCharacter) {
-      console.error('No character selected');
+      console.error("No character selected");
       return;
     }
 
@@ -151,7 +159,7 @@ export const GameProvider = ({ children }) => {
 export const useGame = () => {
   const context = useContext(GameContext);
   if (!context) {
-    throw new Error('useGame must be used within a GameProvider');
+    throw new Error("useGame must be used within a GameProvider");
   }
   return context;
 };

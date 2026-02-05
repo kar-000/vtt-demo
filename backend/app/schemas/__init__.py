@@ -1,6 +1,6 @@
-from .user import UserCreate, UserLogin, UserResponse, Token
-from .character import CharacterCreate, CharacterUpdate, CharacterResponse
+from .character import CharacterCreate, CharacterResponse, CharacterUpdate
 from .dice import DiceRoll, DiceRollResult
+from .user import Token, UserCreate, UserLogin, UserResponse
 
 __all__ = [
     "UserCreate",

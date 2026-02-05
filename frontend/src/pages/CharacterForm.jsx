@@ -1,19 +1,42 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useGame } from '../contexts/GameContext';
-import './CharacterForm.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useGame } from "../contexts/GameContext";
+import "./CharacterForm.css";
 
-const RACES = ['Human', 'Elf', 'Dwarf', 'Halfling', 'Dragonborn', 'Gnome', 'Half-Elf', 'Half-Orc', 'Tiefling'];
-const CLASSES = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+const RACES = [
+  "Human",
+  "Elf",
+  "Dwarf",
+  "Halfling",
+  "Dragonborn",
+  "Gnome",
+  "Half-Elf",
+  "Half-Orc",
+  "Tiefling",
+];
+const CLASSES = [
+  "Barbarian",
+  "Bard",
+  "Cleric",
+  "Druid",
+  "Fighter",
+  "Monk",
+  "Paladin",
+  "Ranger",
+  "Rogue",
+  "Sorcerer",
+  "Warlock",
+  "Wizard",
+];
 
 export default function CharacterForm() {
   const navigate = useNavigate();
   const { createCharacter } = useGame();
 
   const [formData, setFormData] = useState({
-    name: '',
-    race: 'Human',
-    character_class: 'Fighter',
+    name: "",
+    race: "Human",
+    character_class: "Fighter",
     level: 1,
     strength: 10,
     dexterity: 10,
@@ -27,14 +50,17 @@ export default function CharacterForm() {
     speed: 30,
   });
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'name' || name === 'race' || name === 'character_class' ? value : Number(value),
+      [name]:
+        name === "name" || name === "race" || name === "character_class"
+          ? value
+          : Number(value),
     }));
   };
 
@@ -44,14 +70,14 @@ export default function CharacterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       await createCharacter(formData);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      setError(err.message || 'Failed to create character');
+      setError(err.message || "Failed to create character");
     } finally {
       setLoading(false);
     }
@@ -62,7 +88,10 @@ export default function CharacterForm() {
       <div className="character-form-container">
         <div className="form-header">
           <h1>Create New Character</h1>
-          <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="btn btn-secondary"
+          >
             Cancel
           </button>
         </div>
@@ -89,7 +118,13 @@ export default function CharacterForm() {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="race">Race *</label>
-                <select id="race" name="race" value={formData.race} onChange={handleChange} required>
+                <select
+                  id="race"
+                  name="race"
+                  value={formData.race}
+                  onChange={handleChange}
+                  required
+                >
                   {RACES.map((race) => (
                     <option key={race} value={race}>
                       {race}
@@ -134,9 +169,18 @@ export default function CharacterForm() {
           <section className="form-section">
             <h2>Ability Scores</h2>
             <div className="ability-scores-grid">
-              {['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map((ability) => (
+              {[
+                "strength",
+                "dexterity",
+                "constitution",
+                "intelligence",
+                "wisdom",
+                "charisma",
+              ].map((ability) => (
                 <div key={ability} className="ability-score-group">
-                  <label htmlFor={ability}>{ability.charAt(0).toUpperCase() + ability.slice(1)}</label>
+                  <label htmlFor={ability}>
+                    {ability.charAt(0).toUpperCase() + ability.slice(1)}
+                  </label>
                   <div className="ability-score-input">
                     <input
                       id={ability}
@@ -149,7 +193,7 @@ export default function CharacterForm() {
                       required
                     />
                     <span className="modifier">
-                      {calculateModifier(formData[ability]) >= 0 ? '+' : ''}
+                      {calculateModifier(formData[ability]) >= 0 ? "+" : ""}
                       {calculateModifier(formData[ability])}
                     </span>
                   </div>
@@ -216,11 +260,19 @@ export default function CharacterForm() {
           </section>
 
           <div className="form-actions">
-            <button type="button" onClick={() => navigate('/dashboard')} className="btn btn-secondary">
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard")}
+              className="btn btn-secondary"
+            >
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="btn btn-primary">
-              {loading ? 'Creating...' : 'Create Character'}
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary"
+            >
+              {loading ? "Creating..." : "Create Character"}
             </button>
           </div>
         </form>

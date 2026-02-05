@@ -1,5 +1,5 @@
-from .user import User
-from .character import Character
 from .campaign import Campaign
+from .character import Character
+from .user import User
 
 __all__ = ["User", "Character", "Campaign"]

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useGame } from '../contexts/GameContext';
-import './DiceRoller.css';
+import React, { useState } from "react";
+import { useGame } from "../contexts/GameContext";
+import "./DiceRoller.css";
 
 const DICE_TYPES = [4, 6, 8, 10, 12, 20, 100];
 
@@ -12,18 +12,18 @@ export default function DiceRoller() {
 
   const handleRoll = () => {
     if (!currentCharacter) {
-      alert('Please select a character first');
+      alert("Please select a character first");
       return;
     }
-    rollDice(selectedDice, numDice, modifier, 'manual');
+    rollDice(selectedDice, numDice, modifier, "manual");
   };
 
   const quickRoll = (diceType) => {
     if (!currentCharacter) {
-      alert('Please select a character first');
+      alert("Please select a character first");
       return;
     }
-    rollDice(diceType, 1, 0, 'manual');
+    rollDice(diceType, 1, 0, "manual");
   };
 
   return (
@@ -58,13 +58,19 @@ export default function DiceRoller() {
               min="1"
               max="100"
               value={numDice}
-              onChange={(e) => setNumDice(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={(e) =>
+                setNumDice(Math.max(1, parseInt(e.target.value) || 1))
+              }
             />
           </div>
 
           <div className="input-group">
             <label htmlFor="diceType">Dice Type</label>
-            <select id="diceType" value={selectedDice} onChange={(e) => setSelectedDice(parseInt(e.target.value))}>
+            <select
+              id="diceType"
+              value={selectedDice}
+              onChange={(e) => setSelectedDice(parseInt(e.target.value))}
+            >
               {DICE_TYPES.map((dice) => (
                 <option key={dice} value={dice}>
                   d{dice}
@@ -86,7 +92,7 @@ export default function DiceRoller() {
 
         <div className="roll-preview">
           Roll: {numDice}d{selectedDice}
-          {modifier !== 0 && ` ${modifier >= 0 ? '+' : ''}${modifier}`}
+          {modifier !== 0 && ` ${modifier >= 0 ? "+" : ""}${modifier}`}
         </div>
 
         <button onClick={handleRoll} className="btn btn-primary roll-button">

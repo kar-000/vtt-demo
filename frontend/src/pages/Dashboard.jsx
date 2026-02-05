@@ -1,35 +1,36 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useGame } from '../contexts/GameContext';
-import './Dashboard.css';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useGame } from "../contexts/GameContext";
+import "./Dashboard.css";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const { characters, setCurrentCharacter, deleteCharacter, loading } = useGame();
+  const { characters, setCurrentCharacter, deleteCharacter, loading } =
+    useGame();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleSelectCharacter = (character) => {
     setCurrentCharacter(character);
-    navigate('/game');
+    navigate("/game");
   };
 
   const handleCreateCharacter = () => {
-    navigate('/character/new');
+    navigate("/character/new");
   };
 
   const handleDeleteCharacter = async (e, characterId) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this character?')) {
+    if (window.confirm("Are you sure you want to delete this character?")) {
       try {
         await deleteCharacter(characterId);
       } catch (error) {
-        alert('Failed to delete character');
+        alert("Failed to delete character");
       }
     }
   };
@@ -40,7 +41,7 @@ export default function Dashboard() {
         <h1>D&D Virtual Tabletop</h1>
         <div className="user-info">
           <span>
-            {user?.username} {user?.is_dm && '(DM)'}
+            {user?.username} {user?.is_dm && "(DM)"}
           </span>
           <button onClick={handleLogout} className="btn btn-secondary">
             Logout
@@ -84,7 +85,8 @@ export default function Dashboard() {
                   <div className="character-info">
                     <h3>{character.name}</h3>
                     <p>
-                      Level {character.level} {character.race} {character.character_class}
+                      Level {character.level} {character.race}{" "}
+                      {character.character_class}
                     </p>
                     <p className="character-hp">
                       HP: {character.current_hp}/{character.max_hp}

@@ -1,10 +1,12 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Dict, List, Any
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class CharacterBase(BaseModel):
     """Base character schema."""
+
     name: str = Field(..., min_length=1, max_length=100)
     race: str
     character_class: str
@@ -32,6 +34,7 @@ class CharacterBase(BaseModel):
 
 class CharacterCreate(CharacterBase):
     """Schema for character creation."""
+
     campaign_id: Optional[int] = None
     proficiencies: Optional[Dict[str, List[str]]] = None
     saving_throw_proficiencies: Optional[Dict[str, bool]] = None
@@ -40,6 +43,7 @@ class CharacterCreate(CharacterBase):
 
 class CharacterUpdate(BaseModel):
     """Schema for character updates."""
+
     name: Optional[str] = None
     race: Optional[str] = None
     character_class: Optional[str] = None
@@ -74,6 +78,7 @@ class CharacterUpdate(BaseModel):
 
 class CharacterResponse(CharacterBase):
     """Schema for character response."""
+
     id: int
     owner_id: int
     campaign_id: Optional[int]

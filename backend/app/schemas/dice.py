@@ -1,10 +1,12 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class DiceRoll(BaseModel):
     """Schema for a dice roll request."""
+
     character_name: str
     dice_type: int = Field(..., description="Type of dice (4, 6, 8, 10, 12, 20, 100)")
     num_dice: int = Field(default=1, ge=1, le=100, description="Number of dice to roll")
@@ -15,6 +17,7 @@ class DiceRoll(BaseModel):
 
 class DiceRollResult(BaseModel):
     """Schema for a dice roll result."""
+
     character_name: str
     dice_type: int
     num_dice: int

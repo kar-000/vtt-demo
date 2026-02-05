@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from typing import List
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.user import User
 from app.models.character import Character
-from app.schemas.character import CharacterCreate, CharacterUpdate, CharacterResponse
+from app.models.user import User
+from app.schemas.character import CharacterCreate, CharacterResponse, CharacterUpdate
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
 
@@ -97,12 +97,7 @@ async def list_characters(
     db: Session = Depends(get_db),
 ):
     """List all characters owned by the current user."""
-    characters = (
-        db.query(Character)
-        .filter(Character.owner_id == current_user.id)
-        .order_by(Character.created_at.desc())
-        .all()
-    )
+    characters = db.query(Character).filter(Character.owner_id == current_user.id).order_by(Character.created_at.desc()).all()
 
     return [CharacterResponse.from_orm(char) for char in characters]
 

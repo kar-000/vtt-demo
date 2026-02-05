@@ -1,13 +1,18 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { GameProvider } from './contexts/GameContext';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import CharacterForm from './pages/CharacterForm';
-import Game from './pages/Game';
-import './App.css';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { GameProvider } from "./contexts/GameContext";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import CharacterForm from "./pages/CharacterForm";
+import Game from "./pages/Game";
+import "./App.css";
 
 // Protected route wrapper
 function ProtectedRoute({ children }) {

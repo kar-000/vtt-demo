@@ -1,7 +1,8 @@
-from fastapi import WebSocket
-from typing import Dict, List, Set
 import json
 import logging
+from typing import Dict, Set
+
+from fastapi import WebSocket
 
 logger = logging.getLogger(__name__)
 

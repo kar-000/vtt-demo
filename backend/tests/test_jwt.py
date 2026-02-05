@@ -1,10 +1,11 @@
 """Unit tests for JWT token handling."""
-import pytest
-from datetime import timedelta
-from jose import jwt, JWTError
 
-from app.core.security import create_access_token, decode_access_token
+from datetime import timedelta
+
+import pytest
 from app.core.config import settings
+from app.core.security import create_access_token, decode_access_token
+from jose import JWTError, jwt
 
 
 def test_create_token_with_string_sub():
@@ -65,11 +66,7 @@ def test_decode_token_wrong_secret():
     user_id = 123
 
     # Create token with wrong secret
-    wrong_token = jwt.encode(
-        {"sub": str(user_id), "exp": 9999999999},
-        "wrong-secret-key",
-        algorithm=settings.ALGORITHM
-    )
+    wrong_token = jwt.encode({"sub": str(user_id), "exp": 9999999999}, "wrong-secret-key", algorithm=settings.ALGORITHM)
 
     # Try to decode with correct secret
     result = decode_access_token(wrong_token)
@@ -83,9 +80,7 @@ def test_decode_token_wrong_algorithm():
 
     # Create token with different algorithm
     wrong_algo_token = jwt.encode(
-        {"sub": str(user_id), "exp": 9999999999},
-        settings.SECRET_KEY,
-        algorithm="HS512"  # Different from HS256
+        {"sub": str(user_id), "exp": 9999999999}, settings.SECRET_KEY, algorithm="HS512"  # Different from HS256
     )
 
     # Try to decode
@@ -105,9 +100,7 @@ def test_token_with_integer_sub_fails():
     with pytest.raises(JWTError):
         # Manually encode with integer sub to test the failure
         token = jwt.encode(
-            {"sub": user_id, "exp": 9999999999},  # Integer sub
-            settings.SECRET_KEY,
-            algorithm=settings.ALGORITHM
+            {"sub": user_id, "exp": 9999999999}, settings.SECRET_KEY, algorithm=settings.ALGORITHM  # Integer sub
         )
         # JWT encoding succeeds, but decoding should fail
         jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
@@ -131,10 +124,7 @@ def test_decode_expired_token():
     user_id = 123
 
     # Create token that expired immediately
-    token = create_access_token(
-        data={"sub": str(user_id)},
-        expires_delta=timedelta(seconds=-1)  # Already expired
-    )
+    token = create_access_token(data={"sub": str(user_id)}, expires_delta=timedelta(seconds=-1))  # Already expired
 
     result = decode_access_token(token)
 

@@ -1,4 +1,4 @@
-const WS_BASE = 'ws://localhost:8000/api/v1';
+const WS_BASE = "ws://localhost:8000/api/v1";
 
 class WebSocketService {
   constructor() {
@@ -11,7 +11,7 @@ class WebSocketService {
 
   connect(campaignId, token) {
     if (this.ws?.readyState === WebSocket.OPEN) {
-      console.log('WebSocket already connected');
+      console.log("WebSocket already connected");
       return;
     }
 
@@ -21,41 +21,43 @@ class WebSocketService {
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
-        console.log('WebSocket connected');
+        console.log("WebSocket connected");
         this.reconnectAttempts = 0;
-        this.emit('connected', {});
+        this.emit("connected", {});
       };
 
       this.ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('WebSocket message:', data);
+          console.log("WebSocket message:", data);
           this.emit(data.type, data.data || data);
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          console.error("Error parsing WebSocket message:", error);
         }
       };
 
       this.ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        this.emit('error', error);
+        console.error("WebSocket error:", error);
+        this.emit("error", error);
       };
 
       this.ws.onclose = () => {
-        console.log('WebSocket disconnected');
-        this.emit('disconnected', {});
+        console.log("WebSocket disconnected");
+        this.emit("disconnected", {});
 
         // Attempt to reconnect
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
           this.reconnectAttempts++;
-          console.log(`Reconnecting in ${this.reconnectDelay}ms (attempt ${this.reconnectAttempts})`);
+          console.log(
+            `Reconnecting in ${this.reconnectDelay}ms (attempt ${this.reconnectAttempts})`,
+          );
           setTimeout(() => {
             this.connect(campaignId, token);
           }, this.reconnectDelay);
         }
       };
     } catch (error) {
-      console.error('Error creating WebSocket:', error);
+      console.error("Error creating WebSocket:", error);
     }
   }
 
@@ -71,16 +73,16 @@ class WebSocketService {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({ type, data }));
     } else {
-      console.error('WebSocket is not connected');
+      console.error("WebSocket is not connected");
     }
   }
 
   rollDice(diceData) {
-    this.send('dice_roll', diceData);
+    this.send("dice_roll", diceData);
   }
 
   sendChatMessage(message) {
-    this.send('chat_message', { message });
+    this.send("chat_message", { message });
   }
 
   on(eventType, callback) {
