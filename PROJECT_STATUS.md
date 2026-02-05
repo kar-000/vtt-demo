@@ -4,6 +4,34 @@
 
 ## Current Phase: Phase 1 Complete, Ready for Phase 2
 
+## ⚖️ Legal Foundation: SRD 5.1
+
+**Decision**: Use SRD 5.1 (System Reference Document) as the base content library.
+
+**Rationale**:
+- Released under Open Gaming License (OGL) - legally safe to implement
+- Includes core D&D 5e mechanics, spells, monsters, and equipment
+- Avoids copyright issues with non-SRD content from official books
+- Allows free distribution and digital implementation
+
+**Implementation Approach**:
+- Provide SRD 5.1 content as default (spells, abilities, equipment)
+- Design flexible data models that allow manual content entry
+- Users can add their own non-SRD content (spells, subclasses, etc.)
+- We don't distribute non-SRD content - users input what they own
+- Include OGL license text in repository and application
+
+**What This Means**:
+- ✅ Fully functional VTT with complete rule system
+- ✅ Legally distributable without WotC concerns
+- ✅ Users can use any content they personally own (they enter it)
+- ✅ Flexible enough to support homebrew and custom content
+
+**Resources**:
+- Official SRD 5.1: Available from D&D website
+- Open5e.com: API access to SRD content
+- License: Must include OGL text (see LICENSE.md)
+
 ## ✅ Completed (Phase 1)
 
 ### Core Features
@@ -51,26 +79,42 @@
 ## 📋 Next Steps (Phase 2)
 
 ### Immediate Priorities
-1. **Attacks System**
-   - Display all attacks on character sheet
+
+1. **HP Management** ⭐
+   - Edit current HP on character sheet
+   - Apply damage/healing with quick buttons (+/- HP)
+   - Temporary HP tracking
+   - Death saves tracker (when HP = 0)
+   - Visual HP bar or indicator
+
+2. **Attacks/Weapons System**
+   - Display all attacks/weapons on character sheet
+   - **Custom add weapons** with name, attack bonus, damage dice, damage type
    - Clickable to roll hit (d20 + modifier)
    - Automatic damage roll on hit
    - Show results in shared log
+   - Support for versatile weapons, two-weapon fighting
 
-2. **Spells System**
+3. **Character Sheet Export** ⭐
+   - **Download character sheet** as JSON for backup
+   - Import character from JSON file
+   - Future: PDF export option
+
+4. **Spells System**
    - Display spell list organized by level
    - Track spell slots (current/max)
    - Clickable to roll damage/healing
    - Auto-calculate spell save DC
    - Concentration indicator
+   - Start with SRD 5.1 spells, allow custom spell entry
 
-3. **Initiative Tracker**
+5. **Initiative Tracker**
    - DM can roll/set initiative for all combatants
    - Turn order display
    - Cycle through turns
    - Highlight current turn
 
-4. **DM Capabilities**
+6. **DM Capabilities**
    - View all player character sheets
    - Edit any character sheet
    - Manage combat encounter
@@ -91,10 +135,12 @@ Before starting Phase 2, decide:
    - What fields needed? (name, attack_bonus, damage_dice, damage_type, etc.)
 
 2. **Spells Data Model**
-   - Full D&D 5e spell database or manual entry?
+   - Start with SRD 5.1 spell list (~300 spells)
+   - Allow manual entry for non-SRD spells (user responsibility)
    - How to handle spell slot tracking?
    - Upcasting mechanics?
    - Concentration tracking?
+   - Consider using Open5e API vs seeding local database
 
 3. **Initiative Tracker**
    - Where to display? (sidebar, modal, top of screen?)
