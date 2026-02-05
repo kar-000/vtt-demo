@@ -38,6 +38,10 @@ class Character(Base):
     speed = Column(Integer, default=30, nullable=False)
     initiative_bonus = Column(Integer, default=0, nullable=False)
 
+    # Death Saves (for when HP = 0)
+    # Structure: {"successes": 0, "failures": 0}
+    death_saves = Column(JSON, default=lambda: {"successes": 0, "failures": 0}, nullable=False)
+
     # Proficiencies (stored as JSON for flexibility)
     # Structure: {"armor": [], "weapons": [], "tools": [], "languages": []}
     proficiencies = Column(JSON, default=dict, nullable=False)

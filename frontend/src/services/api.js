@@ -114,6 +114,28 @@ class ApiService {
     }
     return this.handleResponse(response);
   }
+
+  // HP Management endpoints
+  async updateHP(characterId, hpData) {
+    const response = await fetch(`${API_BASE}/characters/${characterId}/hp`, {
+      method: "PATCH",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(hpData),
+    });
+    return this.handleResponse(response);
+  }
+
+  async applyDamageOrHealing(characterId, type, amount) {
+    const response = await fetch(
+      `${API_BASE}/characters/${characterId}/damage-healing`,
+      {
+        method: "POST",
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({ type, amount }),
+      },
+    );
+    return this.handleResponse(response);
+  }
 }
 
 export default new ApiService();

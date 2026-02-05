@@ -1,5 +1,6 @@
 import React from "react";
 import { useGame } from "../contexts/GameContext";
+import HPManager from "./HPManager";
 import "./CharacterSheet.css";
 
 const SKILLS = {
@@ -33,7 +34,7 @@ const SAVES = [
 ];
 
 export default function CharacterSheet({ character }) {
-  const { rollDice } = useGame();
+  const { rollDice, updateHP } = useGame();
 
   const getModifier = (score) => {
     return Math.floor((score - 10) / 2);
@@ -61,6 +62,10 @@ export default function CharacterSheet({ character }) {
     rollDice(20, 1, bonus, "skill", skillData.label);
   };
 
+  const handleUpdateHP = async (updateData) => {
+    await updateHP(character.id, updateData);
+  };
+
   return (
     <div className="character-sheet">
       {/* Header */}
@@ -79,12 +84,7 @@ export default function CharacterSheet({ character }) {
           <div className="stat-label">AC</div>
           <div className="stat-value">{character.armor_class}</div>
         </div>
-        <div className="stat-box">
-          <div className="stat-label">HP</div>
-          <div className="stat-value">
-            {character.current_hp}/{character.max_hp}
-          </div>
-        </div>
+        <HPManager character={character} onUpdateHP={handleUpdateHP} />
         <div className="stat-box">
           <div className="stat-label">Speed</div>
           <div className="stat-value">{character.speed} ft</div>

@@ -1,0 +1,209 @@
+.hp-manager {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* HP Bar */
+.hp-bar-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.hp-bar-bg {
+  width: 100%;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hp-bar-fill {
+  height: 100%;
+  transition:
+    width 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.hp-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.hp-current {
+  font-size: 1.3rem;
+}
+
+.hp-separator {
+  opacity: 0.7;
+}
+
+.hp-max {
+  opacity: 0.9;
+}
+
+.hp-temp {
+  font-size: 0.9rem;
+  color: #64b5f6;
+}
+
+/* HP Controls */
+.hp-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.hp-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 120px;
+}
+
+.hp-control-group label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  opacity: 0.9;
+}
+
+.hp-control-group input {
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.hp-control-group button {
+  padding: 0.5rem;
+  background: rgba(76, 175, 80, 0.8);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.hp-control-group button:hover:not(:disabled) {
+  background: rgba(76, 175, 80, 1);
+}
+
+.hp-control-group button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Death Saves */
+.death-saves {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(139, 0, 0, 0.2);
+  border: 2px solid rgba(139, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+.death-saves h4 {
+  margin: 0 0 0.75rem 0;
+  color: #ff6b6b;
+  text-align: center;
+}
+
+.death-saves-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.death-save-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.death-save-label {
+  font-weight: bold;
+  min-width: 100px;
+}
+
+.death-save-boxes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.death-save-box {
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.death-save-box:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.death-save-box.filled {
+  border-width: 3px;
+}
+
+.death-save-box.success {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+.death-save-box.failure {
+  background: rgba(244, 67, 54, 0.3);
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.reset-death-saves {
+  width: 100%;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.reset-death-saves:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hp-controls {
+    flex-direction: column;
+  }
+
+  .hp-control-group {
+    min-width: 100%;
+  }
+}

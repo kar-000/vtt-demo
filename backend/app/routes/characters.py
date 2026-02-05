@@ -4,7 +4,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.character import Character
 from app.models.user import User
-from app.schemas.character import CharacterCreate, CharacterResponse, CharacterUpdate
+from app.schemas.character import CharacterCreate, CharacterResponse, CharacterUpdate, DamageHealingUpdate, HPUpdate
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -187,3 +187,102 @@ async def delete_character(
     db.commit()
 
     return None
+
+
+@router.patch("/{character_id}/hp", response_model=CharacterResponse)
+async def update_hp(
+    character_id: int,
+    hp_data: HPUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Update character HP directly (manual editing)."""
+    character = db.query(Character).filter(Character.id == character_id).first()
+
+    if not character:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Character not found",
+        )
+
+    # Check if user owns the character or is a DM
+    if character.owner_id != current_user.id and not current_user.is_dm:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to modify this character",
+        )
+
+    # Update HP fields
+    if hp_data.current_hp is not None:
+        character.current_hp = min(hp_data.current_hp, character.max_hp)
+
+    if hp_data.temp_hp is not None:
+        character.temp_hp = hp_data.temp_hp
+
+    if hp_data.death_saves is not None:
+        character.death_saves = hp_data.death_saves
+
+    # Reset death saves if healing above 0
+    if character.current_hp > 0:
+        character.death_saves = {"successes": 0, "failures": 0}
+
+    db.commit()
+    db.refresh(character)
+
+    return CharacterResponse.from_orm(character)
+
+
+@router.post("/{character_id}/damage-healing", response_model=CharacterResponse)
+async def apply_damage_or_healing(
+    character_id: int,
+    update_data: DamageHealingUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Apply damage or healing to a character."""
+    character = db.query(Character).filter(Character.id == character_id).first()
+
+    if not character:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Character not found",
+        )
+
+    # Check if user owns the character or is a DM
+    if character.owner_id != current_user.id and not current_user.is_dm:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to modify this character",
+        )
+
+    if update_data.type == "damage":
+        # Apply damage: first to temp HP, then to current HP
+        damage_remaining = update_data.amount
+
+        if character.temp_hp > 0:
+            if character.temp_hp >= damage_remaining:
+                character.temp_hp -= damage_remaining
+                damage_remaining = 0
+            else:
+                damage_remaining -= character.temp_hp
+                character.temp_hp = 0
+
+        character.current_hp = max(0, character.current_hp - damage_remaining)
+
+    elif update_data.type == "healing":
+        # Apply healing: restore current HP up to max
+        character.current_hp = min(character.current_hp + update_data.amount, character.max_hp)
+
+        # Reset death saves if healing above 0
+        if character.current_hp > 0:
+            character.death_saves = {"successes": 0, "failures": 0}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Type must be 'damage' or 'healing'",
+        )
+
+    db.commit()
+    db.refresh(character)
+
+    return CharacterResponse.from_orm(character)

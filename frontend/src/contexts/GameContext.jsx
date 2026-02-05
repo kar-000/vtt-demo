@@ -117,6 +117,32 @@ export const GameProvider = ({ children }) => {
     }
   };
 
+  const updateHP = async (characterId, updateData) => {
+    try {
+      let updated;
+      if (updateData.type === "damage" || updateData.type === "healing") {
+        updated = await api.applyDamageOrHealing(
+          characterId,
+          updateData.type,
+          updateData.amount,
+        );
+      } else if (updateData.type === "direct") {
+        updated = await api.updateHP(characterId, updateData.data);
+      }
+
+      setCharacters((prev) =>
+        prev.map((char) => (char.id === characterId ? updated : char)),
+      );
+      if (currentCharacter?.id === characterId) {
+        setCurrentCharacter(updated);
+      }
+      return updated;
+    } catch (error) {
+      console.error("Error updating HP:", error);
+      throw error;
+    }
+  };
+
   const rollDice = (
     diceType,
     numDice = 1,
@@ -150,6 +176,7 @@ export const GameProvider = ({ children }) => {
     createCharacter,
     updateCharacter,
     deleteCharacter,
+    updateHP,
     rollDice,
   };
 

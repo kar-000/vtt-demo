@@ -30,6 +30,7 @@ class CharacterBase(BaseModel):
     temp_hp: int = Field(default=0, ge=0)
     speed: int = Field(default=30, ge=0)
     initiative_bonus: int = Field(default=0)
+    death_saves: Dict[str, int] = Field(default_factory=lambda: {"successes": 0, "failures": 0})
 
 
 class CharacterCreate(CharacterBase):
@@ -65,6 +66,7 @@ class CharacterUpdate(BaseModel):
     temp_hp: Optional[int] = Field(None, ge=0)
     speed: Optional[int] = Field(None, ge=0)
     initiative_bonus: Optional[int] = None
+    death_saves: Optional[Dict[str, int]] = None
 
     proficiencies: Optional[Dict[str, List[str]]] = None
     saving_throw_proficiencies: Optional[Dict[str, bool]] = None
@@ -119,3 +121,18 @@ class CharacterResponse(CharacterBase):
             "charisma_modifier": obj.charisma_modifier,
         }
         return cls(**data)
+
+
+class HPUpdate(BaseModel):
+    """Schema for HP updates."""
+
+    current_hp: Optional[int] = Field(None, ge=0)
+    temp_hp: Optional[int] = Field(None, ge=0)
+    death_saves: Optional[Dict[str, int]] = None
+
+
+class DamageHealingUpdate(BaseModel):
+    """Schema for applying damage or healing."""
+
+    amount: int = Field(..., description="Amount of damage (positive) or healing (negative)")
+    type: str = Field(..., description="Type: 'damage' or 'healing'")
