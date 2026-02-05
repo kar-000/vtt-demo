@@ -125,6 +125,15 @@
 - [ ] Level-up system with guided workflow
 - [ ] Action economy tracking (action/bonus action/reaction/movement)
 
+### UI Theming (Phase 2/3)
+- [ ] **Theme Selector** - User can choose UI theme
+  - **Dark Medieval (Default)** - Dark fantasy aesthetic, D&D vibe
+  - **Pink Pony Club** - Pink and sparkly, fun and playful
+  - **Boring** - Minimal, simple, no-frills design
+- [ ] Theme persistence (localStorage)
+- [ ] CSS variables for theme switching
+- [ ] Smooth theme transitions
+
 ## 📊 Phase 2 Planning Questions
 
 Before starting Phase 2, decide:
