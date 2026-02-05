@@ -1,0 +1,117 @@
+.roll-log {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+}
+
+.roll-log h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.25rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+}
+
+.empty-log {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+}
+
+.empty-log p {
+  margin: 0;
+}
+
+.log-entries {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.log-entry {
+  background: #f9f9f9;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+  padding: 0.75rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.character-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.roll-time {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.roll-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.roll-details {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-family: 'Courier New', monospace;
+}
+
+.roll-total {
+  font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.total-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #667eea;
+  margin-left: 0.5rem;
+}
+
+/* Scrollbar styling */
+.log-entries::-webkit-scrollbar {
+  width: 6px;
+}
+
+.log-entries::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.log-entries::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.log-entries::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

@@ -1,0 +1,193 @@
+.character-sheet {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sheet-header {
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 1rem;
+}
+
+.character-title h2 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.75rem;
+}
+
+.character-title p {
+  margin: 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.main-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.stat-box {
+  background: #f9f9f9;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.abilities-section h3,
+.saves-section h3,
+.skills-section h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.25rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+}
+
+.abilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.ability-box {
+  background: #f9f9f9;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.ability-box.clickable {
+  cursor: pointer;
+}
+
+.ability-box.clickable:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ability-name {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.ability-modifier {
+  font-size: 1.75rem;
+  color: #667eea;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.ability-score {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.saves-list,
+.skills-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+}
+
+.save-item,
+.skill-item {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s;
+}
+
+.save-item.clickable,
+.skill-item.clickable {
+  cursor: pointer;
+}
+
+.save-item.clickable:hover,
+.skill-item.clickable:hover {
+  background: #f0f4ff;
+  border-color: #667eea;
+}
+
+.save-item.proficient,
+.skill-item.proficient {
+  background: #e8f5e9;
+  border-color: #4caf50;
+}
+
+.save-prof,
+.skill-prof {
+  color: #999;
+  font-size: 1rem;
+}
+
+.save-item.proficient .save-prof,
+.skill-item.proficient .skill-prof {
+  color: #4caf50;
+}
+
+.save-bonus,
+.skill-bonus {
+  font-weight: bold;
+  color: #667eea;
+  min-width: 30px;
+}
+
+.save-name,
+.skill-name {
+  flex: 1;
+  color: #333;
+  font-weight: 500;
+}
+
+.skill-ability {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .character-sheet {
+    padding: 1rem;
+  }
+
+  .main-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .abilities-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .saves-list,
+  .skills-list {
+    grid-template-columns: 1fr;
+  }
+}
