@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-02-05
 
-## Current Phase: Phase 1 Complete, Ready for Phase 2
+## Current Phase: Phase 2 In Progress - HP Management Complete (38 tests passing)
 
 ## ⚖️ Legal Foundation: SRD 5.1
 
@@ -78,14 +78,19 @@
 
 ## 📋 Next Steps (Phase 2)
 
-### Immediate Priorities
+### Completed Features
 
-1. **HP Management** ⭐
-   - Edit current HP on character sheet
-   - Apply damage/healing with quick buttons (+/- HP)
-   - Temporary HP tracking
-   - Death saves tracker (when HP = 0)
-   - Visual HP bar or indicator
+1. **HP Management** ✅ (2026-02-05)
+   - ✅ Edit current HP on character sheet
+   - ✅ Apply damage/healing with quick buttons
+   - ✅ Temporary HP tracking
+   - ✅ Death saves tracker (when HP = 0) with clickable boxes
+   - ✅ Color-coded HP bar with visual indicator
+   - ✅ Damage precedence (temp HP absorbed first)
+   - ✅ Auto-reset death saves on healing
+   - ✅ 16 comprehensive tests added (38 total tests passing)
+
+### Immediate Priorities
 
 2. **Attacks/Weapons System**
    - Display all attacks/weapons on character sheet
@@ -247,6 +252,16 @@ VTT/
 ## 📝 Notes
 
 ### Recent Work (2026-02-05)
+
+**Phase 2 Kickoff: HP Management Feature Complete** ✅
+- Implemented comprehensive HP management system
+- Backend: death_saves field, HP update endpoints, damage/healing logic
+- Frontend: HPManager component with color-coded HP bar, damage/healing controls, death saves tracker
+- Added 16 comprehensive HP management tests (38 total tests passing)
+- Integrated HPManager into CharacterSheet component
+- All tests passing, code committed and pushed to GitHub
+
+**Earlier (2026-02-05)**
 - Fixed critical JWT authentication bug
 - Added comprehensive test suite (22 tests)
 - Set up CI/CD with nightly runs
