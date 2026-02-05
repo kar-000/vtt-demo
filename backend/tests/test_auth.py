@@ -179,7 +179,7 @@ def test_create_character_without_token():
             "level": 1,
         },
     )
-    assert response.status_code == 403  # No credentials provided
+    assert response.status_code == 401  # No credentials provided
 
 
 def test_get_current_user():
@@ -205,3 +205,160 @@ def test_get_current_user():
     data = response.json()
     assert data["username"] == "testuser"
     assert data["is_dm"] is True
+
+
+def test_token_contains_string_sub_claim():
+    """
+    Test that JWT tokens contain 'sub' claim as a string.
+    This is a regression test for the bug where integer user IDs caused JWTClaimsError.
+    """
+    from jose import jwt
+    from app.core.config import settings
+
+    # Register user
+    response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "testuser",
+            "email": "test@example.com",
+            "password": "testpass123",
+        },
+    )
+    assert response.status_code == 201
+
+    token = response.json()["access_token"]
+
+    # Manually decode the token to inspect claims
+    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+
+    # Verify 'sub' is a string, not an integer
+    assert "sub" in payload
+    assert isinstance(payload["sub"], str)
+    # Should be convertible to int (it's the user ID)
+    assert int(payload["sub"]) > 0
+
+
+def test_login_token_contains_string_sub_claim():
+    """Test that login endpoint also creates tokens with string 'sub' claim."""
+    from jose import jwt
+    from app.core.config import settings
+
+    # Register user
+    client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "testuser",
+            "email": "test@example.com",
+            "password": "testpass123",
+        },
+    )
+
+    # Login
+    response = client.post(
+        "/api/v1/auth/login",
+        json={
+            "username": "testuser",
+            "password": "testpass123",
+        },
+    )
+    assert response.status_code == 200
+
+    token = response.json()["access_token"]
+
+    # Manually decode the token
+    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+
+    # Verify 'sub' is a string
+    assert isinstance(payload["sub"], str)
+
+
+def test_invalid_token_returns_401():
+    """Test that requests with invalid tokens are rejected."""
+    response = client.get(
+        "/api/v1/auth/me",
+        headers={"Authorization": "Bearer invalid.token.here"},
+    )
+    assert response.status_code == 401
+
+
+def test_malformed_authorization_header():
+    """Test that malformed authorization headers are rejected."""
+    # Register user
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "testuser",
+            "email": "test@example.com",
+            "password": "testpass123",
+        },
+    )
+    token = register_response.json()["access_token"]
+
+    # Try without "Bearer" prefix
+    response = client.get(
+        "/api/v1/auth/me",
+        headers={"Authorization": token},  # Missing "Bearer" prefix
+    )
+    assert response.status_code == 401
+
+
+def test_token_works_across_multiple_requests():
+    """Test that a token can be reused for multiple requests."""
+    # Register and get token
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "testuser",
+            "email": "test@example.com",
+            "password": "testpass123",
+        },
+    )
+    token = register_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Make multiple requests with same token
+    for _ in range(3):
+        response = client.get("/api/v1/auth/me", headers=headers)
+        assert response.status_code == 200
+        assert response.json()["username"] == "testuser"
+
+
+def test_different_users_have_different_tokens():
+    """Test that different users get different tokens."""
+    # Register first user
+    response1 = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "user1",
+            "email": "user1@example.com",
+            "password": "testpass123",
+        },
+    )
+    token1 = response1.json()["access_token"]
+
+    # Register second user
+    response2 = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "user2",
+            "email": "user2@example.com",
+            "password": "testpass123",
+        },
+    )
+    token2 = response2.json()["access_token"]
+
+    # Tokens should be different
+    assert token1 != token2
+
+    # Each token should identify the correct user
+    response1 = client.get(
+        "/api/v1/auth/me",
+        headers={"Authorization": f"Bearer {token1}"},
+    )
+    assert response1.json()["username"] == "user1"
+
+    response2 = client.get(
+        "/api/v1/auth/me",
+        headers={"Authorization": f"Bearer {token2}"},
+    )
+    assert response2.json()["username"] == "user2"

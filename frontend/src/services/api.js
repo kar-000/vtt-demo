@@ -17,10 +17,13 @@ class ApiService {
   getAuthHeaders() {
     // Always get fresh token from localStorage to ensure we have the latest
     const token = localStorage.getItem('token');
-    return {
+    console.log('[API] getAuthHeaders called, token:', token ? `${token.substring(0, 20)}...` : 'null');
+    const headers = {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
+    console.log('[API] Returning headers:', headers);
+    return headers;
   }
 
   async handleResponse(response) {

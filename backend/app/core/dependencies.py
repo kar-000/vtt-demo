@@ -7,14 +7,21 @@ from .database import get_db
 from .security import decode_access_token
 from app.models.user import User
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     db: Session = Depends(get_db),
 ) -> User:
     """Get the current authenticated user."""
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No authentication credentials provided",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     token = credentials.credentials
 
     # Decode token
@@ -27,8 +34,17 @@ async def get_current_user(
         )
 
     # Get user from database
-    user_id: Optional[int] = payload.get("sub")
-    if user_id is None:
+    user_id_str = payload.get("sub")
+    if not user_id_str:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        user_id = int(user_id_str)
+    except (ValueError, TypeError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",
