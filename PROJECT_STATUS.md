@@ -103,17 +103,19 @@
    - ✅ Clickable proficiency toggles for saves (○ ⇄ ●)
    - ✅ Hover effects on proficiency indicators
 
+4. **Custom Weapons/Attacks System** ✅ (2026-02-05)
+   - ✅ AttacksSection component with full CRUD operations
+   - ✅ Add custom weapons with name, attack bonus, damage dice, damage type
+   - ✅ Edit and delete existing attacks
+   - ✅ Clickable attack rolls (d20 + bonus) integrated with rollDice
+   - ✅ Clickable damage rolls with dice parsing
+   - ✅ Color-coded roll buttons (green for attack, red for damage)
+   - ✅ Results displayed in shared combat log
+   - ✅ Attacks stored in character.attacks JSON field
+
 ### Immediate Priorities
 
-4. **Attacks/Weapons System**
-   - Display all attacks/weapons on character sheet
-   - **Custom add weapons** with name, attack bonus, damage dice, damage type
-   - Clickable to roll hit (d20 + modifier)
-   - Automatic damage roll on hit
-   - Show results in shared log
-   - Support for versatile weapons, two-weapon fighting
-
-4. **Spells System**
+5. **Spells System**
    - Display spell list organized by level
    - Track spell slots (current/max)
    - Clickable to roll damage/healing
@@ -121,13 +123,13 @@
    - Concentration indicator
    - Start with SRD 5.1 spells, allow custom spell entry
 
-5. **Initiative Tracker**
+6. **Initiative Tracker**
    - DM can roll/set initiative for all combatants
    - Turn order display
    - Cycle through turns
    - Highlight current turn
 
-6. **DM Capabilities**
+7. **DM Capabilities**
    - View all player character sheets
    - Edit any character sheet
    - Manage combat encounter
@@ -261,12 +263,22 @@ VTT/
 
 ### Recent Work (2026-02-05)
 
-**Phase 2 Kickoff: HP Management Feature Complete** ✅
+**Custom Weapons/Attacks System Complete** ✅
+- Created AttacksSection component with full CRUD functionality
+- Add/edit/delete attacks with name, attack bonus, damage dice, damage type
+- Clickable attack rolls (d20 + bonus) and damage rolls integrated with existing rollDice system
+- Color-coded roll buttons for better UX (green for attacks, red for damage)
+- Attacks stored in character.attacks JSON field (no backend changes needed)
+- All code committed and pushed to GitHub (commit: 04d4ad5)
+
+**Phase 2 Kickoff: HP Management + Character Export/Import Complete** ✅
 - Implemented comprehensive HP management system
 - Backend: death_saves field, HP update endpoints, damage/healing logic
 - Frontend: HPManager component with color-coded HP bar, damage/healing controls, death saves tracker
 - Added 16 comprehensive HP management tests (38 total tests passing)
 - Integrated HPManager into CharacterSheet component
+- Character export/import for JSON backups
+- Ability score styling and proficiency toggles improved
 - All tests passing, code committed and pushed to GitHub
 
 **Earlier (2026-02-05)**
