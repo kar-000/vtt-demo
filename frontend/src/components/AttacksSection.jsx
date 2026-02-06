@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./AttacksSection.css";
+import srdWeapons from "../data/srd-weapons.json";
 
 export default function AttacksSection({
   character,
@@ -9,6 +10,8 @@ export default function AttacksSection({
 }) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [showSRDBrowser, setShowSRDBrowser] = useState(false);
+  const [srdFilterType, setSRDFilterType] = useState("all");
   const [formData, setFormData] = useState({
     name: "",
     attack_bonus: 0,
@@ -115,14 +118,57 @@ export default function AttacksSection({
     );
   };
 
+  const handleAddSRDWeapon = async (srdWeapon) => {
+    // Check if weapon already exists
+    const exists = attacks.some((a) => a.name === srdWeapon.name);
+    if (exists) {
+      alert(`${srdWeapon.name} is already in your attacks list!`);
+      return;
+    }
+
+    // Create attack from weapon (user needs to set their own attack bonus)
+    const newAttack = {
+      name: srdWeapon.name,
+      attack_bonus: srdWeapon.attack_bonus,
+      damage_dice: srdWeapon.damage_dice,
+      damage_type: srdWeapon.damage_type,
+    };
+
+    const updatedAttacks = [...attacks, newAttack];
+
+    try {
+      await onUpdateCharacter(character.id, { attacks: updatedAttacks });
+      alert(
+        `${srdWeapon.name} added! Remember to set your attack bonus based on your stats.`,
+      );
+    } catch (error) {
+      console.error("Error adding SRD weapon:", error);
+      alert("Failed to add weapon");
+    }
+  };
+
+  // Filter SRD weapons by type
+  const filteredSRDWeapons = srdWeapons.filter((weapon) => {
+    if (srdFilterType === "all") return true;
+    return weapon.weapon_type === srdFilterType;
+  });
+
   return (
     <div className="attacks-section">
       <div className="section-header">
-        <h3>Attacks & Spells</h3>
+        <h3>Attacks</h3>
         {canEdit && !isAdding && editingIndex === null && (
-          <button onClick={handleStartAdd} className="btn btn-primary btn-sm">
-            + Add Attack
-          </button>
+          <div className="header-buttons">
+            <button
+              onClick={() => setShowSRDBrowser(true)}
+              className="btn btn-secondary btn-sm"
+            >
+              ⚔️ Browse SRD Weapons
+            </button>
+            <button onClick={handleStartAdd} className="btn btn-primary btn-sm">
+              + Add Custom Attack
+            </button>
+          </div>
         )}
       </div>
 
@@ -247,6 +293,82 @@ export default function AttacksSection({
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* SRD Weapons Browser Modal */}
+      {showSRDBrowser && (
+        <div
+          className="weapon-browser-modal"
+          onClick={() => setShowSRDBrowser(false)}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>SRD 5.1 Weapons Library</h3>
+              <button
+                onClick={() => setShowSRDBrowser(false)}
+                className="close-btn"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-filters">
+              <div className="filter-row">
+                <label>
+                  Filter by Type:
+                  <select
+                    value={srdFilterType}
+                    onChange={(e) => setSRDFilterType(e.target.value)}
+                  >
+                    <option value="all">All Weapons</option>
+                    <option value="Simple Melee">Simple Melee</option>
+                    <option value="Simple Ranged">Simple Ranged</option>
+                    <option value="Martial Melee">Martial Melee</option>
+                    <option value="Martial Ranged">Martial Ranged</option>
+                  </select>
+                </label>
+              </div>
+              <div className="filter-info">
+                <span className="weapon-count">
+                  {filteredSRDWeapons.length} weapons
+                </span>
+              </div>
+            </div>
+            <div className="modal-body">
+              {filteredSRDWeapons.map((weapon, index) => (
+                <div
+                  key={`srd-${weapon.name}-${index}`}
+                  className="srd-weapon-card"
+                >
+                  <div className="srd-weapon-header">
+                    <div className="srd-weapon-title">
+                      <h4>{weapon.name}</h4>
+                      <span className="srd-weapon-type">
+                        {weapon.weapon_type}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleAddSRDWeapon(weapon)}
+                      className="btn btn-primary btn-sm"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                  <div className="srd-weapon-stats">
+                    <span>
+                      <strong>Damage:</strong> {weapon.damage_dice}{" "}
+                      {weapon.damage_type}
+                    </span>
+                  </div>
+                  {weapon.properties && (
+                    <div className="srd-weapon-properties">
+                      <strong>Properties:</strong> {weapon.properties}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>

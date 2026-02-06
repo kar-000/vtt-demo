@@ -1,0 +1,298 @@
+[
+  {
+    "name": "Club",
+    "attack_bonus": 0,
+    "damage_dice": "1d4",
+    "damage_type": "bludgeoning",
+    "properties": "Light",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Dagger",
+    "attack_bonus": 0,
+    "damage_dice": "1d4",
+    "damage_type": "piercing",
+    "properties": "Finesse, Light, Thrown (range 20/60)",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Greatclub",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "bludgeoning",
+    "properties": "Two-Handed",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Handaxe",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "slashing",
+    "properties": "Light, Thrown (range 20/60)",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Javelin",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "piercing",
+    "properties": "Thrown (range 30/120)",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Light Hammer",
+    "attack_bonus": 0,
+    "damage_dice": "1d4",
+    "damage_type": "bludgeoning",
+    "properties": "Light, Thrown (range 20/60)",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Mace",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "bludgeoning",
+    "properties": "",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Quarterstaff",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "bludgeoning",
+    "properties": "Versatile (1d8)",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Sickle",
+    "attack_bonus": 0,
+    "damage_dice": "1d4",
+    "damage_type": "slashing",
+    "properties": "Light",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Spear",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "piercing",
+    "properties": "Thrown (range 20/60), Versatile (1d8)",
+    "weapon_type": "Simple Melee"
+  },
+  {
+    "name": "Light Crossbow",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "piercing",
+    "properties": "Ammunition (range 80/320), Loading, Two-Handed",
+    "weapon_type": "Simple Ranged"
+  },
+  {
+    "name": "Dart",
+    "attack_bonus": 0,
+    "damage_dice": "1d4",
+    "damage_type": "piercing",
+    "properties": "Finesse, Thrown (range 20/60)",
+    "weapon_type": "Simple Ranged"
+  },
+  {
+    "name": "Shortbow",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "piercing",
+    "properties": "Ammunition (range 80/320), Two-Handed",
+    "weapon_type": "Simple Ranged"
+  },
+  {
+    "name": "Sling",
+    "attack_bonus": 0,
+    "damage_dice": "1d4",
+    "damage_type": "bludgeoning",
+    "properties": "Ammunition (range 30/120)",
+    "weapon_type": "Simple Ranged"
+  },
+  {
+    "name": "Battleaxe",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "slashing",
+    "properties": "Versatile (1d10)",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Flail",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "bludgeoning",
+    "properties": "",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Glaive",
+    "attack_bonus": 0,
+    "damage_dice": "1d10",
+    "damage_type": "slashing",
+    "properties": "Heavy, Reach, Two-Handed",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Greataxe",
+    "attack_bonus": 0,
+    "damage_dice": "1d12",
+    "damage_type": "slashing",
+    "properties": "Heavy, Two-Handed",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Greatsword",
+    "attack_bonus": 0,
+    "damage_dice": "2d6",
+    "damage_type": "slashing",
+    "properties": "Heavy, Two-Handed",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Halberd",
+    "attack_bonus": 0,
+    "damage_dice": "1d10",
+    "damage_type": "slashing",
+    "properties": "Heavy, Reach, Two-Handed",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Lance",
+    "attack_bonus": 0,
+    "damage_dice": "1d12",
+    "damage_type": "piercing",
+    "properties": "Reach, Special",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Longsword",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "slashing",
+    "properties": "Versatile (1d10)",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Maul",
+    "attack_bonus": 0,
+    "damage_dice": "2d6",
+    "damage_type": "bludgeoning",
+    "properties": "Heavy, Two-Handed",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Morningstar",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "piercing",
+    "properties": "",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Pike",
+    "attack_bonus": 0,
+    "damage_dice": "1d10",
+    "damage_type": "piercing",
+    "properties": "Heavy, Reach, Two-Handed",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Rapier",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "piercing",
+    "properties": "Finesse",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Scimitar",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "slashing",
+    "properties": "Finesse, Light",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Shortsword",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "piercing",
+    "properties": "Finesse, Light",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Trident",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "piercing",
+    "properties": "Thrown (range 20/60), Versatile (1d8)",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "War Pick",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "piercing",
+    "properties": "",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Warhammer",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "bludgeoning",
+    "properties": "Versatile (1d10)",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Whip",
+    "attack_bonus": 0,
+    "damage_dice": "1d4",
+    "damage_type": "slashing",
+    "properties": "Finesse, Reach",
+    "weapon_type": "Martial Melee"
+  },
+  {
+    "name": "Blowgun",
+    "attack_bonus": 0,
+    "damage_dice": "1",
+    "damage_type": "piercing",
+    "properties": "Ammunition (range 25/100), Loading",
+    "weapon_type": "Martial Ranged"
+  },
+  {
+    "name": "Hand Crossbow",
+    "attack_bonus": 0,
+    "damage_dice": "1d6",
+    "damage_type": "piercing",
+    "properties": "Ammunition (range 30/120), Light, Loading",
+    "weapon_type": "Martial Ranged"
+  },
+  {
+    "name": "Heavy Crossbow",
+    "attack_bonus": 0,
+    "damage_dice": "1d10",
+    "damage_type": "piercing",
+    "properties": "Ammunition (range 100/400), Heavy, Loading, Two-Handed",
+    "weapon_type": "Martial Ranged"
+  },
+  {
+    "name": "Longbow",
+    "attack_bonus": 0,
+    "damage_dice": "1d8",
+    "damage_type": "piercing",
+    "properties": "Ammunition (range 150/600), Heavy, Two-Handed",
+    "weapon_type": "Martial Ranged"
+  },
+  {
+    "name": "Net",
+    "attack_bonus": 0,
+    "damage_dice": "0",
+    "damage_type": "special",
+    "properties": "Special, Thrown (range 5/15)",
+    "weapon_type": "Martial Ranged"
+  }
+]
