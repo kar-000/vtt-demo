@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useGame } from "../contexts/GameContext";
 import CharacterSheet from "../components/CharacterSheet";
+import InitiativeTracker from "../components/InitiativeTracker";
 import DiceRoller from "../components/DiceRoller";
 import RollLog from "../components/RollLog";
 import "./Game.css";
@@ -59,6 +60,7 @@ export default function Game() {
           <CharacterSheet character={currentCharacter} />
         </div>
         <div className="game-sidebar">
+          <InitiativeTracker />
           <DiceRoller />
           <RollLog />
         </div>

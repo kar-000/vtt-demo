@@ -12,6 +12,12 @@ export const GameProvider = ({ children }) => {
   const [rollLog, setRollLog] = useState([]);
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [initiative, setInitiative] = useState({
+    active: false,
+    round: 1,
+    current_turn_index: 0,
+    combatants: [],
+  });
 
   // Campaign ID for demo purposes (in Phase 3, this will be dynamic)
   const campaignId = 1;
@@ -56,6 +62,10 @@ export const GameProvider = ({ children }) => {
 
     websocket.on("user_disconnected", (data) => {
       console.log("User disconnected:", data);
+    });
+
+    websocket.on("initiative_state", (data) => {
+      setInitiative(data);
     });
   };
 
@@ -174,6 +184,53 @@ export const GameProvider = ({ children }) => {
     });
   };
 
+  // Initiative tracker methods
+  const sendInitiativeAction = (action, data = {}) => {
+    websocket.send("initiative_update", { action, data });
+  };
+
+  const startCombat = (characterIds) => {
+    sendInitiativeAction("start_combat", { character_ids: characterIds });
+  };
+
+  const addCombatant = (name, initiativeValue = null) => {
+    sendInitiativeAction("add_combatant", {
+      name,
+      initiative: initiativeValue,
+    });
+  };
+
+  const removeCombatant = (combatantId) => {
+    sendInitiativeAction("remove_combatant", { combatant_id: combatantId });
+  };
+
+  const rollInitiativeFor = (combatantId) => {
+    sendInitiativeAction("roll_initiative", { combatant_id: combatantId });
+  };
+
+  const rollAllInitiative = () => {
+    sendInitiativeAction("roll_all", {});
+  };
+
+  const setInitiativeValue = (combatantId, value) => {
+    sendInitiativeAction("set_initiative", {
+      combatant_id: combatantId,
+      value,
+    });
+  };
+
+  const nextTurn = () => {
+    sendInitiativeAction("next_turn", {});
+  };
+
+  const previousTurn = () => {
+    sendInitiativeAction("previous_turn", {});
+  };
+
+  const endCombat = () => {
+    sendInitiativeAction("end_combat", {});
+  };
+
   const value = {
     characters,
     currentCharacter,
@@ -187,6 +244,17 @@ export const GameProvider = ({ children }) => {
     deleteCharacter,
     updateHP,
     rollDice,
+    // Initiative tracker
+    initiative,
+    startCombat,
+    addCombatant,
+    removeCombatant,
+    rollInitiativeFor,
+    rollAllInitiative,
+    setInitiativeValue,
+    nextTurn,
+    previousTurn,
+    endCombat,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

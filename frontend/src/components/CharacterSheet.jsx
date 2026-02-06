@@ -145,19 +145,23 @@ export default function CharacterSheet({ character }) {
 
       {/* Main Stats */}
       <div className="main-stats">
-        <div className="stat-box">
-          <div className="stat-label">AC</div>
-          <div className="stat-value">{character.armor_class}</div>
+        <div className="combat-stats-stack">
+          <div className="stacked-stat">
+            <span className="stacked-label">AC</span>
+            <span className="stacked-value">{character.armor_class}</span>
+          </div>
+          <div className="stacked-stat">
+            <span className="stacked-label">Speed</span>
+            <span className="stacked-value">{character.speed} ft</span>
+          </div>
+          <div className="stacked-stat">
+            <span className="stacked-label">Prof</span>
+            <span className="stacked-value">
+              +{character.proficiency_bonus}
+            </span>
+          </div>
         </div>
         <HPManager character={character} onUpdateHP={handleUpdateHP} />
-        <div className="stat-box">
-          <div className="stat-label">Speed</div>
-          <div className="stat-value">{character.speed} ft</div>
-        </div>
-        <div className="stat-box">
-          <div className="stat-label">Prof. Bonus</div>
-          <div className="stat-value">+{character.proficiency_bonus}</div>
-        </div>
       </div>
 
       {/* Ability Scores */}

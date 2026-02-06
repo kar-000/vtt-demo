@@ -1,0 +1,277 @@
+/* Dark Medieval Initiative Tracker */
+.initiative-tracker {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #3d3d5c;
+  border-radius: 4px;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.initiative-collapsed {
+  padding: 0.75rem 1rem;
+}
+
+.initiative-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.initiative-header h3 {
+  margin: 0;
+  color: #c9a227;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.round-display {
+  background: rgba(201, 162, 39, 0.2);
+  border: 1px solid #c9a227;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  color: #c9a227;
+  font-weight: bold;
+}
+
+.no-combat-msg {
+  color: #6a6a7a;
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* Turn Controls */
+.turn-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.turn-label {
+  color: #e8dcc4;
+  font-weight: bold;
+  font-size: 0.9rem;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Combatants List */
+.combatants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 0.75rem;
+}
+
+.combatant-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid #4a4a6a;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.combatant-item:hover {
+  border-color: #6a6a8a;
+}
+
+.combatant-item.active-turn {
+  border-color: #c9a227;
+  background: rgba(201, 162, 39, 0.15);
+  box-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+}
+
+.combatant-item.npc {
+  border-style: dashed;
+}
+
+.combatant-initiative {
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #4a4a6a;
+  border-radius: 4px;
+  color: #c9a227;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.combatant-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.combatant-name {
+  color: #e8dcc4;
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.combatant-type {
+  color: #8a8aa0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.combatant-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.combatant-actions .btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 0.85rem;
+  opacity: 0.6;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.combatant-actions .btn-icon:hover {
+  opacity: 1;
+  background: rgba(201, 162, 39, 0.2);
+}
+
+.combatant-actions .btn-icon.btn-danger:hover {
+  background: rgba(183, 28, 28, 0.3);
+}
+
+/* Initiative Actions */
+.initiative-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.initiative-actions .btn {
+  flex: 1;
+  min-width: 60px;
+}
+
+/* Add NPC Form */
+.add-npc-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #4a4a6a;
+}
+
+.add-npc-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #4a4a6a;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #e8dcc4;
+  font-size: 0.85rem;
+}
+
+.add-npc-form input:focus {
+  outline: none;
+  border-color: #c9a227;
+}
+
+.add-npc-form input[type="number"] {
+  width: 70px;
+  flex: 0 0 70px;
+}
+
+.add-npc-form input::placeholder {
+  color: #6a6a7a;
+}
+
+/* Button Styles (scoped) */
+.initiative-tracker .btn {
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.initiative-tracker .btn-primary {
+  background: rgba(76, 153, 76, 0.6);
+  border-color: #4c994c;
+  color: #e8dcc4;
+}
+
+.initiative-tracker .btn-primary:hover {
+  background: rgba(76, 153, 76, 0.8);
+  border-color: #6fbf6f;
+}
+
+.initiative-tracker .btn-secondary {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: #4a4a6a;
+  color: #a0a0b0;
+}
+
+.initiative-tracker .btn-secondary:hover {
+  background: rgba(201, 162, 39, 0.1);
+  border-color: #c9a227;
+  color: #c9a227;
+}
+
+.initiative-tracker .btn-danger {
+  background: rgba(183, 28, 28, 0.3);
+  border-color: #722f37;
+  color: #ff6b6b;
+}
+
+.initiative-tracker .btn-danger:hover {
+  background: rgba(183, 28, 28, 0.5);
+  border-color: #b71c1c;
+}
+
+.initiative-tracker .btn-sm {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Scrollbar styling */
+.combatants-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.combatants-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.combatants-list::-webkit-scrollbar-thumb {
+  background: #4a4a6a;
+  border-radius: 3px;
+}
+
+.combatants-list::-webkit-scrollbar-thumb:hover {
+  background: #6a6a8a;
+}

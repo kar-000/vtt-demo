@@ -1,15 +1,19 @@
+/* Dark Medieval Theme */
 .character-sheet {
-  background: white;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 4px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(201, 162, 39, 0.1);
+  border: 2px solid #3d3d5c;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 .sheet-header {
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid #c9a227;
   padding-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -19,45 +23,73 @@
 
 .character-title h2 {
   margin: 0 0 0.5rem 0;
-  color: #333;
+  color: #c9a227;
   font-size: 1.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.05em;
 }
 
 .character-title p {
   margin: 0;
-  color: #666;
+  color: #a0a0b0;
   font-size: 1rem;
+  font-style: italic;
 }
 
 .export-btn {
   flex-shrink: 0;
   white-space: nowrap;
+  background: #2d2d44 !important;
+  border-color: #4a4a6a !important;
+  color: #c9a227 !important;
+}
+
+.export-btn:hover {
+  background: #3d3d5c !important;
+  border-color: #c9a227 !important;
 }
 
 .main-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  display: flex;
   gap: 1rem;
+  align-items: stretch;
 }
 
-.stat-box {
-  background: #f9f9f9;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
+.combat-stats-stack {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #4a4a6a;
+  border-radius: 4px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 100px;
 }
 
-.stat-label {
-  font-size: 0.85rem;
-  color: #666;
+.stacked-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.stacked-stat:last-child {
+  border-bottom: none;
+}
+
+.stacked-label {
+  font-size: 0.8rem;
+  color: #8a8aa0;
   font-weight: 500;
-  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.stat-value {
-  font-size: 1.5rem;
-  color: #333;
+.stacked-value {
+  font-size: 1.1rem;
+  color: #e8dcc4;
   font-weight: bold;
 }
 
@@ -65,10 +97,12 @@
 .saves-section h3,
 .skills-section h3 {
   margin: 0 0 1rem 0;
-  color: #333;
-  font-size: 1.25rem;
-  border-bottom: 1px solid #e0e0e0;
+  color: #c9a227;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #4a4a6a;
   padding-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .abilities-grid {
@@ -78,9 +112,9 @@
 }
 
 .ability-box {
-  background: #f9f9f9;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #4a4a6a;
+  border-radius: 4px;
   padding: 1rem;
   text-align: center;
   transition: all 0.2s;
@@ -91,30 +125,33 @@
 }
 
 .ability-box.clickable:hover {
-  border-color: #667eea;
-  background: #f0f4ff;
+  border-color: #c9a227;
+  background: rgba(201, 162, 39, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .ability-name {
   font-size: 0.85rem;
-  color: #666;
+  color: #8a8aa0;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .ability-modifier {
   font-size: 2.5rem;
-  color: #667eea;
+  color: #c9a227;
   font-weight: bold;
   margin-bottom: 0.25rem;
   line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .ability-score {
   font-size: 0.9rem;
-  color: #999;
+  color: #6a6a7a;
 }
 
 .saves-list,
@@ -126,8 +163,8 @@
 
 .save-item,
 .skill-item {
-  background: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #3d3d5c;
   border-radius: 4px;
   padding: 0.75rem;
   display: flex;
@@ -143,19 +180,19 @@
 
 .save-item.clickable:hover,
 .skill-item.clickable:hover {
-  background: #f0f4ff;
-  border-color: #667eea;
+  background: rgba(201, 162, 39, 0.1);
+  border-color: #c9a227;
 }
 
 .save-item.proficient,
 .skill-item.proficient {
-  background: #e8f5e9;
-  border-color: #4caf50;
+  background: rgba(76, 153, 76, 0.15);
+  border-color: #4c994c;
 }
 
 .save-prof,
 .skill-prof {
-  color: #999;
+  color: #6a6a7a;
   font-size: 1rem;
 }
 
@@ -170,37 +207,37 @@
 
 .skill-prof-toggle:hover,
 .save-prof-toggle:hover {
-  background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
+  background: rgba(201, 162, 39, 0.2);
+  color: #c9a227;
   transform: scale(1.2);
 }
 
 .save-item.proficient .save-prof,
 .skill-item.proficient .skill-prof {
-  color: #4caf50;
+  color: #6fbf6f;
 }
 
 .skill-item.proficient .skill-prof-toggle:hover,
 .save-item.proficient .save-prof-toggle:hover {
-  color: #45a049;
+  color: #8fcf8f;
 }
 
 .save-bonus,
 .skill-bonus {
   font-weight: bold;
-  color: #667eea;
+  color: #c9a227;
   min-width: 30px;
 }
 
 .save-name,
 .skill-name {
   flex: 1;
-  color: #333;
+  color: #d0d0e0;
   font-weight: 500;
 }
 
 .skill-ability {
-  color: #999;
+  color: #6a6a7a;
   font-size: 0.85rem;
 }
 
@@ -210,7 +247,25 @@
   }
 
   .main-stats {
-    grid-template-columns: repeat(2, 1fr);
+    flex-direction: column;
+  }
+
+  .combat-stats-stack {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .stacked-stat {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.25rem;
+    border-bottom: none;
+    border-right: 1px solid rgba(201, 162, 39, 0.2);
+    padding: 0 1rem;
+  }
+
+  .stacked-stat:last-child {
+    border-right: none;
   }
 
   .abilities-grid {

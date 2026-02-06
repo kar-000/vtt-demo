@@ -1,9 +1,12 @@
 import logging
 import random
+import uuid
 from datetime import datetime
 
 from app.core.database import get_db
 from app.core.security import decode_access_token
+from app.models.campaign import Campaign
+from app.models.character import Character
 from app.models.user import User
 from app.websocket.manager import manager
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
@@ -103,6 +106,161 @@ async def websocket_endpoint(
                     },
                 }
                 await manager.broadcast_to_campaign(campaign_id, message)
+
+            elif message_type == "initiative_update":
+                # Handle initiative tracker updates
+                payload = data.get("data", {})
+                action = payload.get("action")
+                init_data = payload.get("data", {})
+
+                # Get campaign and current initiative state
+                campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+                if not campaign:
+                    await manager.send_personal_message(
+                        {"type": "error", "message": "Campaign not found"},
+                        websocket,
+                    )
+                    continue
+
+                # Initialize initiative if not exists
+                settings = campaign.settings or {}
+                initiative = settings.get(
+                    "initiative", {"active": False, "round": 1, "current_turn_index": 0, "combatants": []}
+                )
+
+                if action == "start_combat":
+                    # Start combat with specified character IDs
+                    character_ids = init_data.get("character_ids", [])
+                    combatants = []
+
+                    for char_id in character_ids:
+                        char = db.query(Character).filter(Character.id == char_id).first()
+                        if char:
+                            combatants.append(
+                                {
+                                    "id": f"char_{char.id}",
+                                    "name": char.name,
+                                    "initiative": None,
+                                    "dex_mod": char.dexterity_modifier,
+                                    "type": "pc",
+                                    "character_id": char.id,
+                                }
+                            )
+
+                    initiative = {"active": True, "round": 1, "current_turn_index": 0, "combatants": combatants}
+
+                elif action == "add_combatant":
+                    # Add NPC/monster to initiative
+                    name = init_data.get("name", "Unknown")
+                    init_value = init_data.get("initiative")
+                    combatant = {
+                        "id": f"npc_{uuid.uuid4().hex[:8]}",
+                        "name": name,
+                        "initiative": init_value,
+                        "dex_mod": 0,
+                        "type": "npc",
+                    }
+                    initiative["combatants"].append(combatant)
+                    # Re-sort if initiative value provided
+                    if init_value is not None:
+                        initiative["combatants"] = sorted(
+                            initiative["combatants"],
+                            key=lambda x: (x["initiative"] or -999, x.get("dex_mod", 0), x["name"]),
+                            reverse=True,
+                        )
+
+                elif action == "remove_combatant":
+                    # Remove combatant by ID
+                    combatant_id = init_data.get("combatant_id")
+                    initiative["combatants"] = [c for c in initiative["combatants"] if c["id"] != combatant_id]
+                    # Adjust current turn index if needed
+                    if initiative["current_turn_index"] >= len(initiative["combatants"]):
+                        initiative["current_turn_index"] = 0
+
+                elif action == "roll_initiative":
+                    # Roll initiative for a specific combatant
+                    combatant_id = init_data.get("combatant_id")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id:
+                            roll = random.randint(1, 20)
+                            dex_mod = combatant.get("dex_mod", 0)
+                            combatant["initiative"] = roll + dex_mod
+                            combatant["roll"] = roll
+                            break
+                    # Re-sort by initiative (desc), then dex_mod (desc), then name (asc)
+                    initiative["combatants"] = sorted(
+                        initiative["combatants"],
+                        key=lambda x: (x["initiative"] or -999, x.get("dex_mod", 0), x["name"]),
+                        reverse=True,
+                    )
+                    # Reset turn index after sorting
+                    initiative["current_turn_index"] = 0
+
+                elif action == "set_initiative":
+                    # Manually set initiative value
+                    combatant_id = init_data.get("combatant_id")
+                    value = init_data.get("value")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id:
+                            combatant["initiative"] = value
+                            break
+                    # Re-sort
+                    initiative["combatants"] = sorted(
+                        initiative["combatants"],
+                        key=lambda x: (x["initiative"] or -999, x.get("dex_mod", 0), x["name"]),
+                        reverse=True,
+                    )
+
+                elif action == "next_turn":
+                    # Advance to next turn
+                    if initiative["combatants"]:
+                        initiative["current_turn_index"] += 1
+                        if initiative["current_turn_index"] >= len(initiative["combatants"]):
+                            initiative["current_turn_index"] = 0
+                            initiative["round"] += 1
+
+                elif action == "previous_turn":
+                    # Go back to previous turn
+                    if initiative["combatants"]:
+                        initiative["current_turn_index"] -= 1
+                        if initiative["current_turn_index"] < 0:
+                            initiative["current_turn_index"] = len(initiative["combatants"]) - 1
+                            initiative["round"] = max(1, initiative["round"] - 1)
+
+                elif action == "end_combat":
+                    # End combat and clear initiative
+                    initiative = {"active": False, "round": 1, "current_turn_index": 0, "combatants": []}
+
+                elif action == "roll_all":
+                    # Roll initiative for all combatants
+                    for combatant in initiative["combatants"]:
+                        if combatant["initiative"] is None:
+                            roll = random.randint(1, 20)
+                            dex_mod = combatant.get("dex_mod", 0)
+                            combatant["initiative"] = roll + dex_mod
+                            combatant["roll"] = roll
+                    # Sort
+                    initiative["combatants"] = sorted(
+                        initiative["combatants"],
+                        key=lambda x: (x["initiative"] or -999, x.get("dex_mod", 0), x["name"]),
+                        reverse=True,
+                    )
+                    initiative["current_turn_index"] = 0
+
+                else:
+                    await manager.send_personal_message(
+                        {"type": "error", "message": f"Unknown initiative action: {action}"},
+                        websocket,
+                    )
+                    continue
+
+                # Save to database
+                settings["initiative"] = initiative
+                campaign.settings = settings
+                db.commit()
+
+                # Broadcast updated state to all clients
+                await manager.broadcast_to_campaign(campaign_id, {"type": "initiative_state", "data": initiative})
 
             else:
                 # Unknown message type
