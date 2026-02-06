@@ -2,6 +2,7 @@ import React from "react";
 import { useGame } from "../contexts/GameContext";
 import HPManager from "./HPManager";
 import AttacksSection from "./AttacksSection";
+import SpellsSection from "./SpellsSection";
 import "./CharacterSheet.css";
 
 const SKILLS = {
@@ -268,6 +269,14 @@ export default function CharacterSheet({ character }) {
 
       {/* Attacks */}
       <AttacksSection
+        character={character}
+        onUpdateCharacter={updateCharacter}
+        onRollDice={rollDice}
+        canEdit={true}
+      />
+
+      {/* Spells */}
+      <SpellsSection
         character={character}
         onUpdateCharacter={updateCharacter}
         onRollDice={rollDice}
