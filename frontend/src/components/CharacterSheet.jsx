@@ -1,6 +1,7 @@
 import React from "react";
 import { useGame } from "../contexts/GameContext";
 import HPManager from "./HPManager";
+import AttacksSection from "./AttacksSection";
 import "./CharacterSheet.css";
 
 const SKILLS = {
@@ -264,6 +265,14 @@ export default function CharacterSheet({ character }) {
           })}
         </div>
       </div>
+
+      {/* Attacks */}
+      <AttacksSection
+        character={character}
+        onUpdateCharacter={updateCharacter}
+        onRollDice={rollDice}
+        canEdit={true}
+      />
     </div>
   );
 }
