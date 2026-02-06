@@ -90,20 +90,28 @@
    - ✅ Auto-reset death saves on healing
    - ✅ 16 comprehensive tests added (38 total tests passing)
 
+2. **Character Export/Import** ✅ (2026-02-05)
+   - ✅ Export character as JSON from character sheet
+   - ✅ Import character from JSON on dashboard
+   - ✅ Automatic filename sanitization
+   - ✅ Export metadata (version, timestamp)
+   - ✅ Import validation and error handling
+
+3. **UI Improvements** ✅ (2026-02-05)
+   - ✅ Large blue ability modifiers (matching character creation)
+   - ✅ Clickable proficiency toggles for skills (○ → ● → ◆)
+   - ✅ Clickable proficiency toggles for saves (○ ⇄ ●)
+   - ✅ Hover effects on proficiency indicators
+
 ### Immediate Priorities
 
-2. **Attacks/Weapons System**
+4. **Attacks/Weapons System**
    - Display all attacks/weapons on character sheet
    - **Custom add weapons** with name, attack bonus, damage dice, damage type
    - Clickable to roll hit (d20 + modifier)
    - Automatic damage roll on hit
    - Show results in shared log
    - Support for versatile weapons, two-weapon fighting
-
-3. **Character Sheet Export** ⭐
-   - **Download character sheet** as JSON for backup
-   - Import character from JSON file
-   - Future: PDF export option
 
 4. **Spells System**
    - Display spell list organized by level
