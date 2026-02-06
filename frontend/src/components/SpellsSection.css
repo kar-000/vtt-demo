@@ -432,8 +432,15 @@
   background: #f9f9f9;
   border-bottom: 1px solid #e0e0e0;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filter-row {
+  display: flex;
   align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .modal-filters label {
@@ -444,11 +451,34 @@
   color: #666;
 }
 
+.checkbox-label {
+  font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+}
+
 .modal-filters select {
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
+}
+
+.filter-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.class-filter {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .spell-count {

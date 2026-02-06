@@ -11,7 +11,8 @@
     "damage_dice": "1d10",
     "damage_type": "fire",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Cure Wounds",
@@ -25,7 +26,8 @@
     "damage_dice": "1d8",
     "damage_type": "healing",
     "save_type": "",
-    "is_healing": true
+    "is_healing": true,
+    "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger"]
   },
   {
     "name": "Magic Missile",
@@ -39,7 +41,8 @@
     "damage_dice": "3d4",
     "damage_type": "force",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Burning Hands",
@@ -53,7 +56,8 @@
     "damage_dice": "3d6",
     "damage_type": "fire",
     "save_type": "dexterity",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Shield",
@@ -67,7 +71,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Scorching Ray",
@@ -81,7 +86,8 @@
     "damage_dice": "2d6",
     "damage_type": "fire",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Fireball",
@@ -95,7 +101,8 @@
     "damage_dice": "8d6",
     "damage_type": "fire",
     "save_type": "dexterity",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Lightning Bolt",
@@ -109,7 +116,8 @@
     "damage_dice": "8d6",
     "damage_type": "lightning",
     "save_type": "dexterity",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Counterspell",
@@ -123,7 +131,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Warlock", "Wizard"]
   },
   {
     "name": "Haste",
@@ -137,7 +146,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Polymorph",
@@ -151,7 +161,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "wisdom",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Bard", "Druid", "Sorcerer", "Wizard"]
   },
   {
     "name": "Cone of Cold",
@@ -165,7 +176,8 @@
     "damage_dice": "8d8",
     "damage_type": "cold",
     "save_type": "constitution",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Heal",
@@ -179,7 +191,8 @@
     "damage_dice": "",
     "damage_type": "healing",
     "save_type": "",
-    "is_healing": true
+    "is_healing": true,
+    "classes": ["Cleric", "Druid"]
   },
   {
     "name": "Power Word Stun",
@@ -193,7 +206,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"]
   },
   {
     "name": "Power Word Kill",
@@ -207,7 +221,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"]
   },
   {
     "name": "Eldritch Blast",
@@ -221,7 +236,8 @@
     "damage_dice": "1d10",
     "damage_type": "force",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Warlock"]
   },
   {
     "name": "Guidance",
@@ -235,7 +251,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Cleric", "Druid"]
   },
   {
     "name": "Mage Armor",
@@ -249,7 +266,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Wizard"]
   },
   {
     "name": "Bless",
@@ -263,7 +281,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Cleric", "Paladin"]
   },
   {
     "name": "Healing Word",
@@ -277,7 +296,8 @@
     "damage_dice": "1d4",
     "damage_type": "healing",
     "save_type": "",
-    "is_healing": true
+    "is_healing": true,
+    "classes": ["Bard", "Cleric", "Druid"]
   },
   {
     "name": "Thunderwave",
@@ -291,7 +311,8 @@
     "damage_dice": "2d8",
     "damage_type": "thunder",
     "save_type": "constitution",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Bard", "Druid", "Sorcerer", "Wizard"]
   },
   {
     "name": "Misty Step",
@@ -305,7 +326,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Warlock", "Wizard"]
   },
   {
     "name": "Hold Person",
@@ -319,7 +341,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "wisdom",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Bard", "Cleric", "Druid", "Sorcerer", "Warlock", "Wizard"]
   },
   {
     "name": "Spiritual Weapon",
@@ -333,7 +356,8 @@
     "damage_dice": "1d8",
     "damage_type": "force",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Cleric"]
   },
   {
     "name": "Dispel Magic",
@@ -347,7 +371,16 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": [
+      "Bard",
+      "Cleric",
+      "Druid",
+      "Paladin",
+      "Sorcerer",
+      "Warlock",
+      "Wizard"
+    ]
   },
   {
     "name": "Fly",
@@ -361,7 +394,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Sorcerer", "Warlock", "Wizard"]
   },
   {
     "name": "Revivify",
@@ -375,7 +409,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Cleric", "Paladin"]
   },
   {
     "name": "Banishment",
@@ -389,7 +424,8 @@
     "damage_dice": "",
     "damage_type": "",
     "save_type": "charisma",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Cleric", "Paladin", "Sorcerer", "Warlock", "Wizard"]
   },
   {
     "name": "Wall of Fire",
@@ -403,6 +439,7 @@
     "damage_dice": "5d8",
     "damage_type": "fire",
     "save_type": "dexterity",
-    "is_healing": false
+    "is_healing": false,
+    "classes": ["Druid", "Sorcerer", "Wizard"]
   }
 ]

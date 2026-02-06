@@ -12,6 +12,7 @@ export default function SpellsSection({
   const [editingSpell, setEditingSpell] = useState(null);
   const [showSRDBrowser, setShowSRDBrowser] = useState(false);
   const [srdFilterLevel, setSRDFilterLevel] = useState("all");
+  const [showAllClasses, setShowAllClasses] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     level: 0,
@@ -239,11 +240,20 @@ export default function SpellsSection({
     }
   };
 
-  // Filter SRD spells by level
-  const filteredSRDSpells =
-    srdFilterLevel === "all"
-      ? srdSpells
-      : srdSpells.filter((spell) => spell.level === parseInt(srdFilterLevel));
+  // Filter SRD spells by level and class
+  const filteredSRDSpells = srdSpells.filter((spell) => {
+    // Filter by level
+    const levelMatch =
+      srdFilterLevel === "all" || spell.level === parseInt(srdFilterLevel);
+
+    // Filter by class (unless showing all)
+    const classMatch =
+      showAllClasses ||
+      !character.character_class ||
+      spell.classes?.includes(character.character_class);
+
+    return levelMatch && classMatch;
+  });
 
   return (
     <div className="spells-section">
@@ -607,24 +617,41 @@ export default function SpellsSection({
               </button>
             </div>
             <div className="modal-filters">
-              <label>
-                Filter by Level:
-                <select
-                  value={srdFilterLevel}
-                  onChange={(e) => setSRDFilterLevel(e.target.value)}
-                >
-                  <option value="all">All Levels</option>
-                  <option value="0">Cantrips</option>
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((lvl) => (
-                    <option key={lvl} value={lvl}>
-                      Level {lvl}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <span className="spell-count">
-                {filteredSRDSpells.length} spells
-              </span>
+              <div className="filter-row">
+                <label>
+                  Filter by Level:
+                  <select
+                    value={srdFilterLevel}
+                    onChange={(e) => setSRDFilterLevel(e.target.value)}
+                  >
+                    <option value="all">All Levels</option>
+                    <option value="0">Cantrips</option>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((lvl) => (
+                      <option key={lvl} value={lvl}>
+                        Level {lvl}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={showAllClasses}
+                    onChange={(e) => setShowAllClasses(e.target.checked)}
+                  />
+                  Show all classes
+                </label>
+              </div>
+              <div className="filter-info">
+                {!showAllClasses && character.character_class && (
+                  <span className="class-filter">
+                    Showing {character.character_class} spells
+                  </span>
+                )}
+                <span className="spell-count">
+                  {filteredSRDSpells.length} spells
+                </span>
+              </div>
             </div>
             <div className="modal-body">
               {filteredSRDSpells.map((spell, index) => (
