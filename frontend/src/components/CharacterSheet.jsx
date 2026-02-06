@@ -34,7 +34,7 @@ const SAVES = [
 ];
 
 export default function CharacterSheet({ character }) {
-  const { rollDice, updateHP } = useGame();
+  const { rollDice, updateHP, updateCharacter } = useGame();
 
   const getModifier = (score) => {
     return Math.floor((score - 10) / 2);
@@ -60,6 +60,42 @@ export default function CharacterSheet({ character }) {
     const proficiencyLevel = character.skills?.[skillName] || 0;
     const bonus = abilityMod + proficiencyLevel * character.proficiency_bonus;
     rollDice(20, 1, bonus, "skill", skillData.label);
+  };
+
+  const handleSkillProficiencyToggle = async (skillName, e) => {
+    e.stopPropagation(); // Prevent skill check roll when clicking proficiency
+    const currentLevel = character.skills?.[skillName] || 0;
+    const newLevel = (currentLevel + 1) % 3; // Cycle: 0 -> 1 -> 2 -> 0
+
+    const updatedSkills = {
+      ...character.skills,
+      [skillName]: newLevel,
+    };
+
+    try {
+      await updateCharacter(character.id, { skills: updatedSkills });
+    } catch (error) {
+      console.error("Error updating skill proficiency:", error);
+    }
+  };
+
+  const handleSaveProficiencyToggle = async (saveName, e) => {
+    e.stopPropagation(); // Prevent save roll when clicking proficiency
+    const currentProficiency =
+      character.saving_throw_proficiencies?.[saveName] || false;
+
+    const updatedSaves = {
+      ...character.saving_throw_proficiencies,
+      [saveName]: !currentProficiency,
+    };
+
+    try {
+      await updateCharacter(character.id, {
+        saving_throw_proficiencies: updatedSaves,
+      });
+    } catch (error) {
+      console.error("Error updating save proficiency:", error);
+    }
   };
 
   const handleUpdateHP = async (updateData) => {
@@ -147,7 +183,13 @@ export default function CharacterSheet({ character }) {
                 onClick={() => handleSavingThrow(save, modifier, proficient)}
                 title={`Click to roll ${save} save`}
               >
-                <span className="save-prof">{proficient ? "●" : "○"}</span>
+                <span
+                  className="save-prof save-prof-toggle"
+                  onClick={(e) => handleSaveProficiencyToggle(save, e)}
+                  title="Click to toggle proficiency"
+                >
+                  {proficient ? "●" : "○"}
+                </span>
                 <span className="save-bonus">{formatModifier(bonus)}</span>
                 <span className="save-name">
                   {save.charAt(0).toUpperCase() + save.slice(1)}
@@ -174,7 +216,11 @@ export default function CharacterSheet({ character }) {
                 onClick={() => handleSkillCheck(skillKey, skillData)}
                 title={`Click to roll ${skillData.label}`}
               >
-                <span className="skill-prof">
+                <span
+                  className="skill-prof skill-prof-toggle"
+                  onClick={(e) => handleSkillProficiencyToggle(skillKey, e)}
+                  title="Click to toggle proficiency (Not Proficient → Proficient → Expert)"
+                >
                   {proficiencyLevel === 2
                     ? "◆"
                     : proficiencyLevel === 1

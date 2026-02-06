@@ -96,10 +96,11 @@
 }
 
 .ability-modifier {
-  font-size: 1.75rem;
+  font-size: 2.5rem;
   color: #667eea;
   font-weight: bold;
   margin-bottom: 0.25rem;
+  line-height: 1;
 }
 
 .ability-score {
@@ -149,9 +150,30 @@
   font-size: 1rem;
 }
 
+.skill-prof-toggle,
+.save-prof-toggle {
+  cursor: pointer;
+  padding: 0.25rem;
+  margin: -0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.skill-prof-toggle:hover,
+.save-prof-toggle:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  transform: scale(1.2);
+}
+
 .save-item.proficient .save-prof,
 .skill-item.proficient .skill-prof {
   color: #4caf50;
+}
+
+.skill-item.proficient .skill-prof-toggle:hover,
+.save-item.proficient .save-prof-toggle:hover {
+  color: #45a049;
 }
 
 .save-bonus,
