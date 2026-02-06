@@ -155,9 +155,18 @@ export const GameProvider = ({ children }) => {
       return;
     }
 
+    // Convert dice type string (e.g., "d20") to integer (e.g., 20)
+    let diceTypeInt = diceType;
+    if (typeof diceType === "string") {
+      const match = diceType.match(/d(\d+)/i);
+      if (match) {
+        diceTypeInt = parseInt(match[1], 10);
+      }
+    }
+
     websocket.rollDice({
       character_name: currentCharacter.name,
-      dice_type: diceType,
+      dice_type: diceTypeInt,
       num_dice: numDice,
       modifier,
       roll_type: rollType,
