@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./SpellsSection.css";
+import srdSpells from "../data/srd-spells.json";
 
 export default function SpellsSection({
   character,
@@ -9,6 +10,8 @@ export default function SpellsSection({
 }) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingSpell, setEditingSpell] = useState(null);
+  const [showSRDBrowser, setShowSRDBrowser] = useState(false);
+  const [srdFilterLevel, setSRDFilterLevel] = useState("all");
   const [formData, setFormData] = useState({
     name: "",
     level: 0,
@@ -212,14 +215,52 @@ export default function SpellsSection({
     }
   };
 
+  const handleAddSRDSpell = async (srdSpell) => {
+    // Check if spell already exists
+    const exists = spellsKnown.some(
+      (s) => s.name === srdSpell.name && s.level === srdSpell.level,
+    );
+    if (exists) {
+      alert(`${srdSpell.name} is already in your spell list!`);
+      return;
+    }
+
+    const updatedSpells = [...spellsKnown, srdSpell];
+    const updatedSpellData = {
+      ...spellData,
+      spells_known: updatedSpells,
+    };
+
+    try {
+      await onUpdateCharacter(character.id, { spells: updatedSpellData });
+    } catch (error) {
+      console.error("Error adding SRD spell:", error);
+      alert("Failed to add spell");
+    }
+  };
+
+  // Filter SRD spells by level
+  const filteredSRDSpells =
+    srdFilterLevel === "all"
+      ? srdSpells
+      : srdSpells.filter((spell) => spell.level === parseInt(srdFilterLevel));
+
   return (
     <div className="spells-section">
       <div className="section-header">
         <h3>Spellcasting</h3>
         {canEdit && !isAdding && !editingSpell && (
-          <button onClick={handleStartAdd} className="btn btn-primary btn-sm">
-            + Add Spell
-          </button>
+          <div className="header-buttons">
+            <button
+              onClick={() => setShowSRDBrowser(true)}
+              className="btn btn-secondary btn-sm"
+            >
+              📖 Browse SRD Spells
+            </button>
+            <button onClick={handleStartAdd} className="btn btn-primary btn-sm">
+              + Add Custom Spell
+            </button>
+          </div>
         )}
       </div>
 
@@ -548,6 +589,92 @@ export default function SpellsSection({
           </div>
         )}
       </div>
+
+      {/* SRD Spell Browser Modal */}
+      {showSRDBrowser && (
+        <div
+          className="spell-browser-modal"
+          onClick={() => setShowSRDBrowser(false)}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>SRD 5.1 Spell Library</h3>
+              <button
+                onClick={() => setShowSRDBrowser(false)}
+                className="close-btn"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-filters">
+              <label>
+                Filter by Level:
+                <select
+                  value={srdFilterLevel}
+                  onChange={(e) => setSRDFilterLevel(e.target.value)}
+                >
+                  <option value="all">All Levels</option>
+                  <option value="0">Cantrips</option>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((lvl) => (
+                    <option key={lvl} value={lvl}>
+                      Level {lvl}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <span className="spell-count">
+                {filteredSRDSpells.length} spells
+              </span>
+            </div>
+            <div className="modal-body">
+              {filteredSRDSpells.map((spell, index) => (
+                <div
+                  key={`srd-${spell.name}-${index}`}
+                  className="srd-spell-card"
+                >
+                  <div className="srd-spell-header">
+                    <div className="srd-spell-title">
+                      <h4>{spell.name}</h4>
+                      <span className="srd-spell-level">
+                        {spell.level === 0 ? "Cantrip" : `Level ${spell.level}`}
+                      </span>
+                      {spell.school && (
+                        <span className="srd-spell-school">{spell.school}</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleAddSRDSpell(spell)}
+                      className="btn btn-primary btn-sm"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                  <div className="srd-spell-meta">
+                    {spell.casting_time && <span>⏱️ {spell.casting_time}</span>}
+                    {spell.range && <span>📏 {spell.range}</span>}
+                    {spell.duration && <span>⏳ {spell.duration}</span>}
+                  </div>
+                  {spell.components && (
+                    <div className="srd-spell-components">
+                      <strong>Components:</strong> {spell.components}
+                    </div>
+                  )}
+                  <p className="srd-spell-description">{spell.description}</p>
+                  {spell.damage_dice && (
+                    <div className="srd-spell-damage">
+                      <strong>
+                        {spell.is_healing ? "Healing:" : "Damage:"}
+                      </strong>{" "}
+                      {spell.damage_dice} {spell.damage_type}
+                      {spell.save_type && ` (${spell.save_type} save)`}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
