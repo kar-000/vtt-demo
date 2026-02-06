@@ -6,8 +6,13 @@ import "./Dashboard.css";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const { characters, setCurrentCharacter, deleteCharacter, loading } =
-    useGame();
+  const {
+    characters,
+    setCurrentCharacter,
+    deleteCharacter,
+    createCharacter,
+    loading,
+  } = useGame();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -35,6 +40,40 @@ export default function Dashboard() {
     }
   };
 
+  const handleImportCharacter = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const characterData = JSON.parse(text);
+
+        // Remove fields that shouldn't be imported
+        const {
+          id,
+          owner_id,
+          created_at,
+          updated_at,
+          exported_at,
+          export_version,
+          ...importData
+        } = characterData;
+
+        // Create new character from imported data
+        const newCharacter = await createCharacter(importData);
+        alert(`Character "${newCharacter.name}" imported successfully!`);
+      } catch (error) {
+        console.error("Import error:", error);
+        alert("Failed to import character. Please check the file format.");
+      }
+    };
+    input.click();
+  };
+
   return (
     <div className="dashboard">
       <header className="dashboard-header">
@@ -53,9 +92,21 @@ export default function Dashboard() {
         <div className="characters-section">
           <div className="section-header">
             <h2>Your Characters</h2>
-            <button onClick={handleCreateCharacter} className="btn btn-primary">
-              Create Character
-            </button>
+            <div className="header-actions">
+              <button
+                onClick={handleImportCharacter}
+                className="btn btn-secondary"
+                title="Import character from JSON file"
+              >
+                📤 Import
+              </button>
+              <button
+                onClick={handleCreateCharacter}
+                className="btn btn-primary"
+              >
+                Create Character
+              </button>
+            </div>
           </div>
 
           {loading ? (

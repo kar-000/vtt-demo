@@ -102,6 +102,26 @@ export default function CharacterSheet({ character }) {
     await updateHP(character.id, updateData);
   };
 
+  const handleExportCharacter = () => {
+    const characterData = {
+      ...character,
+      exported_at: new Date().toISOString(),
+      export_version: "1.0",
+    };
+
+    const dataStr = JSON.stringify(characterData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(dataBlob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${character.name.replace(/[^a-z0-9]/gi, "_")}_character.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="character-sheet">
       {/* Header */}
@@ -112,6 +132,13 @@ export default function CharacterSheet({ character }) {
             Level {character.level} {character.race} {character.character_class}
           </p>
         </div>
+        <button
+          onClick={handleExportCharacter}
+          className="btn btn-secondary export-btn"
+          title="Download character as JSON backup"
+        >
+          📥 Export Character
+        </button>
       </div>
 
       {/* Main Stats */}
