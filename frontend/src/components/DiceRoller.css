@@ -199,6 +199,29 @@
   width: 100%;
 }
 
+/* Spinning animation for dice rolls */
+@keyframes diceSpin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.15);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.dice-button.rolling {
+  animation: diceSpin 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.roll-button.rolling {
+  animation: diceSpin 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
 @media (max-width: 768px) {
   .quick-roll-buttons {
     gap: 0.5rem;

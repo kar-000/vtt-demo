@@ -9,21 +9,29 @@ export default function DiceRoller() {
   const [selectedDice, setSelectedDice] = useState(20);
   const [numDice, setNumDice] = useState(1);
   const [modifier, setModifier] = useState(0);
+  const [rollingDice, setRollingDice] = useState(null);
+  const [isCustomRolling, setIsCustomRolling] = useState(false);
 
   const handleRoll = () => {
+    if (isCustomRolling) return;
     if (!currentCharacter) {
       alert("Please select a character first");
       return;
     }
+    setIsCustomRolling(true);
     rollDice(selectedDice, numDice, modifier, "manual");
+    setTimeout(() => setIsCustomRolling(false), 400);
   };
 
   const quickRoll = (diceType) => {
+    if (rollingDice) return;
     if (!currentCharacter) {
       alert("Please select a character first");
       return;
     }
+    setRollingDice(diceType);
     rollDice(diceType, 1, 0, "manual");
+    setTimeout(() => setRollingDice(null), 400);
   };
 
   return (
@@ -37,7 +45,7 @@ export default function DiceRoller() {
             <button
               key={dice}
               onClick={() => quickRoll(dice)}
-              className={`dice-button dice-d${dice}`}
+              className={`dice-button dice-d${dice}${rollingDice === dice ? " rolling" : ""}`}
               title={`Roll 1d${dice}`}
             >
               <span className="dice-label">d{dice}</span>
@@ -95,7 +103,10 @@ export default function DiceRoller() {
           {modifier !== 0 && ` ${modifier >= 0 ? "+" : ""}${modifier}`}
         </div>
 
-        <button onClick={handleRoll} className="btn btn-primary roll-button">
+        <button
+          onClick={handleRoll}
+          className={`btn btn-primary roll-button${isCustomRolling ? " rolling" : ""}`}
+        >
           Roll Dice
         </button>
       </div>
