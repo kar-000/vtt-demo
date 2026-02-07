@@ -6,6 +6,7 @@ export default function SpellsSection({
   character,
   onUpdateCharacter,
   onRollDice,
+  onPostToChat,
   canEdit,
 }) {
   const [isAdding, setIsAdding] = useState(false);
@@ -156,9 +157,32 @@ export default function SpellsSection({
         );
       }
     } else {
-      // Non-damaging spell
-      alert(`${spell.name} cast! (No damage/healing to roll)`);
+      // Non-damaging spell - post to chat instead
+      handleShareSpell(spell);
     }
+  };
+
+  const handleShareSpell = (spell) => {
+    if (!onPostToChat) return;
+
+    const levelText = spell.level === 0 ? "Cantrip" : `Level ${spell.level}`;
+    const parts = [
+      `**${spell.name}** (${levelText}${spell.school ? ` ${spell.school}` : ""})`,
+    ];
+
+    if (spell.casting_time) parts.push(`Casting Time: ${spell.casting_time}`);
+    if (spell.range) parts.push(`Range: ${spell.range}`);
+    if (spell.duration) parts.push(`Duration: ${spell.duration}`);
+    if (spell.components) parts.push(`Components: ${spell.components}`);
+    if (spell.description) parts.push(spell.description);
+    if (spell.damage_dice) {
+      const dmgType = spell.is_healing ? "Healing" : "Damage";
+      parts.push(`${dmgType}: ${spell.damage_dice} ${spell.damage_type || ""}`);
+    }
+    if (spell.save_type)
+      parts.push(`Save: DC ${spellSaveDC} ${spell.save_type}`);
+
+    onPostToChat(`${character.name} shares: ${parts.join(" | ")}`);
   };
 
   const handleSlotChange = async (level, current) => {
@@ -575,17 +599,26 @@ export default function SpellsSection({
                     {spell.description && (
                       <p className="spell-description">{spell.description}</p>
                     )}
-                    {spell.damage_dice && (
+                    <div className="spell-buttons">
+                      {spell.damage_dice && (
+                        <button
+                          onClick={() => handleCastSpell(spell)}
+                          className={`cast-button ${spell.is_healing ? "healing" : "damage"}`}
+                        >
+                          <span className="cast-label">Cast</span>
+                          <span className="cast-value">
+                            {spell.damage_dice} {spell.damage_type}
+                          </span>
+                        </button>
+                      )}
                       <button
-                        onClick={() => handleCastSpell(spell)}
-                        className={`cast-button ${spell.is_healing ? "healing" : "damage"}`}
+                        onClick={() => handleShareSpell(spell)}
+                        className="share-button"
+                        title="Share spell info to chat"
                       >
-                        <span className="cast-label">Cast</span>
-                        <span className="cast-value">
-                          {spell.damage_dice} {spell.damage_type}
-                        </span>
+                        📜 Share
                       </button>
-                    )}
+                    </div>
                   </div>
                 ))}
               </div>

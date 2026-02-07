@@ -21,6 +21,36 @@ export default function AttacksSection({
 
   const attacks = character.attacks || [];
 
+  // Calculate ability modifier from score
+  const getModifier = (score) => Math.floor((score - 10) / 2);
+
+  // Calculate proficiency bonus from level
+  const getProficiencyBonus = (level) => 2 + Math.floor((level - 1) / 4);
+
+  // Calculate attack bonus based on weapon properties and character stats
+  const calculateAttackBonus = (weapon) => {
+    const strMod = getModifier(character.strength || 10);
+    const dexMod = getModifier(character.dexterity || 10);
+    const profBonus = getProficiencyBonus(character.level || 1);
+
+    let abilityMod;
+
+    // Check if ranged weapon
+    if (weapon.weapon_type?.includes("Ranged")) {
+      abilityMod = dexMod;
+    }
+    // Check if finesse weapon (can use STR or DEX, pick higher)
+    else if (weapon.properties?.toLowerCase().includes("finesse")) {
+      abilityMod = Math.max(strMod, dexMod);
+    }
+    // Default to STR for melee
+    else {
+      abilityMod = strMod;
+    }
+
+    return abilityMod + profBonus;
+  };
+
   const handleStartAdd = () => {
     setFormData({
       name: "",
@@ -126,10 +156,13 @@ export default function AttacksSection({
       return;
     }
 
-    // Create attack from weapon (user needs to set their own attack bonus)
+    // Calculate attack bonus based on character stats and weapon properties
+    const attackBonus = calculateAttackBonus(srdWeapon);
+
+    // Create attack from weapon with calculated bonus
     const newAttack = {
       name: srdWeapon.name,
-      attack_bonus: srdWeapon.attack_bonus,
+      attack_bonus: attackBonus,
       damage_dice: srdWeapon.damage_dice,
       damage_type: srdWeapon.damage_type,
     };
@@ -138,9 +171,6 @@ export default function AttacksSection({
 
     try {
       await onUpdateCharacter(character.id, { attacks: updatedAttacks });
-      alert(
-        `${srdWeapon.name} added! Remember to set your attack bonus based on your stats.`,
-      );
     } catch (error) {
       console.error("Error adding SRD weapon:", error);
       alert("Failed to add weapon");
@@ -355,6 +385,9 @@ export default function AttacksSection({
                     </button>
                   </div>
                   <div className="srd-weapon-stats">
+                    <span>
+                      <strong>Attack:</strong> +{calculateAttackBonus(weapon)}
+                    </span>
                     <span>
                       <strong>Damage:</strong> {weapon.damage_dice}{" "}
                       {weapon.damage_type}

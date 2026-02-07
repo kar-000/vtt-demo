@@ -46,26 +46,35 @@ export default function RollLog() {
         </div>
       ) : (
         <div className="log-entries">
-          {rollLog.map((roll, index) => (
-            <div key={index} className="log-entry">
+          {rollLog.map((entry, index) => (
+            <div
+              key={index}
+              className={`log-entry ${entry.type === "chat" ? "chat-entry" : ""}`}
+            >
               <div className="log-header">
                 <span className="character-name">
-                  {roll.character_name || roll.username}
+                  {entry.character_name || entry.username}
                 </span>
-                <span className="roll-time">{formatTime(roll.timestamp)}</span>
+                <span className="roll-time">{formatTime(entry.timestamp)}</span>
               </div>
-              {roll.label && (
-                <div
-                  className="roll-label"
-                  style={{ color: getRollTypeColor(roll.roll_type) }}
-                >
-                  {roll.label}
-                </div>
+              {entry.type === "chat" ? (
+                <div className="chat-message">{entry.message}</div>
+              ) : (
+                <>
+                  {entry.label && (
+                    <div
+                      className="roll-label"
+                      style={{ color: getRollTypeColor(entry.roll_type) }}
+                    >
+                      {entry.label}
+                    </div>
+                  )}
+                  <div className="roll-details">{formatRollDetails(entry)}</div>
+                  <div className="roll-total">
+                    Total: <span className="total-value">{entry.total}</span>
+                  </div>
+                </>
               )}
-              <div className="roll-details">{formatRollDetails(roll)}</div>
-              <div className="roll-total">
-                Total: <span className="total-value">{roll.total}</span>
-              </div>
             </div>
           ))}
         </div>

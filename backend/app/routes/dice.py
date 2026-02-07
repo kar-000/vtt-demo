@@ -11,6 +11,7 @@ from app.models.user import User
 from app.websocket.manager import manager
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
 
 router = APIRouter(tags=["Dice"])
 logger = logging.getLogger(__name__)
@@ -96,12 +97,13 @@ async def websocket_endpoint(
                 await manager.broadcast_to_campaign(campaign_id, result)
 
             elif message_type == "chat_message":
-                # Handle chat messages (for future use)
+                # Handle chat messages
+                chat_data = data.get("data", {})
                 message = {
                     "type": "chat_message",
                     "data": {
                         "username": user.username,
-                        "message": data.get("message", ""),
+                        "message": chat_data.get("message", ""),
                         "timestamp": datetime.utcnow().isoformat(),
                     },
                 }
@@ -129,23 +131,21 @@ async def websocket_endpoint(
                 )
 
                 if action == "start_combat":
-                    # Start combat with specified character IDs
-                    character_ids = init_data.get("character_ids", [])
+                    # Start combat with ALL characters (for multi-player support)
+                    all_characters = db.query(Character).all()
                     combatants = []
 
-                    for char_id in character_ids:
-                        char = db.query(Character).filter(Character.id == char_id).first()
-                        if char:
-                            combatants.append(
-                                {
-                                    "id": f"char_{char.id}",
-                                    "name": char.name,
-                                    "initiative": None,
-                                    "dex_mod": char.dexterity_modifier,
-                                    "type": "pc",
-                                    "character_id": char.id,
-                                }
-                            )
+                    for char in all_characters:
+                        combatants.append(
+                            {
+                                "id": f"char_{char.id}",
+                                "name": char.name,
+                                "initiative": None,
+                                "dex_mod": char.dexterity_modifier,
+                                "type": "pc",
+                                "character_id": char.id,
+                            }
+                        )
 
                     initiative = {"active": True, "round": 1, "current_turn_index": 0, "combatants": combatants}
 
@@ -254,9 +254,10 @@ async def websocket_endpoint(
                     )
                     continue
 
-                # Save to database
+                # Save to database (flag_modified ensures SQLAlchemy detects JSON changes)
                 settings["initiative"] = initiative
                 campaign.settings = settings
+                flag_modified(campaign, "settings")
                 db.commit()
 
                 # Broadcast updated state to all clients

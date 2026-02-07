@@ -15,6 +15,9 @@ class WebSocketService {
       return;
     }
 
+    // Clear old listeners to prevent duplicates on reconnect
+    this.listeners.clear();
+
     const wsUrl = `${WS_BASE}/ws/game/${campaignId}?token=${token}`;
 
     try {
@@ -67,6 +70,8 @@ class WebSocketService {
       this.ws.close();
       this.ws = null;
     }
+    // Clear all listeners to prevent duplicates on reconnect
+    this.listeners.clear();
   }
 
   send(type, data) {
