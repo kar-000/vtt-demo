@@ -20,7 +20,7 @@ export default function DiceRoller() {
     }
     setIsCustomRolling(true);
     rollDice(selectedDice, numDice, modifier, "manual");
-    setTimeout(() => setIsCustomRolling(false), 400);
+    setTimeout(() => setIsCustomRolling(false), 500);
   };
 
   const quickRoll = (diceType) => {
@@ -31,7 +31,7 @@ export default function DiceRoller() {
     }
     setRollingDice(diceType);
     rollDice(diceType, 1, 0, "manual");
-    setTimeout(() => setRollingDice(null), 400);
+    setTimeout(() => setRollingDice(null), 500);
   };
 
   return (
