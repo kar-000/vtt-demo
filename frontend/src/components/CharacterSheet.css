@@ -19,6 +19,11 @@
   gap: 1rem;
 }
 
+.character-title {
+  flex: 1;
+  min-width: 0;
+}
+
 .character-title h2 {
   margin: 0 0 0.5rem 0;
   color: var(--text-heading);

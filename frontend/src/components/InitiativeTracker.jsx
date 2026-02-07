@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useGame } from "../contexts/GameContext";
 import { useAuth } from "../contexts/AuthContext";
+import CharacterPortrait from "./CharacterPortrait";
 import "./InitiativeTracker.css";
 
 export default function InitiativeTracker() {
@@ -73,6 +74,12 @@ export default function InitiativeTracker() {
     }
   };
 
+  // Get character data for a combatant (for portraits)
+  const getCharacterForCombatant = (combatant) => {
+    if (!combatant.character_id) return null;
+    return characters.find((c) => c.id === combatant.character_id) || null;
+  };
+
   // Collapsed state when no combat
   if (!initiative.active) {
     return (
@@ -125,42 +132,54 @@ export default function InitiativeTracker() {
 
       {/* Combatants List */}
       <div className="combatants-list">
-        {initiative.combatants.map((combatant, index) => (
-          <div
-            key={combatant.id}
-            className={`combatant-item ${index === initiative.current_turn_index ? "active-turn" : ""} ${combatant.type}`}
-          >
-            <div className="combatant-initiative">
-              {combatant.initiative !== null ? combatant.initiative : "—"}
-            </div>
-            <div className="combatant-info">
-              <span className="combatant-name">{combatant.name}</span>
-              {combatant.type === "npc" && (
-                <span className="combatant-type">NPC</span>
+        {initiative.combatants.map((combatant, index) => {
+          const character = getCharacterForCombatant(combatant);
+          return (
+            <div
+              key={combatant.id}
+              className={`combatant-item ${index === initiative.current_turn_index ? "active-turn" : ""} ${combatant.type}`}
+            >
+              {character ? (
+                <CharacterPortrait
+                  character={character}
+                  size="tiny"
+                  editable={false}
+                />
+              ) : (
+                <div className="combatant-npc-icon">👹</div>
               )}
+              <div className="combatant-initiative">
+                {combatant.initiative !== null ? combatant.initiative : "—"}
+              </div>
+              <div className="combatant-info">
+                <span className="combatant-name">{combatant.name}</span>
+                {combatant.type === "npc" && (
+                  <span className="combatant-type">NPC</span>
+                )}
+              </div>
+              <div className="combatant-actions">
+                {isDM && combatant.initiative === null && (
+                  <button
+                    onClick={() => rollInitiativeFor(combatant.id)}
+                    className="btn-icon"
+                    title="Roll Initiative"
+                  >
+                    🎲
+                  </button>
+                )}
+                {isDM && (
+                  <button
+                    onClick={() => removeCombatant(combatant.id)}
+                    className="btn-icon btn-danger"
+                    title="Remove"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="combatant-actions">
-              {isDM && combatant.initiative === null && (
-                <button
-                  onClick={() => rollInitiativeFor(combatant.id)}
-                  className="btn-icon"
-                  title="Roll Initiative"
-                >
-                  🎲
-                </button>
-              )}
-              {isDM && (
-                <button
-                  onClick={() => removeCombatant(combatant.id)}
-                  className="btn-icon btn-danger"
-                  title="Remove"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Action Economy for Current Turn */}

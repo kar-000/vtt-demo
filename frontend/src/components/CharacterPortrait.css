@@ -1,0 +1,153 @@
+/* Character Portrait Component */
+.character-portrait {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--bg-surface);
+  border: 3px solid var(--border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Size variants */
+.portrait-large {
+  width: 100px;
+  height: 100px;
+}
+
+.portrait-medium {
+  width: 60px;
+  height: 60px;
+}
+
+.portrait-small {
+  width: 36px;
+  height: 36px;
+}
+
+.portrait-tiny {
+  width: 28px;
+  height: 28px;
+  border-width: 2px;
+}
+
+/* Editable state */
+.character-portrait.editable {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.character-portrait.editable:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+}
+
+/* Portrait image */
+.portrait-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Initials fallback */
+.portrait-initials {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.portrait-small .portrait-initials {
+  font-size: 0.9rem;
+}
+
+.portrait-tiny .portrait-initials {
+  font-size: 0.7rem;
+}
+
+.portrait-medium .portrait-initials {
+  font-size: 1.2rem;
+}
+
+/* Overlay on hover */
+.portrait-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.character-portrait.editable:hover .portrait-overlay {
+  opacity: 1;
+}
+
+.portrait-hint {
+  font-size: 1.5rem;
+}
+
+.portrait-small .portrait-hint,
+.portrait-tiny .portrait-hint {
+  font-size: 1rem;
+}
+
+/* Remove button */
+.portrait-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger-light);
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character-portrait.editable:hover .portrait-remove {
+  opacity: 1;
+}
+
+.portrait-remove:hover {
+  background: var(--color-danger);
+  color: white;
+}
+
+.portrait-small .portrait-remove,
+.portrait-tiny .portrait-remove {
+  display: none;
+}
+
+/* Hidden file input */
+.portrait-input {
+  display: none;
+}
+
+/* Loading state */
+.portrait-loading {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.character-portrait.uploading {
+  pointer-events: none;
+}

@@ -112,6 +112,19 @@
   font-size: 0.9rem;
 }
 
+.combatant-npc-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 2px dashed var(--border-secondary);
+  border-radius: 50%;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
 .combatant-info {
   flex: 1;
   display: flex;
