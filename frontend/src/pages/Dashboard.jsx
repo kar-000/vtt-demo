@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useGame } from "../contexts/GameContext";
+import ThemeSwitcher from "../components/ThemeSwitcher";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -94,13 +95,16 @@ export default function Dashboard() {
     <div className="dashboard">
       <header className="dashboard-header">
         <h1>D&D Virtual Tabletop</h1>
-        <div className="user-info">
-          <span>
-            {user?.username} {user?.is_dm && "(DM)"}
-          </span>
-          <button onClick={handleLogout} className="btn btn-secondary">
-            Logout
-          </button>
+        <div className="header-right">
+          <ThemeSwitcher />
+          <div className="user-info">
+            <span>
+              {user?.username} {user?.is_dm && "(DM)"}
+            </span>
+            <button onClick={handleLogout} className="btn btn-secondary">
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 

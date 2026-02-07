@@ -1,8 +1,9 @@
+/* Dice Roller - Uses theme CSS variables */
 .dice-roller {
-  background: white;
+  background: var(--bg-card);
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -10,9 +11,9 @@
 
 .dice-roller h3 {
   margin: 0;
-  color: #333;
+  color: var(--text-dark);
   font-size: 1.25rem;
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid var(--accent-secondary);
   padding-bottom: 0.5rem;
 }
 
@@ -25,7 +26,7 @@
 .quick-roll-label,
 .custom-roll-label {
   font-weight: 500;
-  color: #666;
+  color: var(--text-dark-secondary);
   font-size: 0.9rem;
 }
 
@@ -38,12 +39,12 @@
 }
 
 .dice-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--dice-gradient);
   color: white;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,7 +59,7 @@
 
 .dice-button:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-md);
   filter: brightness(1.1);
 }
 
@@ -127,7 +128,7 @@
   height: 47px;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   padding-top: 10px;
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  background: var(--dice-d20);
   transform-origin: 50% 66%; /* Centroid of triangle */
 }
 .dice-d20 .dice-label {
@@ -140,7 +141,7 @@
   height: 50px;
   border-radius: 50%;
   clip-path: none;
-  background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+  background: var(--dice-d100);
 }
 .dice-d100 .dice-label {
   font-size: 0.75rem;
@@ -151,7 +152,7 @@
   flex-direction: column;
   gap: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border-light);
 }
 
 .roll-inputs {
@@ -168,33 +169,35 @@
 
 .input-group label {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-dark-secondary);
   font-weight: 500;
 }
 
 .input-group input,
 .input-group select {
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-light);
   border-radius: 4px;
   font-size: 0.9rem;
+  background: var(--bg-card);
+  color: var(--text-dark);
 }
 
 .input-group input:focus,
 .input-group select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--accent-secondary);
 }
 
 .roll-preview {
-  background: #f9f9f9;
-  border: 2px solid #e0e0e0;
+  background: var(--bg-page);
+  border: 2px solid var(--border-light);
   border-radius: 4px;
   padding: 0.75rem;
   text-align: center;
   font-size: 1.1rem;
   font-weight: bold;
-  color: #667eea;
+  color: var(--accent-secondary);
 }
 
 .roll-button {

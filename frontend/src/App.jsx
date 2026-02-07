@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { GameProvider } from "./contexts/GameContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -96,13 +97,15 @@ function AppRoutes() {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <GameProvider>
-          <AppRoutes />
-        </GameProvider>
-      </AuthProvider>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <GameProvider>
+            <AppRoutes />
+          </GameProvider>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

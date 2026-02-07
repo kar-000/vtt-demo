@@ -1,6 +1,7 @@
+/* Game Page - Uses theme CSS variables */
 .game-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: var(--bg-page);
   display: flex;
   flex-direction: column;
 }
@@ -17,18 +18,18 @@
 
 .no-character h2 {
   margin: 0;
-  color: #333;
+  color: var(--text-dark);
 }
 
 .no-character p {
-  color: #666;
+  color: var(--text-dark-secondary);
   margin: 0;
 }
 
 .game-header {
-  background: white;
+  background: var(--bg-card);
   padding: 1rem 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -43,7 +44,7 @@
 .header-left h1 {
   margin: 0;
   font-size: 1.5rem;
-  color: #333;
+  color: var(--text-dark);
 }
 
 .header-right {
@@ -63,13 +64,13 @@
 }
 
 .connection-status.connected {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: var(--status-connected-bg);
+  color: var(--status-connected-text);
 }
 
 .connection-status.disconnected {
-  background: #ffebee;
-  color: #c62828;
+  background: var(--status-disconnected-bg);
+  color: var(--status-disconnected-text);
 }
 
 .status-dot {
@@ -80,7 +81,7 @@
 }
 
 .user-badge {
-  color: #666;
+  color: var(--text-dark-secondary);
   font-weight: 500;
 }
 

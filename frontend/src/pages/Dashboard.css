@@ -1,12 +1,13 @@
+/* Dashboard - Uses theme CSS variables */
 .dashboard {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: var(--bg-page);
 }
 
 .dashboard-header {
-  background: white;
+  background: var(--bg-card);
   padding: 1rem 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,7 +16,13 @@
 .dashboard-header h1 {
   margin: 0;
   font-size: 1.5rem;
-  color: #333;
+  color: var(--text-dark);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .user-info {
@@ -25,7 +32,7 @@
 }
 
 .user-info span {
-  color: #666;
+  color: var(--text-dark-secondary);
   font-weight: 500;
 }
 
@@ -36,10 +43,10 @@
 }
 
 .characters-section {
-  background: white;
+  background: var(--bg-card);
   border-radius: 8px;
   padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .section-header {
@@ -51,7 +58,7 @@
 
 .section-header h2 {
   margin: 0;
-  color: #333;
+  color: var(--text-dark);
 }
 
 .header-actions {
@@ -62,7 +69,7 @@
 .empty-state {
   text-align: center;
   padding: 3rem;
-  color: #666;
+  color: var(--text-dark-secondary);
 }
 
 .characters-grid {
@@ -72,8 +79,8 @@
 }
 
 .character-card {
-  background: #f9f9f9;
-  border: 2px solid #e0e0e0;
+  background: var(--bg-page);
+  border: 2px solid var(--border-light);
   border-radius: 8px;
   padding: 1.5rem;
   cursor: pointer;
@@ -84,8 +91,8 @@
 }
 
 .character-card:hover {
-  border-color: #667eea;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: var(--accent-secondary);
+  box-shadow: var(--shadow-md);
 }
 
 .character-avatar {
@@ -105,7 +112,7 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: #667eea;
+  background: var(--accent-secondary);
   color: white;
   display: flex;
   align-items: center;
@@ -120,26 +127,26 @@
 
 .character-info h3 {
   margin: 0 0 0.5rem 0;
-  color: #333;
+  color: var(--text-dark);
   font-size: 1.25rem;
 }
 
 .character-info p {
   margin: 0.25rem 0;
-  color: #666;
+  color: var(--text-dark-secondary);
   font-size: 0.9rem;
 }
 
 .character-hp {
   font-weight: 500;
-  color: #d32f2f;
+  color: var(--color-danger);
 }
 
 .delete-btn {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  background: #d32f2f;
+  background: var(--color-danger);
   color: white;
   border: none;
   border-radius: 50%;
@@ -163,27 +170,27 @@
 }
 
 .btn-secondary {
-  background: #666;
+  background: var(--btn-secondary-text);
   color: white;
 }
 
 .btn-secondary:hover {
-  background: #555;
+  opacity: 0.85;
 }
 
 /* DM Section Styles */
 .dm-section {
   margin-top: 2rem;
-  border: 2px solid #c9a227;
+  border: 2px solid var(--accent-primary);
 }
 
 .dm-section .section-header {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border-light);
   padding-bottom: 1rem;
 }
 
 .dm-badge {
-  background: linear-gradient(135deg, #c9a227 0%, #a08020 100%);
+  background: var(--gradient-accent);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 4px;
@@ -193,15 +200,15 @@
 }
 
 .player-card {
-  border-color: #c9a227;
+  border-color: var(--accent-primary);
 }
 
 .player-card:hover {
-  border-color: #a08020;
+  border-color: var(--accent-hover);
 }
 
 .player-avatar {
-  background: linear-gradient(135deg, #c9a227 0%, #a08020 100%);
+  background: var(--gradient-accent);
 }
 
 @media (max-width: 768px) {
@@ -210,6 +217,11 @@
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .dashboard-content {

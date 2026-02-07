@@ -1,8 +1,8 @@
 # D&D 5e VTT - Project Status
 
-**Last Updated**: 2026-02-05
+**Last Updated**: 2026-02-07
 
-## Current Phase: Phase 2 In Progress - DM Capabilities Complete (47+ tests passing)
+## Current Phase: Phase 2 In Progress - UI Theming Complete (47+ tests passing)
 
 ## ⚖️ Legal Foundation: SRD 5.1
 
@@ -159,14 +159,23 @@
 - [ ] Level-up system with guided workflow
 - [ ] Action economy tracking (action/bonus action/reaction/movement)
 
-### UI Theming (Phase 2/3)
-- [ ] **Theme Selector** - User can choose UI theme
-  - **Dark Medieval (Default)** - Dark fantasy aesthetic, D&D vibe
-  - **Pink Pony Club** - Pink and sparkly, fun and playful
-  - **Boring** - Minimal, simple, no-frills design
-- [ ] Theme persistence (localStorage)
-- [ ] CSS variables for theme switching
-- [ ] Smooth theme transitions
+9. **UI Theming** ✅ (2026-02-07)
+   - ✅ Three complete themes with CSS custom properties
+     - **Dark Medieval (Default)** - Dark fantasy aesthetic, gold accents
+     - **Pink Pony Club** - Sparkly pink and playful
+     - **Boring** - Minimal, neutral, no-frills
+   - ✅ ThemeContext for React state management
+   - ✅ Theme persistence via localStorage
+   - ✅ CSS variables for all colors, shadows, borders
+   - ✅ Smooth theme transitions
+   - ✅ ThemeSwitcher component (dropdown + compact icon mode)
+   - ✅ All CSS files migrated to use theme variables
+   - ✅ Theme switcher in Dashboard header and Game header
+
+10. **Layout Improvements** ✅ (2026-02-07)
+    - ✅ Attacks and Spells sections side-by-side on desktop
+    - ✅ Compact attack/damage roll buttons
+    - ✅ Responsive stacking on smaller screens (< 1200px)
 
 ## 📊 Phase 2 Planning Questions
 

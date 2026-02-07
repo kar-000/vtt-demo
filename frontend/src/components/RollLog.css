@@ -1,8 +1,9 @@
+/* Roll Log - Uses theme CSS variables */
 .roll-log {
-  background: white;
+  background: var(--bg-card);
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   max-height: 500px;
@@ -10,16 +11,16 @@
 
 .roll-log h3 {
   margin: 0 0 1rem 0;
-  color: #333;
+  color: var(--text-dark);
   font-size: 1.25rem;
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid var(--accent-secondary);
   padding-bottom: 0.5rem;
 }
 
 .empty-log {
   text-align: center;
   padding: 2rem;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .empty-log p {
@@ -35,8 +36,8 @@
 }
 
 .log-entry {
-  background: #f9f9f9;
-  border-left: 4px solid #667eea;
+  background: var(--bg-page);
+  border-left: 4px solid var(--accent-secondary);
   border-radius: 4px;
   padding: 0.75rem;
   animation: slideIn 0.3s ease-out;
@@ -62,13 +63,13 @@
 
 .character-name {
   font-weight: 600;
-  color: #333;
+  color: var(--text-dark);
   font-size: 0.95rem;
 }
 
 .roll-time {
   font-size: 0.8rem;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .roll-label {
@@ -79,21 +80,21 @@
 
 .roll-details {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-dark-secondary);
   margin-bottom: 0.5rem;
   font-family: "Courier New", monospace;
 }
 
 .roll-total {
   font-weight: 500;
-  color: #333;
+  color: var(--text-dark);
   font-size: 0.9rem;
 }
 
 .total-value {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #667eea;
+  color: var(--accent-secondary);
   margin-left: 0.5rem;
 }
 
@@ -103,15 +104,29 @@
 }
 
 .log-entries::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--scrollbar-track);
   border-radius: 3px;
 }
 
 .log-entries::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 .log-entries::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Chat message styling */
+.chat-entry {
+  border-left-color: var(--accent-tertiary);
+  background: rgba(156, 39, 176, 0.05);
+}
+
+.chat-message {
+  color: var(--text-dark);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
 }

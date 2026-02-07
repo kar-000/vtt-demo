@@ -1,0 +1,313 @@
+/* =============================================================================
+   VTT THEME SYSTEM
+   Three themes: Dark Medieval (default), Pink Pony Club, Boring
+   ============================================================================= */
+
+/* =============================================================================
+   DARK MEDIEVAL THEME (Default)
+   Classic dark fantasy with gold accents
+   ============================================================================= */
+:root,
+[data-theme="dark-medieval"] {
+  /* Backgrounds */
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-surface: rgba(0, 0, 0, 0.3);
+  --bg-overlay: rgba(0, 0, 0, 0.85);
+  --bg-input: rgba(0, 0, 0, 0.3);
+  --bg-page: #0f0f1a;
+  --bg-card: #1a1a2e;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --gradient-accent: linear-gradient(135deg, #c9a227 0%, #a08020 100%);
+  --gradient-header: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  /* Text Colors */
+  --text-primary: #e8dcc4;
+  --text-secondary: #a0a0b0;
+  --text-muted: #6a6a7a;
+  --text-accent: #c9a227;
+  --text-heading: #c9a227;
+  --text-dark: #e8dcc4;
+  --text-dark-secondary: #a0a0b0;
+
+  /* Accent Colors */
+  --accent-primary: #c9a227;
+  --accent-secondary: #667eea;
+  --accent-tertiary: #b19cd9;
+  --accent-hover: #a08020;
+
+  /* Borders */
+  --border-primary: #3d3d5c;
+  --border-secondary: #4a4a6a;
+  --border-accent: #c9a227;
+  --border-light: #3d3d5c;
+
+  /* Status Colors */
+  --color-success: #4c994c;
+  --color-success-light: #6fbf6f;
+  --color-success-bg: rgba(76, 153, 76, 0.15);
+  --color-danger: #b71c1c;
+  --color-danger-light: #ff6b6b;
+  --color-danger-bg: rgba(183, 28, 28, 0.2);
+  --color-warning: #f39c12;
+  --color-info: #64b5f6;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-inset: inset 0 1px 0 rgba(201, 162, 39, 0.1);
+
+  /* Buttons */
+  --btn-primary-bg: #667eea;
+  --btn-primary-hover: #5568d3;
+  --btn-secondary-bg: rgba(0, 0, 0, 0.3);
+  --btn-secondary-hover: rgba(201, 162, 39, 0.1);
+  --btn-secondary-text: #a0a0b0;
+
+  /* Dice */
+  --dice-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --dice-d20: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  --dice-d100: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+
+  /* HP Bar */
+  --hp-full: #4c994c;
+  --hp-medium: #f39c12;
+  --hp-low: #e74c3c;
+  --hp-temp: #64b5f6;
+
+  /* Death Saves */
+  --death-save-bg: rgba(139, 0, 0, 0.2);
+  --death-save-border: #722f37;
+
+  /* Scrollbar */
+  --scrollbar-track: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb: #4a4a6a;
+  --scrollbar-thumb-hover: #6a6a8a;
+
+  /* Connection Status */
+  --status-connected-bg: rgba(76, 153, 76, 0.2);
+  --status-connected-text: #6fbf6f;
+  --status-disconnected-bg: rgba(183, 28, 28, 0.2);
+  --status-disconnected-text: #ff6b6b;
+
+  /* Auth Page */
+  --auth-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* =============================================================================
+   PINK PONY CLUB THEME
+   Sparkly pink and playful
+   ============================================================================= */
+[data-theme="pink-pony-club"] {
+  /* Backgrounds */
+  --bg-primary: #2d1f2f;
+  --bg-secondary: #3d2840;
+  --bg-surface: rgba(255, 182, 193, 0.1);
+  --bg-overlay: rgba(45, 31, 47, 0.95);
+  --bg-input: rgba(0, 0, 0, 0.2);
+  --bg-page: #1a1218;
+  --bg-card: #2d1f2f;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #2d1f2f 0%, #3d2840 100%);
+  --gradient-accent: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+  --gradient-header: linear-gradient(135deg, #ff69b4 0%, #da70d6 100%);
+
+  /* Text Colors */
+  --text-primary: #fff0f5;
+  --text-secondary: #dda0dd;
+  --text-muted: #b88fb4;
+  --text-accent: #ff69b4;
+  --text-heading: #ff69b4;
+  --text-dark: #fff0f5;
+  --text-dark-secondary: #dda0dd;
+
+  /* Accent Colors */
+  --accent-primary: #ff69b4;
+  --accent-secondary: #da70d6;
+  --accent-tertiary: #ee82ee;
+  --accent-hover: #ff1493;
+
+  /* Borders */
+  --border-primary: #6b4c6b;
+  --border-secondary: #8b668b;
+  --border-accent: #ff69b4;
+  --border-light: #6b4c6b;
+
+  /* Status Colors */
+  --color-success: #98fb98;
+  --color-success-light: #adff2f;
+  --color-success-bg: rgba(152, 251, 152, 0.15);
+  --color-danger: #ff6b9d;
+  --color-danger-light: #ff8fbc;
+  --color-danger-bg: rgba(255, 107, 157, 0.2);
+  --color-warning: #ffd700;
+  --color-info: #87ceeb;
+
+  /* Shadows - with pink glow */
+  --shadow-sm: 0 2px 4px rgba(255, 105, 180, 0.2);
+  --shadow-md: 0 4px 12px rgba(255, 105, 180, 0.25);
+  --shadow-lg: 0 4px 20px rgba(255, 105, 180, 0.3);
+  --shadow-inset: inset 0 1px 0 rgba(255, 182, 193, 0.2);
+
+  /* Buttons */
+  --btn-primary-bg: #ff69b4;
+  --btn-primary-hover: #ff1493;
+  --btn-secondary-bg: rgba(255, 182, 193, 0.2);
+  --btn-secondary-hover: rgba(255, 105, 180, 0.3);
+  --btn-secondary-text: #da70d6;
+
+  /* Dice */
+  --dice-gradient: linear-gradient(135deg, #ff69b4 0%, #da70d6 100%);
+  --dice-d20: linear-gradient(135deg, #ff1493 0%, #c71585 100%);
+  --dice-d100: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+
+  /* HP Bar */
+  --hp-full: #98fb98;
+  --hp-medium: #ffd700;
+  --hp-low: #ff6b9d;
+  --hp-temp: #87ceeb;
+
+  /* Death Saves */
+  --death-save-bg: rgba(255, 20, 147, 0.15);
+  --death-save-border: #c71585;
+
+  /* Scrollbar */
+  --scrollbar-track: rgba(255, 182, 193, 0.1);
+  --scrollbar-thumb: #8b668b;
+  --scrollbar-thumb-hover: #da70d6;
+
+  /* Connection Status */
+  --status-connected-bg: rgba(152, 251, 152, 0.2);
+  --status-connected-text: #98fb98;
+  --status-disconnected-bg: rgba(255, 107, 157, 0.2);
+  --status-disconnected-text: #ff6b9d;
+
+  /* Auth Page */
+  --auth-gradient: linear-gradient(135deg, #ff69b4 0%, #da70d6 100%);
+}
+
+/* =============================================================================
+   BORING THEME
+   Minimal, neutral, no-frills
+   ============================================================================= */
+[data-theme="boring"] {
+  /* Backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-surface: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  --bg-input: #ffffff;
+  --bg-page: #f8f9fa;
+  --bg-card: #ffffff;
+
+  /* Gradients - flat colors, no gradients */
+  --gradient-primary: #ffffff;
+  --gradient-accent: #495057;
+  --gradient-header: #343a40;
+
+  /* Text Colors */
+  --text-primary: #212529;
+  --text-secondary: #495057;
+  --text-muted: #6c757d;
+  --text-accent: #212529;
+  --text-heading: #212529;
+  --text-dark: #212529;
+  --text-dark-secondary: #495057;
+
+  /* Accent Colors */
+  --accent-primary: #495057;
+  --accent-secondary: #6c757d;
+  --accent-tertiary: #868e96;
+  --accent-hover: #343a40;
+
+  /* Borders */
+  --border-primary: #dee2e6;
+  --border-secondary: #ced4da;
+  --border-accent: #495057;
+  --border-light: #e9ecef;
+
+  /* Status Colors */
+  --color-success: #28a745;
+  --color-success-light: #5cb85c;
+  --color-success-bg: rgba(40, 167, 69, 0.1);
+  --color-danger: #dc3545;
+  --color-danger-light: #e57373;
+  --color-danger-bg: rgba(220, 53, 69, 0.1);
+  --color-warning: #ffc107;
+  --color-info: #17a2b8;
+
+  /* Shadows - subtle */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-inset: none;
+
+  /* Buttons */
+  --btn-primary-bg: #495057;
+  --btn-primary-hover: #343a40;
+  --btn-secondary-bg: #f8f9fa;
+  --btn-secondary-hover: #e9ecef;
+  --btn-secondary-text: #495057;
+
+  /* Dice - monochrome */
+  --dice-gradient: #495057;
+  --dice-d20: #343a40;
+  --dice-d100: #6c757d;
+
+  /* HP Bar */
+  --hp-full: #28a745;
+  --hp-medium: #ffc107;
+  --hp-low: #dc3545;
+  --hp-temp: #17a2b8;
+
+  /* Death Saves */
+  --death-save-bg: rgba(220, 53, 69, 0.08);
+  --death-save-border: #dc3545;
+
+  /* Scrollbar */
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: #c1c1c1;
+  --scrollbar-thumb-hover: #a1a1a1;
+
+  /* Connection Status */
+  --status-connected-bg: rgba(40, 167, 69, 0.1);
+  --status-connected-text: #28a745;
+  --status-disconnected-bg: rgba(220, 53, 69, 0.1);
+  --status-disconnected-text: #dc3545;
+
+  /* Auth Page */
+  --auth-gradient: #343a40;
+}
+
+/* =============================================================================
+   GLOBAL STYLES
+   Apply theme to root elements
+   ============================================================================= */
+body {
+  background-color: var(--bg-page);
+  color: var(--text-dark);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* =============================================================================
+   GLOBAL TRANSITIONS
+   Smooth theme switching
+   ============================================================================= */
+.character-sheet,
+.dice-roller,
+.roll-log,
+.hp-manager,
+.attacks-section,
+.spells-section,
+.initiative-tracker {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}

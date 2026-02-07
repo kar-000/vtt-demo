@@ -6,6 +6,7 @@ import CharacterSheet from "../components/CharacterSheet";
 import InitiativeTracker from "../components/InitiativeTracker";
 import DiceRoller from "../components/DiceRoller";
 import RollLog from "../components/RollLog";
+import ThemeSwitcher from "../components/ThemeSwitcher";
 import "./Game.css";
 
 export default function Game() {
@@ -43,6 +44,7 @@ export default function Game() {
           <h1>{currentCharacter.name}</h1>
         </div>
         <div className="header-right">
+          <ThemeSwitcher compact />
           <div
             className={`connection-status ${connected ? "connected" : "disconnected"}`}
           >

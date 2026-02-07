@@ -281,22 +281,22 @@ export default function CharacterSheet({ character }) {
         </div>
       </div>
 
-      {/* Attacks */}
-      <AttacksSection
-        character={character}
-        onUpdateCharacter={updateCharacter}
-        onRollDice={rollDice}
-        canEdit={true}
-      />
-
-      {/* Spells */}
-      <SpellsSection
-        character={character}
-        onUpdateCharacter={updateCharacter}
-        onRollDice={rollDice}
-        onPostToChat={postToChat}
-        canEdit={true}
-      />
+      {/* Attacks & Spells Side-by-Side */}
+      <div className="combat-sections">
+        <AttacksSection
+          character={character}
+          onUpdateCharacter={updateCharacter}
+          onRollDice={rollDice}
+          canEdit={true}
+        />
+        <SpellsSection
+          character={character}
+          onUpdateCharacter={updateCharacter}
+          onRollDice={rollDice}
+          onPostToChat={postToChat}
+          canEdit={true}
+        />
+      </div>
     </div>
   );
 }

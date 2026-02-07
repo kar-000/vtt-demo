@@ -1,19 +1,17 @@
-/* Dark Medieval Theme */
+/* Character Sheet - Uses theme CSS variables */
 .character-sheet {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: var(--gradient-primary);
   border-radius: 4px;
   padding: 1.5rem;
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(201, 162, 39, 0.1);
-  border: 2px solid #3d3d5c;
+  box-shadow: var(--shadow-lg), var(--shadow-inset);
+  border: 2px solid var(--border-primary);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 .sheet-header {
-  border-bottom: 2px solid #c9a227;
+  border-bottom: 2px solid var(--accent-primary);
   padding-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -23,7 +21,7 @@
 
 .character-title h2 {
   margin: 0 0 0.5rem 0;
-  color: #c9a227;
+  color: var(--text-heading);
   font-size: 1.75rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   letter-spacing: 0.05em;
@@ -33,8 +31,8 @@
 }
 
 .dm-viewing-badge {
-  background: linear-gradient(135deg, #c9a227 0%, #a08020 100%);
-  color: #1a1a2e;
+  background: var(--gradient-accent);
+  color: var(--bg-primary);
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
   font-size: 0.7rem;
@@ -46,7 +44,7 @@
 
 .character-title p {
   margin: 0;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 1rem;
   font-style: italic;
 }
@@ -54,14 +52,14 @@
 .export-btn {
   flex-shrink: 0;
   white-space: nowrap;
-  background: #2d2d44 !important;
-  border-color: #4a4a6a !important;
-  color: #c9a227 !important;
+  background: var(--bg-secondary) !important;
+  border-color: var(--border-secondary) !important;
+  color: var(--text-accent) !important;
 }
 
 .export-btn:hover {
-  background: #3d3d5c !important;
-  border-color: #c9a227 !important;
+  background: var(--border-primary) !important;
+  border-color: var(--accent-primary) !important;
 }
 
 .main-stats {
@@ -71,8 +69,8 @@
 }
 
 .combat-stats-stack {
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid #4a4a6a;
+  background: var(--bg-surface);
+  border: 2px solid var(--border-secondary);
   border-radius: 4px;
   padding: 0.75rem;
   display: flex;
@@ -96,7 +94,7 @@
 
 .stacked-label {
   font-size: 0.8rem;
-  color: #8a8aa0;
+  color: var(--text-muted);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -104,7 +102,7 @@
 
 .stacked-value {
   font-size: 1.1rem;
-  color: #e8dcc4;
+  color: var(--text-primary);
   font-weight: bold;
 }
 
@@ -112,9 +110,9 @@
 .saves-section h3,
 .skills-section h3 {
   margin: 0 0 1rem 0;
-  color: #c9a227;
+  color: var(--text-heading);
   font-size: 1.1rem;
-  border-bottom: 1px solid #4a4a6a;
+  border-bottom: 1px solid var(--border-secondary);
   padding-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -127,8 +125,8 @@
 }
 
 .ability-box {
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid #4a4a6a;
+  background: var(--bg-surface);
+  border: 2px solid var(--border-secondary);
   border-radius: 4px;
   padding: 1rem;
   text-align: center;
@@ -140,15 +138,15 @@
 }
 
 .ability-box.clickable:hover {
-  border-color: #c9a227;
-  background: rgba(201, 162, 39, 0.1);
+  border-color: var(--accent-primary);
+  background: var(--btn-secondary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .ability-name {
   font-size: 0.85rem;
-  color: #8a8aa0;
+  color: var(--text-muted);
   font-weight: 600;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
@@ -157,7 +155,7 @@
 
 .ability-modifier {
   font-size: 2.5rem;
-  color: #c9a227;
+  color: var(--text-accent);
   font-weight: bold;
   margin-bottom: 0.25rem;
   line-height: 1;
@@ -166,7 +164,7 @@
 
 .ability-score {
   font-size: 0.9rem;
-  color: #6a6a7a;
+  color: var(--text-muted);
 }
 
 .saves-list,
@@ -179,7 +177,7 @@
 .save-item,
 .skill-item {
   background: rgba(0, 0, 0, 0.2);
-  border: 1px solid #3d3d5c;
+  border: 1px solid var(--border-primary);
   border-radius: 4px;
   padding: 0.75rem;
   display: flex;
@@ -195,19 +193,19 @@
 
 .save-item.clickable:hover,
 .skill-item.clickable:hover {
-  background: rgba(201, 162, 39, 0.1);
-  border-color: #c9a227;
+  background: var(--btn-secondary-hover);
+  border-color: var(--accent-primary);
 }
 
 .save-item.proficient,
 .skill-item.proficient {
-  background: rgba(76, 153, 76, 0.15);
-  border-color: #4c994c;
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
 }
 
 .save-prof,
 .skill-prof {
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 1rem;
 }
 
@@ -222,38 +220,51 @@
 
 .skill-prof-toggle:hover,
 .save-prof-toggle:hover {
-  background: rgba(201, 162, 39, 0.2);
-  color: #c9a227;
+  background: var(--btn-secondary-hover);
+  color: var(--text-accent);
   transform: scale(1.2);
 }
 
 .save-item.proficient .save-prof,
 .skill-item.proficient .skill-prof {
-  color: #6fbf6f;
+  color: var(--color-success-light);
 }
 
 .skill-item.proficient .skill-prof-toggle:hover,
 .save-item.proficient .save-prof-toggle:hover {
-  color: #8fcf8f;
+  color: var(--color-success-light);
 }
 
 .save-bonus,
 .skill-bonus {
   font-weight: bold;
-  color: #c9a227;
+  color: var(--text-accent);
   min-width: 30px;
 }
 
 .save-name,
 .skill-name {
   flex: 1;
-  color: #d0d0e0;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .skill-ability {
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 0.85rem;
+}
+
+/* Combat Sections - Attacks & Spells Side by Side */
+.combat-sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 1200px) {
+  .combat-sections {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
