@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useGame } from "../contexts/GameContext";
 import "./AttacksSection.css";
 import srdWeapons from "../data/srd-weapons.json";
 
@@ -8,6 +9,7 @@ export default function AttacksSection({
   onRollDice,
   canEdit,
 }) {
+  const { consumeActionEconomy } = useGame();
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [showSRDBrowser, setShowSRDBrowser] = useState(false);
@@ -128,6 +130,8 @@ export default function AttacksSection({
       "attack",
       `${character.name} attacks with ${attack.name} (1d20${sign}${bonus})`,
     );
+    // Auto-consume action when attacking
+    consumeActionEconomy("action");
   };
 
   const handleRollDamage = (attack) => {

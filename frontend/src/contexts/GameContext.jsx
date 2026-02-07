@@ -20,6 +20,17 @@ export const GameProvider = ({ children }) => {
     combatants: [],
   });
 
+  // Auto-track action economy when attacks/spells are used
+  const [autoTrackActions, setAutoTrackActions] = useState(() => {
+    const saved = localStorage.getItem("autoTrackActions");
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  // Persist auto-track setting
+  useEffect(() => {
+    localStorage.setItem("autoTrackActions", JSON.stringify(autoTrackActions));
+  }, [autoTrackActions]);
+
   // Campaign ID for demo purposes (in Phase 3, this will be dynamic)
   const campaignId = 1;
 
@@ -281,6 +292,39 @@ export const GameProvider = ({ children }) => {
     sendInitiativeAction("reset_action_economy", { combatant_id: combatantId });
   };
 
+  // Get combatant ID for current character (if in combat)
+  const getCurrentCombatantId = () => {
+    if (!initiative.active || !currentCharacter) return null;
+    const combatant = initiative.combatants.find(
+      (c) => c.character_id === currentCharacter.id,
+    );
+    return combatant?.id || null;
+  };
+
+  // Auto-consume action economy when attacks/spells are used
+  // actionType: "action" | "bonus_action" | "reaction"
+  const consumeActionEconomy = (actionType) => {
+    if (!autoTrackActions || !initiative.active) return;
+
+    const combatantId = getCurrentCombatantId();
+    if (!combatantId) return;
+
+    // Only consume if it's the current character's turn (for action/bonus action)
+    // Reactions can be used on any turn
+    const currentTurnCombatant =
+      initiative.combatants[initiative.current_turn_index];
+    const isMyTurn = currentTurnCombatant?.id === combatantId;
+
+    if (actionType === "action" && isMyTurn) {
+      useAction(combatantId);
+    } else if (actionType === "bonus_action" && isMyTurn) {
+      useBonusAction(combatantId);
+    } else if (actionType === "reaction") {
+      // Reactions can be used on any turn
+      useReaction(combatantId);
+    }
+  };
+
   const value = {
     characters,
     allCharacters,
@@ -314,6 +358,10 @@ export const GameProvider = ({ children }) => {
     useReaction,
     useMovement,
     resetActionEconomy,
+    // Auto-track actions
+    autoTrackActions,
+    setAutoTrackActions,
+    consumeActionEconomy,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

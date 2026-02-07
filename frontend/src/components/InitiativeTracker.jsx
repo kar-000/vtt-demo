@@ -22,6 +22,8 @@ export default function InitiativeTracker() {
     useReaction,
     useMovement,
     resetActionEconomy,
+    autoTrackActions,
+    setAutoTrackActions,
   } = useGame();
 
   const [showAddNPC, setShowAddNPC] = useState(false);
@@ -168,15 +170,29 @@ export default function InitiativeTracker() {
             <span className="action-economy-title">
               {currentCombatant.name}'s Turn
             </span>
-            {isDM && (
-              <button
-                onClick={() => resetActionEconomy(currentCombatant.id)}
-                className="btn-icon btn-reset"
-                title="Reset all"
+            <div className="action-economy-controls">
+              <label
+                className="auto-track-toggle"
+                title="Auto-track actions when attacking or casting spells"
               >
-                ↻
-              </button>
-            )}
+                <input
+                  type="checkbox"
+                  checked={autoTrackActions}
+                  onChange={(e) => setAutoTrackActions(e.target.checked)}
+                />
+                <span className="toggle-slider"></span>
+                <span className="toggle-label">Auto</span>
+              </label>
+              {isDM && (
+                <button
+                  onClick={() => resetActionEconomy(currentCombatant.id)}
+                  className="btn-icon btn-reset"
+                  title="Reset all"
+                >
+                  ↻
+                </button>
+              )}
+            </div>
           </div>
           <div className="action-economy-grid">
             <button

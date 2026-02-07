@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useGame } from "../contexts/GameContext";
 import "./SpellsSection.css";
 import srdSpells from "../data/srd-spells.json";
 import classData from "../data/srd-class-data.json";
@@ -10,6 +11,7 @@ export default function SpellsSection({
   onPostToChat,
   canEdit,
 }) {
+  const { consumeActionEconomy } = useGame();
   const [isAdding, setIsAdding] = useState(false);
   const [editingSpell, setEditingSpell] = useState(null);
   const [showSRDBrowser, setShowSRDBrowser] = useState(false);
@@ -191,6 +193,17 @@ export default function SpellsSection({
     } else {
       // Non-damaging spell - post to chat instead
       handleShareSpell(spell);
+    }
+
+    // Auto-consume action economy based on casting time
+    const castingTime = (spell.casting_time || "").toLowerCase();
+    if (castingTime.includes("bonus action")) {
+      consumeActionEconomy("bonus_action");
+    } else if (castingTime.includes("reaction")) {
+      consumeActionEconomy("reaction");
+    } else if (castingTime.includes("action")) {
+      // Default to action for "1 action" or any action-based casting
+      consumeActionEconomy("action");
     }
   };
 
