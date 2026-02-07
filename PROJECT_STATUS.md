@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-02-05
 
-## Current Phase: Phase 2 In Progress - HP Management Complete (38 tests passing)
+## Current Phase: Phase 2 In Progress - DM Capabilities Complete (47+ tests passing)
 
 ## ⚖️ Legal Foundation: SRD 5.1
 
@@ -127,16 +127,31 @@
 
 ### Immediate Priorities
 
-6. **Initiative Tracker**
-   - DM can roll/set initiative for all combatants
-   - Turn order display
-   - Cycle through turns
-   - Highlight current turn
+6. **Initiative Tracker** ✅ (2026-02-06)
+   - ✅ Real-time initiative tracking via WebSocket
+   - ✅ DM can start/end combat
+   - ✅ Add NPCs to initiative order
+   - ✅ Roll initiative for all combatants or individually
+   - ✅ Set custom initiative values
+   - ✅ Cycle through turns with next/previous buttons
+   - ✅ Highlight current turn with gold styling
+   - ✅ Round counter
+   - ✅ State persists in campaign.settings JSON
+   - ✅ 9 comprehensive tests added
 
-7. **DM Capabilities**
-   - View all player character sheets
-   - Edit any character sheet
-   - Manage combat encounter
+7. **DM Capabilities** ✅ (2026-02-06)
+   - ✅ GET /characters/all endpoint (DM only)
+   - ✅ "Player Characters" section on Dashboard for DMs
+   - ✅ DM can view any player's character sheet
+   - ✅ DM can edit any player's character
+   - ✅ DM can modify HP on any character
+   - ✅ "DM View" badge on character sheet
+   - ✅ Golden styling for player character cards
+   - ✅ 8 comprehensive tests added
+
+8. **UI Polish** ✅ (2026-02-06)
+   - ✅ Dice roller buttons styled as polyhedral dice shapes
+   - ✅ Spell sharing to chat functionality
 
 ### Future (Phase 2 continued)
 - [ ] Ability descriptions with expandable details
@@ -265,7 +280,29 @@ VTT/
 
 ## 📝 Notes
 
-### Recent Work (2026-02-05)
+### Recent Work (2026-02-06)
+
+**DM Capabilities Complete** ✅
+- Backend: Added GET /characters/all endpoint for DM to fetch all characters
+- Backend: Updated PUT /characters/{id} to allow DM to edit any character
+- Frontend: "Player Characters" section on Dashboard (golden styling)
+- Frontend: "DM View" badge when viewing player's character sheet
+- Frontend: allCharacters state in GameContext for DM view
+- Added 8 comprehensive tests for DM capabilities
+
+**Dice Roller Styling** ✅
+- Buttons now shaped like traditional polyhedral dice
+- d4=triangle, d6=square, d8=diamond, d10=kite, d12=pentagon, d20=red triangle, d100=orange circle
+- Uses CSS clip-path for unique shapes
+
+**Initiative Tracker Complete** ✅
+- Fixed bugs: All characters now appear (not just DM's)
+- Fixed bugs: Initiative values persist correctly (flag_modified fix)
+- Fixed bugs: Duplicate dice rolls resolved (listener cleanup)
+- Added spell sharing to chat
+- 9 comprehensive tests for initiative tracker
+
+### Earlier (2026-02-05)
 
 **Spells System Complete** ✅
 - Created SpellsSection component with comprehensive spell management
