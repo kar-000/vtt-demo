@@ -72,6 +72,7 @@
   height: 45px;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   padding-top: 12px;
+  transform-origin: 50% 66%; /* Centroid of triangle */
 }
 .dice-d4 .dice-label {
   font-size: 0.85rem;
@@ -127,6 +128,7 @@
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   padding-top: 10px;
   background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  transform-origin: 50% 66%; /* Centroid of triangle */
 }
 .dice-d20 .dice-label {
   font-size: 0.85rem;
