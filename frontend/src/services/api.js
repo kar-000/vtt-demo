@@ -79,6 +79,13 @@ class ApiService {
     return this.handleResponse(response);
   }
 
+  async getAllCharacters() {
+    const response = await fetch(`${API_BASE}/characters/all`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
   async getCharacter(id) {
     const response = await fetch(`${API_BASE}/characters/${id}`, {
       headers: this.getAuthHeaders(),

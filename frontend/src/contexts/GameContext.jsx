@@ -8,6 +8,7 @@ const GameContext = createContext(null);
 export const GameProvider = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   const [characters, setCharacters] = useState([]);
+  const [allCharacters, setAllCharacters] = useState([]); // All characters (DM only)
   const [currentCharacter, setCurrentCharacter] = useState(null);
   const [rollLog, setRollLog] = useState([]);
   const [connected, setConnected] = useState(false);
@@ -67,6 +68,15 @@ export const GameProvider = ({ children }) => {
     websocket.on("initiative_state", (data) => {
       setInitiative(data);
     });
+
+    websocket.on("chat_message", (data) => {
+      // Add chat messages to roll log with a special type
+      setRollLog((prev) => [{ ...data, type: "chat" }, ...prev].slice(0, 100));
+    });
+  };
+
+  const postToChat = (message) => {
+    websocket.sendChatMessage(message);
   };
 
   const loadCharacters = async () => {
@@ -81,6 +91,17 @@ export const GameProvider = ({ children }) => {
       console.error("Error loading characters:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAllCharacters = async () => {
+    try {
+      const chars = await api.getAllCharacters();
+      setAllCharacters(chars);
+      return chars;
+    } catch (error) {
+      console.error("Error loading all characters:", error);
+      throw error;
     }
   };
 
@@ -102,6 +123,10 @@ export const GameProvider = ({ children }) => {
     try {
       const updated = await api.updateCharacter(id, characterData);
       setCharacters((prev) =>
+        prev.map((char) => (char.id === id ? updated : char)),
+      );
+      // Also update allCharacters for DM view
+      setAllCharacters((prev) =>
         prev.map((char) => (char.id === id ? updated : char)),
       );
       if (currentCharacter?.id === id) {
@@ -141,6 +166,10 @@ export const GameProvider = ({ children }) => {
       }
 
       setCharacters((prev) =>
+        prev.map((char) => (char.id === characterId ? updated : char)),
+      );
+      // Also update allCharacters for DM view
+      setAllCharacters((prev) =>
         prev.map((char) => (char.id === characterId ? updated : char)),
       );
       if (currentCharacter?.id === characterId) {
@@ -233,17 +262,20 @@ export const GameProvider = ({ children }) => {
 
   const value = {
     characters,
+    allCharacters,
     currentCharacter,
     setCurrentCharacter,
     rollLog,
     connected,
     loading,
     loadCharacters,
+    loadAllCharacters,
     createCharacter,
     updateCharacter,
     deleteCharacter,
     updateHP,
     rollDice,
+    postToChat,
     // Initiative tracker
     initiative,
     startCombat,

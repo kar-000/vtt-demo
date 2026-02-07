@@ -171,6 +171,39 @@
   background: #555;
 }
 
+/* DM Section Styles */
+.dm-section {
+  margin-top: 2rem;
+  border: 2px solid #c9a227;
+}
+
+.dm-section .section-header {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 1rem;
+}
+
+.dm-badge {
+  background: linear-gradient(135deg, #c9a227 0%, #a08020 100%);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.player-card {
+  border-color: #c9a227;
+}
+
+.player-card:hover {
+  border-color: #a08020;
+}
+
+.player-avatar {
+  background: linear-gradient(135deg, #c9a227 0%, #a08020 100%);
+}
+
 @media (max-width: 768px) {
   .dashboard-header {
     padding: 1rem;

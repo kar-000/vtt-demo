@@ -1,5 +1,6 @@
 import React from "react";
 import { useGame } from "../contexts/GameContext";
+import { useAuth } from "../contexts/AuthContext";
 import HPManager from "./HPManager";
 import AttacksSection from "./AttacksSection";
 import SpellsSection from "./SpellsSection";
@@ -36,7 +37,11 @@ const SAVES = [
 ];
 
 export default function CharacterSheet({ character }) {
-  const { rollDice, updateHP, updateCharacter } = useGame();
+  const { rollDice, updateHP, updateCharacter, postToChat } = useGame();
+  const { user } = useAuth();
+
+  // Check if DM is viewing another player's character
+  const isDMViewingPlayer = user?.is_dm && character.owner_id !== user.id;
 
   const getModifier = (score) => {
     return Math.floor((score - 10) / 2);
@@ -129,7 +134,12 @@ export default function CharacterSheet({ character }) {
       {/* Header */}
       <div className="sheet-header">
         <div className="character-title">
-          <h2>{character.name}</h2>
+          <h2>
+            {character.name}
+            {isDMViewingPlayer && (
+              <span className="dm-viewing-badge">DM View</span>
+            )}
+          </h2>
           <p>
             Level {character.level} {character.race} {character.character_class}
           </p>
@@ -284,6 +294,7 @@ export default function CharacterSheet({ character }) {
         character={character}
         onUpdateCharacter={updateCharacter}
         onRollDice={rollDice}
+        onPostToChat={postToChat}
         canEdit={true}
       />
     </div>

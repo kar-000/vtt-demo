@@ -102,6 +102,23 @@ async def list_characters(
     return [CharacterResponse.from_orm(char) for char in characters]
 
 
+@router.get("/all", response_model=List[CharacterResponse])
+async def list_all_characters(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List all characters in the system (DM only)."""
+    if not current_user.is_dm:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the DM can view all characters",
+        )
+
+    characters = db.query(Character).order_by(Character.created_at.desc()).all()
+
+    return [CharacterResponse.from_orm(char) for char in characters]
+
+
 @router.get("/{character_id}", response_model=CharacterResponse)
 async def get_character(
     character_id: int,
@@ -143,8 +160,8 @@ async def update_character(
             detail="Character not found",
         )
 
-    # Check if user owns the character
-    if character.owner_id != current_user.id:
+    # Check if user owns the character or is a DM
+    if character.owner_id != current_user.id and not current_user.is_dm:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to modify this character",

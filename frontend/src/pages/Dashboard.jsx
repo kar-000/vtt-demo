@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useGame } from "../contexts/GameContext";
@@ -8,12 +8,28 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const {
     characters,
+    allCharacters,
     setCurrentCharacter,
     deleteCharacter,
     createCharacter,
+    loadAllCharacters,
     loading,
   } = useGame();
   const navigate = useNavigate();
+  const [loadingAll, setLoadingAll] = useState(false);
+
+  // Load all characters when DM views dashboard
+  useEffect(() => {
+    if (user?.is_dm && allCharacters.length === 0) {
+      setLoadingAll(true);
+      loadAllCharacters().finally(() => setLoadingAll(false));
+    }
+  }, [user?.is_dm]);
+
+  // Get player characters (characters not owned by DM)
+  const playerCharacters = allCharacters.filter(
+    (char) => char.owner_id !== user?.id,
+  );
 
   const handleLogout = () => {
     logout();
@@ -155,6 +171,54 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* DM Section: View All Player Characters */}
+        {user?.is_dm && (
+          <div className="characters-section dm-section">
+            <div className="section-header">
+              <h2>Player Characters</h2>
+              <span className="dm-badge">DM View</span>
+            </div>
+
+            {loadingAll ? (
+              <p>Loading player characters...</p>
+            ) : playerCharacters.length === 0 ? (
+              <div className="empty-state">
+                <p>No other player characters yet.</p>
+              </div>
+            ) : (
+              <div className="characters-grid">
+                {playerCharacters.map((character) => (
+                  <div
+                    key={character.id}
+                    className="character-card player-card"
+                    onClick={() => handleSelectCharacter(character)}
+                  >
+                    <div className="character-avatar">
+                      {character.avatar_url ? (
+                        <img src={character.avatar_url} alt={character.name} />
+                      ) : (
+                        <div className="avatar-placeholder player-avatar">
+                          {character.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="character-info">
+                      <h3>{character.name}</h3>
+                      <p>
+                        Level {character.level} {character.race}{" "}
+                        {character.character_class}
+                      </p>
+                      <p className="character-hp">
+                        HP: {character.current_hp}/{character.max_hp}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );
