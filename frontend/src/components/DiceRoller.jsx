@@ -37,10 +37,10 @@ export default function DiceRoller() {
             <button
               key={dice}
               onClick={() => quickRoll(dice)}
-              className="dice-button"
+              className={`dice-button dice-d${dice}`}
               title={`Roll 1d${dice}`}
             >
-              d{dice}
+              <span className="dice-label">d{dice}</span>
             </button>
           ))}
         </div>

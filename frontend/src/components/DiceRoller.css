@@ -30,31 +30,118 @@
 }
 
 .quick-roll-buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
 }
 
 .dice-button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 0.75rem;
-  font-size: 1rem;
-  font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.dice-label {
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  z-index: 1;
 }
 
 .dice-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.1);
 }
 
 .dice-button:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
+}
+
+/* d4 - Triangle (tetrahedron face) */
+.dice-d4 {
+  width: 52px;
+  height: 45px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  padding-top: 12px;
+}
+.dice-d4 .dice-label {
+  font-size: 0.85rem;
+}
+
+/* d6 - Square (cube face) */
+.dice-d6 {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  clip-path: none;
+}
+.dice-d6 .dice-label {
+  font-size: 0.95rem;
+}
+
+/* d8 - Diamond/rhombus (octahedron face) */
+.dice-d8 {
+  width: 48px;
+  height: 48px;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+.dice-d8 .dice-label {
+  font-size: 0.85rem;
+}
+
+/* d10 - Kite shape (decahedron face) */
+.dice-d10 {
+  width: 46px;
+  height: 54px;
+  clip-path: polygon(50% 0%, 100% 35%, 80% 100%, 20% 100%, 0% 35%);
+}
+.dice-d10 .dice-label {
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* d12 - Pentagon (dodecahedron face) */
+.dice-d12 {
+  width: 52px;
+  height: 50px;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.dice-d12 .dice-label {
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+/* d20 - Icosahedron-inspired triangle */
+.dice-d20 {
+  width: 54px;
+  height: 47px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  padding-top: 10px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+.dice-d20 .dice-label {
+  font-size: 0.85rem;
+}
+
+/* d100 - Circle (percentile) */
+.dice-d100 {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  clip-path: none;
+  background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+}
+.dice-d100 .dice-label {
+  font-size: 0.75rem;
 }
 
 .custom-roll-section {
@@ -114,10 +201,14 @@
 
 @media (max-width: 768px) {
   .quick-roll-buttons {
-    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
   }
 
   .roll-inputs {
     grid-template-columns: 1fr;
+  }
+
+  .dice-button {
+    transform: scale(0.9);
   }
 }
