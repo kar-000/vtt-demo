@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState, useMemo } from "react";
 import "./SpellsSection.css";
 import srdSpells from "../data/srd-spells.json";
+import classData from "../data/srd-class-data.json";
 
 export default function SpellsSection({
   character,
@@ -14,6 +15,7 @@ export default function SpellsSection({
   const [showSRDBrowser, setShowSRDBrowser] = useState(false);
   const [srdFilterLevel, setSRDFilterLevel] = useState("all");
   const [showAllClasses, setShowAllClasses] = useState(false);
+  const [expandedSpells, setExpandedSpells] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     level: 0,
@@ -32,8 +34,31 @@ export default function SpellsSection({
   const spellData = character.spells || {};
   const spellSlots = spellData.spell_slots || {};
   const spellsKnown = spellData.spells_known || [];
-  const spellSaveDC = spellData.spell_save_dc || 0;
-  const spellAttackBonus = spellData.spell_attack_bonus || 0;
+
+  // Calculate spell save DC and attack bonus based on class
+  const spellcastingCalcs = useMemo(() => {
+    const charClass = classData[character.character_class];
+    if (!charClass?.spellcaster) {
+      return { ability: null, modifier: 0, saveDC: 0, attackBonus: 0 };
+    }
+
+    const abilityName = charClass.spellcasting_ability;
+    const abilityScore = character[abilityName] || 10;
+    const modifier = Math.floor((abilityScore - 10) / 2);
+    const proficiency = character.proficiency_bonus || 2;
+
+    return {
+      ability: abilityName,
+      modifier,
+      saveDC: 8 + proficiency + modifier,
+      attackBonus: proficiency + modifier,
+    };
+  }, [character]);
+
+  // Use calculated values, falling back to stored values for manual override
+  const spellSaveDC = spellData.spell_save_dc ?? spellcastingCalcs.saveDC;
+  const spellAttackBonus =
+    spellData.spell_attack_bonus ?? spellcastingCalcs.attackBonus;
 
   // Group spells by level
   const spellsByLevel = {};
@@ -64,6 +89,13 @@ export default function SpellsSection({
     setFormData({ ...spell });
     setEditingSpell(spell);
     setIsAdding(false);
+  };
+
+  const toggleSpellExpanded = (spellKey) => {
+    setExpandedSpells((prev) => ({
+      ...prev,
+      [spellKey]: !prev[spellKey],
+    }));
   };
 
   const handleCancelEdit = () => {
@@ -227,19 +259,6 @@ export default function SpellsSection({
     }
   };
 
-  const handleSpellStatsChange = async (field, value) => {
-    const updatedSpellData = {
-      ...spellData,
-      [field]: parseInt(value) || 0,
-    };
-
-    try {
-      await onUpdateCharacter(character.id, { spells: updatedSpellData });
-    } catch (error) {
-      console.error("Error updating spell stats:", error);
-    }
-  };
-
   const handleAddSRDSpell = async (srdSpell) => {
     // Check if spell already exists
     const exists = spellsKnown.some(
@@ -301,29 +320,44 @@ export default function SpellsSection({
       {/* Spell Stats */}
       <div className="spell-stats">
         <div className="stat-item">
-          <label>Spell Save DC</label>
-          <input
-            type="number"
-            value={spellSaveDC}
-            onChange={(e) =>
-              handleSpellStatsChange("spell_save_dc", e.target.value)
-            }
-            disabled={!canEdit}
-            className="stat-input"
-          />
+          <label>
+            Spell Save DC
+            {spellcastingCalcs.ability && (
+              <span className="stat-formula">
+                (8 + Prof +{" "}
+                {spellcastingCalcs.ability.slice(0, 3).toUpperCase()})
+              </span>
+            )}
+          </label>
+          <div className="stat-value">{spellSaveDC}</div>
         </div>
         <div className="stat-item">
-          <label>Spell Attack Bonus</label>
-          <input
-            type="number"
-            value={spellAttackBonus}
-            onChange={(e) =>
-              handleSpellStatsChange("spell_attack_bonus", e.target.value)
-            }
-            disabled={!canEdit}
-            className="stat-input"
-          />
+          <label>
+            Spell Attack
+            {spellcastingCalcs.ability && (
+              <span className="stat-formula">
+                (Prof + {spellcastingCalcs.ability.slice(0, 3).toUpperCase()})
+              </span>
+            )}
+          </label>
+          <div className="stat-value">
+            {spellAttackBonus >= 0 ? "+" : ""}
+            {spellAttackBonus}
+          </div>
         </div>
+        {spellcastingCalcs.ability && (
+          <div className="stat-item ability-info">
+            <label>Spellcasting Ability</label>
+            <div className="stat-value">
+              {spellcastingCalcs.ability.charAt(0).toUpperCase() +
+                spellcastingCalcs.ability.slice(1)}
+              <span className="modifier">
+                ({spellcastingCalcs.modifier >= 0 ? "+" : ""}
+                {spellcastingCalcs.modifier})
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Spell Slots */}
@@ -552,75 +586,120 @@ export default function SpellsSection({
                 {level === 0 ? "Cantrips" : `Level ${level} Spells`}
               </h4>
               <div className="spell-cards">
-                {spells.map((spell, index) => (
-                  <div key={`${spell.name}-${index}`} className="spell-card">
-                    <div className="spell-header">
-                      <div className="spell-title">
-                        <h5>{spell.name}</h5>
-                        <span className="spell-meta">
-                          {spell.school && (
-                            <span className="spell-school">{spell.school}</span>
-                          )}
-                          {spell.casting_time && (
-                            <span className="spell-time">
-                              {spell.casting_time}
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                      {canEdit && (
-                        <div className="spell-actions">
-                          <button
-                            onClick={() => handleStartEdit(spell)}
-                            className="btn-icon"
-                            title="Edit spell"
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            onClick={() => handleDelete(spell)}
-                            className="btn-icon"
-                            title="Delete spell"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="spell-details">
-                      {spell.range && <span>Range: {spell.range}</span>}
-                      {spell.duration && (
-                        <span>Duration: {spell.duration}</span>
-                      )}
-                      {spell.components && (
-                        <span>Components: {spell.components}</span>
-                      )}
-                    </div>
-                    {spell.description && (
-                      <p className="spell-description">{spell.description}</p>
-                    )}
-                    <div className="spell-buttons">
-                      {spell.damage_dice && (
-                        <button
-                          onClick={() => handleCastSpell(spell)}
-                          className={`cast-button ${spell.is_healing ? "healing" : "damage"}`}
-                        >
-                          <span className="cast-label">Cast</span>
-                          <span className="cast-value">
-                            {spell.damage_dice} {spell.damage_type}
-                          </span>
-                        </button>
-                      )}
-                      <button
-                        onClick={() => handleShareSpell(spell)}
-                        className="share-button"
-                        title="Share spell info to chat"
+                {spells.map((spell, index) => {
+                  const spellKey = `${spell.name}-${spell.level}-${index}`;
+                  const isExpanded = expandedSpells[spellKey];
+
+                  return (
+                    <div
+                      key={spellKey}
+                      className={`spell-card ${isExpanded ? "expanded" : "collapsed"}`}
+                    >
+                      <div
+                        className="spell-header clickable"
+                        onClick={() => toggleSpellExpanded(spellKey)}
                       >
-                        📜 Share
-                      </button>
+                        <div className="spell-title">
+                          <span className="expand-icon">
+                            {isExpanded ? "▼" : "▶"}
+                          </span>
+                          <h5>{spell.name}</h5>
+                          <span className="spell-meta">
+                            {spell.school && (
+                              <span className="spell-school">
+                                {spell.school}
+                              </span>
+                            )}
+                            {!isExpanded && spell.damage_dice && (
+                              <span className="spell-dice-preview">
+                                {spell.damage_dice}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="spell-header-actions">
+                          {!isExpanded && spell.damage_dice && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCastSpell(spell);
+                              }}
+                              className={`cast-button-mini ${spell.is_healing ? "healing" : "damage"}`}
+                              title={`Cast: ${spell.damage_dice}`}
+                            >
+                              🎲
+                            </button>
+                          )}
+                          {canEdit && (
+                            <div className="spell-actions">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleStartEdit(spell);
+                                }}
+                                className="btn-icon"
+                                title="Edit spell"
+                              >
+                                ✏️
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(spell);
+                                }}
+                                className="btn-icon"
+                                title="Delete spell"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {isExpanded && (
+                        <>
+                          <div className="spell-details">
+                            {spell.casting_time && (
+                              <span>Casting Time: {spell.casting_time}</span>
+                            )}
+                            {spell.range && <span>Range: {spell.range}</span>}
+                            {spell.duration && (
+                              <span>Duration: {spell.duration}</span>
+                            )}
+                            {spell.components && (
+                              <span>Components: {spell.components}</span>
+                            )}
+                          </div>
+                          {spell.description && (
+                            <p className="spell-description">
+                              {spell.description}
+                            </p>
+                          )}
+                          <div className="spell-buttons">
+                            {spell.damage_dice && (
+                              <button
+                                onClick={() => handleCastSpell(spell)}
+                                className={`cast-button ${spell.is_healing ? "healing" : "damage"}`}
+                              >
+                                <span className="cast-label">Cast</span>
+                                <span className="cast-value">
+                                  {spell.damage_dice} {spell.damage_type}
+                                </span>
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleShareSpell(spell)}
+                              className="share-button"
+                              title="Share spell info to chat"
+                            >
+                              📜 Share
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           );

@@ -1,9 +1,10 @@
-import React from "react";
+import { useState } from "react";
 import { useGame } from "../contexts/GameContext";
 import { useAuth } from "../contexts/AuthContext";
 import HPManager from "./HPManager";
 import AttacksSection from "./AttacksSection";
 import SpellsSection from "./SpellsSection";
+import LevelUpModal from "./LevelUpModal";
 import "./CharacterSheet.css";
 
 const SKILLS = {
@@ -27,6 +28,96 @@ const SKILLS = {
   survival: { ability: "wisdom", label: "Survival" },
 };
 
+const ABILITY_INFO = {
+  strength: {
+    name: "Strength",
+    abbr: "STR",
+    description:
+      "Physical power. Used for melee attacks, athletics, carrying capacity, and breaking things.",
+    skills: ["Athletics"],
+    commonUses: [
+      "Melee attack/damage",
+      "Grappling",
+      "Shoving",
+      "Lifting/carrying",
+      "Climbing",
+      "Swimming",
+    ],
+  },
+  dexterity: {
+    name: "Dexterity",
+    abbr: "DEX",
+    description:
+      "Agility and reflexes. Used for ranged attacks, initiative, AC, and finesse weapons.",
+    skills: ["Acrobatics", "Sleight of Hand", "Stealth"],
+    commonUses: [
+      "Ranged attacks",
+      "Initiative",
+      "AC bonus",
+      "Finesse weapons",
+      "Dodging effects",
+    ],
+  },
+  constitution: {
+    name: "Constitution",
+    abbr: "CON",
+    description:
+      "Endurance and health. Determines hit points and concentration. No skills use Constitution.",
+    skills: [],
+    commonUses: [
+      "Hit point bonus",
+      "Concentration saves",
+      "Enduring harsh conditions",
+      "Resisting poison",
+    ],
+  },
+  intelligence: {
+    name: "Intelligence",
+    abbr: "INT",
+    description:
+      "Memory, reasoning, and learning. Used by wizards and for knowledge checks.",
+    skills: ["Arcana", "History", "Investigation", "Nature", "Religion"],
+    commonUses: [
+      "Wizard spellcasting",
+      "Recalling lore",
+      "Deduction",
+      "Identifying spells/items",
+    ],
+  },
+  wisdom: {
+    name: "Wisdom",
+    abbr: "WIS",
+    description:
+      "Awareness and intuition. Used by clerics, druids, and rangers for spellcasting.",
+    skills: [
+      "Animal Handling",
+      "Insight",
+      "Medicine",
+      "Perception",
+      "Survival",
+    ],
+    commonUses: [
+      "Cleric/Druid spellcasting",
+      "Spotting hidden things",
+      "Sensing motives",
+      "Resisting charms",
+    ],
+  },
+  charisma: {
+    name: "Charisma",
+    abbr: "CHA",
+    description:
+      "Force of personality. Used by bards, paladins, sorcerers, and warlocks for spellcasting.",
+    skills: ["Deception", "Intimidation", "Performance", "Persuasion"],
+    commonUses: [
+      "Bard/Sorcerer spellcasting",
+      "Social interactions",
+      "Leadership",
+      "Banishing fiends",
+    ],
+  },
+};
+
 const SAVES = [
   "strength",
   "dexterity",
@@ -39,9 +130,14 @@ const SAVES = [
 export default function CharacterSheet({ character }) {
   const { rollDice, updateHP, updateCharacter, postToChat } = useGame();
   const { user } = useAuth();
+  const [showLevelUpModal, setShowLevelUpModal] = useState(false);
+  const [expandedAbility, setExpandedAbility] = useState(null);
 
   // Check if DM is viewing another player's character
   const isDMViewingPlayer = user?.is_dm && character.owner_id !== user.id;
+
+  // Can level up if not at max level (20)
+  const canLevelUp = character.level < 20;
 
   const getModifier = (score) => {
     return Math.floor((score - 10) / 2);
@@ -53,6 +149,22 @@ export default function CharacterSheet({ character }) {
 
   const handleAbilityCheck = (abilityName, modifier) => {
     rollDice(20, 1, modifier, "ability", `${abilityName.toUpperCase()} Check`);
+  };
+
+  const toggleAbilityExpand = (ability, e) => {
+    e.stopPropagation();
+    setExpandedAbility(expandedAbility === ability ? null : ability);
+  };
+
+  const handleShareAbility = (ability, e) => {
+    e.stopPropagation();
+    const info = ABILITY_INFO[ability];
+    const score = character[ability];
+    const modifier = character[`${ability}_modifier`];
+    const modStr = modifier >= 0 ? `+${modifier}` : `${modifier}`;
+
+    const message = `**${character.name}'s ${info.name}** | Score: ${score} (${modStr}) | ${info.description}`;
+    postToChat(message);
   };
 
   const handleSavingThrow = (abilityName, modifier, proficient) => {
@@ -144,13 +256,24 @@ export default function CharacterSheet({ character }) {
             Level {character.level} {character.race} {character.character_class}
           </p>
         </div>
-        <button
-          onClick={handleExportCharacter}
-          className="btn btn-secondary export-btn"
-          title="Download character as JSON backup"
-        >
-          📥 Export Character
-        </button>
+        <div className="header-buttons">
+          {canLevelUp && (
+            <button
+              onClick={() => setShowLevelUpModal(true)}
+              className="btn btn-primary level-up-btn"
+              title="Level up your character"
+            >
+              ⬆ Level Up
+            </button>
+          )}
+          <button
+            onClick={handleExportCharacter}
+            className="btn btn-secondary export-btn"
+            title="Download character as JSON backup"
+          >
+            📥 Export
+          </button>
+        </div>
       </div>
 
       {/* Main Stats */}
@@ -188,20 +311,53 @@ export default function CharacterSheet({ character }) {
           ].map((ability) => {
             const score = character[ability];
             const modifier = character[`${ability}_modifier`];
+            const info = ABILITY_INFO[ability];
+            const isExpanded = expandedAbility === ability;
             return (
-              <div
-                key={ability}
-                className="ability-box clickable"
-                onClick={() => handleAbilityCheck(ability, modifier)}
-                title={`Click to roll ${ability} check`}
-              >
-                <div className="ability-name">
-                  {ability.slice(0, 3).toUpperCase()}
+              <div key={ability} className="ability-container">
+                <div
+                  className={`ability-box clickable ${isExpanded ? "expanded" : ""}`}
+                  onClick={() => handleAbilityCheck(ability, modifier)}
+                  title={`Click to roll ${ability} check`}
+                >
+                  <button
+                    className="ability-expand-btn"
+                    onClick={(e) => toggleAbilityExpand(ability, e)}
+                    title={isExpanded ? "Collapse" : "Expand for details"}
+                  >
+                    {isExpanded ? "▼" : "▶"}
+                  </button>
+                  <div className="ability-name">{info.abbr}</div>
+                  <div className="ability-modifier">
+                    {formatModifier(modifier)}
+                  </div>
+                  <div className="ability-score">{score}</div>
                 </div>
-                <div className="ability-modifier">
-                  {formatModifier(modifier)}
-                </div>
-                <div className="ability-score">{score}</div>
+                {isExpanded && (
+                  <div className="ability-details">
+                    <p className="ability-description">{info.description}</p>
+                    {info.skills.length > 0 && (
+                      <div className="ability-skills">
+                        <strong>Skills:</strong> {info.skills.join(", ")}
+                      </div>
+                    )}
+                    <div className="ability-uses">
+                      <strong>Common Uses:</strong>
+                      <ul>
+                        {info.commonUses.map((use, i) => (
+                          <li key={i}>{use}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <button
+                      className="btn btn-secondary btn-sm share-ability-btn"
+                      onClick={(e) => handleShareAbility(ability, e)}
+                      title="Share ability info to chat"
+                    >
+                      📢 Share to Log
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -297,6 +453,15 @@ export default function CharacterSheet({ character }) {
           canEdit={true}
         />
       </div>
+
+      {/* Level Up Modal */}
+      {showLevelUpModal && (
+        <LevelUpModal
+          character={character}
+          onUpdateCharacter={updateCharacter}
+          onClose={() => setShowLevelUpModal(false)}
+        />
+      )}
     </div>
   );
 }

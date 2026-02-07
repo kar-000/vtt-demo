@@ -260,6 +260,27 @@ export const GameProvider = ({ children }) => {
     sendInitiativeAction("end_combat", {});
   };
 
+  // Action economy methods
+  const useAction = (combatantId) => {
+    sendInitiativeAction("use_action", { combatant_id: combatantId });
+  };
+
+  const useBonusAction = (combatantId) => {
+    sendInitiativeAction("use_bonus_action", { combatant_id: combatantId });
+  };
+
+  const useReaction = (combatantId) => {
+    sendInitiativeAction("use_reaction", { combatant_id: combatantId });
+  };
+
+  const useMovement = (combatantId, amount) => {
+    sendInitiativeAction("use_movement", { combatant_id: combatantId, amount });
+  };
+
+  const resetActionEconomy = (combatantId) => {
+    sendInitiativeAction("reset_action_economy", { combatant_id: combatantId });
+  };
+
   const value = {
     characters,
     allCharacters,
@@ -287,6 +308,12 @@ export const GameProvider = ({ children }) => {
     nextTurn,
     previousTurn,
     endCombat,
+    // Action economy
+    useAction,
+    useBonusAction,
+    useReaction,
+    useMovement,
+    resetActionEconomy,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

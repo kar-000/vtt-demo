@@ -7,6 +7,7 @@ export default function InitiativeTracker() {
   const { user } = useAuth();
   const {
     characters,
+    currentCharacter,
     initiative,
     startCombat,
     addCombatant,
@@ -16,6 +17,11 @@ export default function InitiativeTracker() {
     nextTurn,
     previousTurn,
     endCombat,
+    useAction,
+    useBonusAction,
+    useReaction,
+    useMovement,
+    resetActionEconomy,
   } = useGame();
 
   const [showAddNPC, setShowAddNPC] = useState(false);
@@ -44,6 +50,26 @@ export default function InitiativeTracker() {
   };
 
   const currentCombatant = getCurrentCombatant();
+
+  // Check if current user can control the current combatant's action economy
+  const canControlActionEconomy = () => {
+    if (!currentCombatant) return false;
+    if (isDM) return true;
+    // Player can control their own character's turn
+    if (
+      currentCombatant.character_id &&
+      currentCharacter?.id === currentCombatant.character_id
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleUseMovement = (amount) => {
+    if (currentCombatant) {
+      useMovement(currentCombatant.id, amount);
+    }
+  };
 
   // Collapsed state when no combat
   if (!initiative.active) {
@@ -134,6 +160,113 @@ export default function InitiativeTracker() {
           </div>
         ))}
       </div>
+
+      {/* Action Economy for Current Turn */}
+      {currentCombatant && currentCombatant.action_economy && (
+        <div className="action-economy-section">
+          <div className="action-economy-header">
+            <span className="action-economy-title">
+              {currentCombatant.name}'s Turn
+            </span>
+            {isDM && (
+              <button
+                onClick={() => resetActionEconomy(currentCombatant.id)}
+                className="btn-icon btn-reset"
+                title="Reset all"
+              >
+                ↻
+              </button>
+            )}
+          </div>
+          <div className="action-economy-grid">
+            <button
+              className={`action-token ${currentCombatant.action_economy.action ? "available" : "used"}`}
+              onClick={() =>
+                canControlActionEconomy() && useAction(currentCombatant.id)
+              }
+              disabled={
+                !canControlActionEconomy() ||
+                !currentCombatant.action_economy.action
+              }
+              title={
+                currentCombatant.action_economy.action
+                  ? "Use Action"
+                  : "Action Used"
+              }
+            >
+              <span className="token-icon">⚔</span>
+              <span className="token-label">Action</span>
+            </button>
+            <button
+              className={`action-token ${currentCombatant.action_economy.bonus_action ? "available" : "used"}`}
+              onClick={() =>
+                canControlActionEconomy() && useBonusAction(currentCombatant.id)
+              }
+              disabled={
+                !canControlActionEconomy() ||
+                !currentCombatant.action_economy.bonus_action
+              }
+              title={
+                currentCombatant.action_economy.bonus_action
+                  ? "Use Bonus Action"
+                  : "Bonus Action Used"
+              }
+            >
+              <span className="token-icon">⚡</span>
+              <span className="token-label">Bonus</span>
+            </button>
+            <button
+              className={`action-token ${currentCombatant.action_economy.reaction ? "available" : "used"}`}
+              onClick={() =>
+                canControlActionEconomy() && useReaction(currentCombatant.id)
+              }
+              disabled={
+                !canControlActionEconomy() ||
+                !currentCombatant.action_economy.reaction
+              }
+              title={
+                currentCombatant.action_economy.reaction
+                  ? "Use Reaction"
+                  : "Reaction Used"
+              }
+            >
+              <span className="token-icon">🛡</span>
+              <span className="token-label">Reaction</span>
+            </button>
+          </div>
+          <div className="movement-tracker">
+            <span className="movement-label">Movement:</span>
+            <div className="movement-controls">
+              <button
+                className="btn-movement"
+                onClick={() => handleUseMovement(5)}
+                disabled={
+                  !canControlActionEconomy() ||
+                  currentCombatant.action_economy.movement < 5
+                }
+                title="Use 5 ft movement"
+              >
+                -5
+              </button>
+              <span className="movement-value">
+                {currentCombatant.action_economy.movement}/
+                {currentCombatant.action_economy.max_movement} ft
+              </span>
+              <button
+                className="btn-movement"
+                onClick={() => handleUseMovement(10)}
+                disabled={
+                  !canControlActionEconomy() ||
+                  currentCombatant.action_economy.movement < 10
+                }
+                title="Use 10 ft movement"
+              >
+                -10
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* DM Actions */}
       {isDM && (

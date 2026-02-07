@@ -1,9 +1,48 @@
-import React from "react";
 import { useGame } from "../contexts/GameContext";
 import "./RollLog.css";
 
 export default function RollLog() {
   const { rollLog } = useGame();
+
+  // Parse simple markdown-like formatting in chat messages
+  const formatChatMessage = (message) => {
+    if (!message) return null;
+
+    // Split by pipe separator and render each part
+    const parts = message.split(" | ");
+
+    return parts.map((part, partIndex) => {
+      // Parse **bold** syntax
+      const elements = [];
+      const regex = /\*\*([^*]+)\*\*/g;
+      let lastIndex = 0;
+      let match;
+
+      while ((match = regex.exec(part)) !== null) {
+        // Add text before the match
+        if (match.index > lastIndex) {
+          elements.push(part.substring(lastIndex, match.index));
+        }
+        // Add bold text
+        elements.push(
+          <strong key={`${partIndex}-${match.index}`}>{match[1]}</strong>,
+        );
+        lastIndex = regex.lastIndex;
+      }
+
+      // Add remaining text
+      if (lastIndex < part.length) {
+        elements.push(part.substring(lastIndex));
+      }
+
+      return (
+        <span key={partIndex} className="chat-part">
+          {elements}
+          {partIndex < parts.length - 1 && <br />}
+        </span>
+      );
+    });
+  };
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -58,7 +97,9 @@ export default function RollLog() {
                 <span className="roll-time">{formatTime(entry.timestamp)}</span>
               </div>
               {entry.type === "chat" ? (
-                <div className="chat-message">{entry.message}</div>
+                <div className="chat-message">
+                  {formatChatMessage(entry.message)}
+                </div>
               ) : (
                 <>
                   {entry.label && (

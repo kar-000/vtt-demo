@@ -49,8 +49,24 @@
   font-style: italic;
 }
 
-.export-btn {
+.header-buttons {
+  display: flex;
+  gap: 0.5rem;
   flex-shrink: 0;
+}
+
+.level-up-btn {
+  white-space: nowrap;
+  background: var(--color-success) !important;
+  border-color: var(--color-success) !important;
+}
+
+.level-up-btn:hover {
+  background: var(--color-success-light) !important;
+  border-color: var(--color-success-light) !important;
+}
+
+.export-btn {
   white-space: nowrap;
   background: var(--bg-secondary) !important;
   border-color: var(--border-secondary) !important;
@@ -165,6 +181,107 @@
 .ability-score {
   font-size: 0.9rem;
   color: var(--text-muted);
+}
+
+/* Expandable Ability Container */
+.ability-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ability-box {
+  position: relative;
+}
+
+.ability-expand-btn {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0.25rem;
+  opacity: 0.6;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.ability-expand-btn:hover {
+  opacity: 1;
+  color: var(--text-accent);
+  transform: scale(1.2);
+}
+
+.ability-box.expanded {
+  border-color: var(--accent-primary);
+  background: var(--bg-tertiary);
+}
+
+.ability-box.expanded .ability-expand-btn {
+  opacity: 1;
+  color: var(--accent-primary);
+}
+
+.ability-details {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ability-description {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.ability-skills {
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.ability-skills strong {
+  color: var(--text-accent);
+}
+
+.ability-uses {
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.ability-uses strong {
+  color: var(--text-accent);
+}
+
+.ability-uses ul {
+  margin: 0.25rem 0 0 0;
+  padding-left: 1.25rem;
+}
+
+.ability-uses li {
+  margin-bottom: 0.15rem;
+  line-height: 1.3;
+}
+
+.share-ability-btn {
+  width: 100%;
+  margin-top: 0.5rem;
 }
 
 .saves-list,

@@ -87,7 +87,7 @@ async def websocket_endpoint(
                         "total": total,
                         "roll_type": roll_data.get("roll_type", "manual"),
                         "label": roll_data.get("label"),
-                        "timestamp": datetime.utcnow().isoformat(),
+                        "timestamp": datetime.utcnow().isoformat() + "Z",
                         "user_id": user.id,
                         "username": user.username,
                     },
@@ -104,7 +104,7 @@ async def websocket_endpoint(
                     "data": {
                         "username": user.username,
                         "message": chat_data.get("message", ""),
-                        "timestamp": datetime.utcnow().isoformat(),
+                        "timestamp": datetime.utcnow().isoformat() + "Z",
                     },
                 }
                 await manager.broadcast_to_campaign(campaign_id, message)
@@ -144,6 +144,13 @@ async def websocket_endpoint(
                                 "dex_mod": char.dexterity_modifier,
                                 "type": "pc",
                                 "character_id": char.id,
+                                "action_economy": {
+                                    "action": True,
+                                    "bonus_action": True,
+                                    "reaction": True,
+                                    "movement": char.speed or 30,
+                                    "max_movement": char.speed or 30,
+                                },
                             }
                         )
 
@@ -153,12 +160,20 @@ async def websocket_endpoint(
                     # Add NPC/monster to initiative
                     name = init_data.get("name", "Unknown")
                     init_value = init_data.get("initiative")
+                    speed = init_data.get("speed", 30)
                     combatant = {
                         "id": f"npc_{uuid.uuid4().hex[:8]}",
                         "name": name,
                         "initiative": init_value,
                         "dex_mod": 0,
                         "type": "npc",
+                        "action_economy": {
+                            "action": True,
+                            "bonus_action": True,
+                            "reaction": True,
+                            "movement": speed,
+                            "max_movement": speed,
+                        },
                     }
                     initiative["combatants"].append(combatant)
                     # Re-sort if initiative value provided
@@ -218,6 +233,14 @@ async def websocket_endpoint(
                         if initiative["current_turn_index"] >= len(initiative["combatants"]):
                             initiative["current_turn_index"] = 0
                             initiative["round"] += 1
+                        # Reset action economy for the new current combatant
+                        current = initiative["combatants"][initiative["current_turn_index"]]
+                        if "action_economy" in current:
+                            current["action_economy"]["action"] = True
+                            current["action_economy"]["bonus_action"] = True
+                            current["action_economy"]["movement"] = current["action_economy"].get("max_movement", 30)
+                            # Note: Reaction resets at start of YOUR next turn, not when others' turns change
+                            current["action_economy"]["reaction"] = True
 
                 elif action == "previous_turn":
                     # Go back to previous turn
@@ -246,6 +269,51 @@ async def websocket_endpoint(
                         reverse=True,
                     )
                     initiative["current_turn_index"] = 0
+
+                elif action == "use_action":
+                    # Mark action as used for a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id and "action_economy" in combatant:
+                            combatant["action_economy"]["action"] = False
+                            break
+
+                elif action == "use_bonus_action":
+                    # Mark bonus action as used for a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id and "action_economy" in combatant:
+                            combatant["action_economy"]["bonus_action"] = False
+                            break
+
+                elif action == "use_reaction":
+                    # Mark reaction as used for a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id and "action_economy" in combatant:
+                            combatant["action_economy"]["reaction"] = False
+                            break
+
+                elif action == "use_movement":
+                    # Deduct movement from a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    amount = init_data.get("amount", 5)
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id and "action_economy" in combatant:
+                            current = combatant["action_economy"]["movement"]
+                            combatant["action_economy"]["movement"] = max(0, current - amount)
+                            break
+
+                elif action == "reset_action_economy":
+                    # Reset action economy for a combatant (DM override)
+                    combatant_id = init_data.get("combatant_id")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id and "action_economy" in combatant:
+                            combatant["action_economy"]["action"] = True
+                            combatant["action_economy"]["bonus_action"] = True
+                            combatant["action_economy"]["reaction"] = True
+                            combatant["action_economy"]["movement"] = combatant["action_economy"].get("max_movement", 30)
+                            break
 
                 else:
                     await manager.send_personal_message(

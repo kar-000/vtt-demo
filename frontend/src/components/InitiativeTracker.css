@@ -275,3 +275,151 @@
 .combatants-list::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
 }
+
+/* Action Economy Section */
+.action-economy-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.action-economy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.action-economy-title {
+  color: var(--text-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.btn-reset {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.2rem;
+  transition: all 0.2s;
+}
+
+.btn-reset:hover {
+  color: var(--text-accent);
+  transform: rotate(180deg);
+}
+
+/* Action Token Grid */
+.action-economy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.action-token {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid;
+}
+
+.action-token.available {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+}
+
+.action-token.available:hover:not(:disabled) {
+  background: rgba(76, 153, 76, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(76, 153, 76, 0.3);
+}
+
+.action-token.used {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: var(--border-primary);
+  opacity: 0.5;
+}
+
+.action-token:disabled {
+  cursor: not-allowed;
+}
+
+.token-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.token-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.action-token.available .token-label {
+  color: var(--color-success-light);
+}
+
+/* Movement Tracker */
+.movement-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-primary);
+}
+
+.movement-label {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.movement-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-movement {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-movement:hover:not(:disabled) {
+  background: var(--btn-secondary-hover);
+  border-color: var(--accent-primary);
+  color: var(--text-accent);
+}
+
+.btn-movement:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.movement-value {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: bold;
+  min-width: 70px;
+  text-align: center;
+}

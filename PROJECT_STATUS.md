@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-02-07
 
-## Current Phase: Phase 2 In Progress - UI Theming Complete (47+ tests passing)
+## Current Phase: Phase 2 COMPLETE! 🎉 (47+ tests passing)
 
 ## ⚖️ Legal Foundation: SRD 5.1
 
@@ -153,11 +153,36 @@
    - ✅ Dice roller buttons styled as polyhedral dice shapes
    - ✅ Spell sharing to chat functionality
 
-### Future (Phase 2 continued)
-- [ ] Ability descriptions with expandable details
-- [ ] Post abilities to shared log
-- [ ] Level-up system with guided workflow
-- [ ] Action economy tracking (action/bonus action/reaction/movement)
+11. **Level-Up System** ✅ (2026-02-07)
+    - ✅ SRD class data for all 12 classes (hit dice, spell slots, ASI levels)
+    - ✅ LevelUpModal with 4-step workflow (Choose Class → HP → ASI → Summary)
+    - ✅ Multiclass support (level in same class or choose new class)
+    - ✅ HP increase options (roll hit die or take average + CON mod)
+    - ✅ ASI at appropriate levels (+2 to one stat or +1 to two stats)
+    - ✅ Automatic spell slot updates for casters
+    - ✅ Level Up button in CharacterSheet header
+    - ✅ Collapsible spell cards with mini cast button
+    - ✅ Auto-calculated Spell Save DC and Spell Attack Bonus
+    - ✅ Fixed spell share time bug (UTC timezone)
+    - ✅ Fixed spell share text formatting
+
+12. **Ability Descriptions** ✅ (2026-02-07)
+    - ✅ Expandable ability cards with descriptions
+    - ✅ Shows related skills and common uses per ability
+    - ✅ "Share to Log" button posts ability info to chat
+    - ✅ Expand/collapse animations
+    - ✅ Consistent with existing UI patterns
+
+13. **Action Economy Tracking** ✅ (2026-02-07)
+    - ✅ Track action/bonus action/reaction/movement per combatant
+    - ✅ Visual tokens show available vs used status
+    - ✅ Movement tracker with -5/-10 ft buttons
+    - ✅ Auto-reset on turn change
+    - ✅ DM can reset any combatant's action economy
+    - ✅ Players can only control their own character's turn
+    - ✅ Real-time sync via WebSocket
+
+## Phase 2 Complete! 🎉
 
 9. **UI Theming** ✅ (2026-02-07)
    - ✅ Three complete themes with CSS custom properties
