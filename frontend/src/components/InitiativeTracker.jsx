@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useGame } from "../contexts/GameContext";
 import { useAuth } from "../contexts/AuthContext";
 import CharacterPortrait from "./CharacterPortrait";
@@ -33,6 +33,21 @@ export default function InitiativeTracker() {
   const [showAddNPC, setShowAddNPC] = useState(false);
   const [selectedMonster, setSelectedMonster] = useState("");
   const [customName, setCustomName] = useState("");
+  const combatantRefs = useRef({});
+
+  // Auto-scroll to current combatant when turn changes
+  useEffect(() => {
+    if (initiative.active && initiative.combatants.length > 0) {
+      const currentCombatant =
+        initiative.combatants[initiative.current_turn_index];
+      if (currentCombatant && combatantRefs.current[currentCombatant.id]) {
+        combatantRefs.current[currentCombatant.id].scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    }
+  }, [initiative.current_turn_index, initiative.active, initiative.combatants]);
 
   const isDM = user?.is_dm;
 
@@ -155,6 +170,7 @@ export default function InitiativeTracker() {
           return (
             <div
               key={combatant.id}
+              ref={(el) => (combatantRefs.current[combatant.id] = el)}
               className={`combatant-item-wrapper ${index === initiative.current_turn_index ? "active-turn" : ""}`}
             >
               <div className={`combatant-item ${combatant.type}`}>
