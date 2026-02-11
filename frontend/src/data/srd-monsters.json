@@ -1,0 +1,306 @@
+{
+  "monsters": [
+    {
+      "name": "Goblin",
+      "size": "Small",
+      "type": "humanoid",
+      "armor_class": 15,
+      "hit_points": 7,
+      "hit_dice": "2d6",
+      "speed": 30,
+      "abilities": {
+        "str": 8,
+        "dex": 14,
+        "con": 10,
+        "int": 10,
+        "wis": 8,
+        "cha": 8
+      },
+      "challenge_rating": "1/4",
+      "attacks": [
+        {
+          "name": "Scimitar",
+          "attack_bonus": 4,
+          "damage_dice": "1d6+2",
+          "damage_type": "slashing"
+        },
+        {
+          "name": "Shortbow",
+          "attack_bonus": 4,
+          "damage_dice": "1d6+2",
+          "damage_type": "piercing"
+        }
+      ]
+    },
+    {
+      "name": "Skeleton",
+      "size": "Medium",
+      "type": "undead",
+      "armor_class": 13,
+      "hit_points": 13,
+      "hit_dice": "2d8+4",
+      "speed": 30,
+      "abilities": {
+        "str": 10,
+        "dex": 14,
+        "con": 15,
+        "int": 6,
+        "wis": 8,
+        "cha": 5
+      },
+      "challenge_rating": "1/4",
+      "attacks": [
+        {
+          "name": "Shortsword",
+          "attack_bonus": 4,
+          "damage_dice": "1d6+2",
+          "damage_type": "piercing"
+        },
+        {
+          "name": "Shortbow",
+          "attack_bonus": 4,
+          "damage_dice": "1d6+2",
+          "damage_type": "piercing"
+        }
+      ]
+    },
+    {
+      "name": "Zombie",
+      "size": "Medium",
+      "type": "undead",
+      "armor_class": 8,
+      "hit_points": 22,
+      "hit_dice": "3d8+9",
+      "speed": 20,
+      "abilities": {
+        "str": 13,
+        "dex": 6,
+        "con": 16,
+        "int": 3,
+        "wis": 6,
+        "cha": 5
+      },
+      "challenge_rating": "1/4",
+      "attacks": [
+        {
+          "name": "Slam",
+          "attack_bonus": 3,
+          "damage_dice": "1d6+1",
+          "damage_type": "bludgeoning"
+        }
+      ]
+    },
+    {
+      "name": "Wolf",
+      "size": "Medium",
+      "type": "beast",
+      "armor_class": 13,
+      "hit_points": 11,
+      "hit_dice": "2d8+2",
+      "speed": 40,
+      "abilities": {
+        "str": 12,
+        "dex": 15,
+        "con": 12,
+        "int": 3,
+        "wis": 12,
+        "cha": 6
+      },
+      "challenge_rating": "1/4",
+      "attacks": [
+        {
+          "name": "Bite",
+          "attack_bonus": 4,
+          "damage_dice": "2d4+2",
+          "damage_type": "piercing"
+        }
+      ]
+    },
+    {
+      "name": "Orc",
+      "size": "Medium",
+      "type": "humanoid",
+      "armor_class": 13,
+      "hit_points": 15,
+      "hit_dice": "2d8+6",
+      "speed": 30,
+      "abilities": {
+        "str": 16,
+        "dex": 12,
+        "con": 16,
+        "int": 7,
+        "wis": 11,
+        "cha": 10
+      },
+      "challenge_rating": "1/2",
+      "attacks": [
+        {
+          "name": "Greataxe",
+          "attack_bonus": 5,
+          "damage_dice": "1d12+3",
+          "damage_type": "slashing"
+        },
+        {
+          "name": "Javelin",
+          "attack_bonus": 5,
+          "damage_dice": "1d6+3",
+          "damage_type": "piercing"
+        }
+      ]
+    },
+    {
+      "name": "Giant Spider",
+      "size": "Large",
+      "type": "beast",
+      "armor_class": 14,
+      "hit_points": 26,
+      "hit_dice": "4d10+4",
+      "speed": 30,
+      "abilities": {
+        "str": 14,
+        "dex": 16,
+        "con": 12,
+        "int": 2,
+        "wis": 11,
+        "cha": 4
+      },
+      "challenge_rating": "1",
+      "attacks": [
+        {
+          "name": "Bite",
+          "attack_bonus": 5,
+          "damage_dice": "1d8+3",
+          "damage_type": "piercing"
+        }
+      ]
+    },
+    {
+      "name": "Ogre",
+      "size": "Large",
+      "type": "giant",
+      "armor_class": 11,
+      "hit_points": 59,
+      "hit_dice": "7d10+21",
+      "speed": 40,
+      "abilities": {
+        "str": 19,
+        "dex": 8,
+        "con": 16,
+        "int": 5,
+        "wis": 7,
+        "cha": 7
+      },
+      "challenge_rating": "2",
+      "attacks": [
+        {
+          "name": "Greatclub",
+          "attack_bonus": 6,
+          "damage_dice": "2d8+4",
+          "damage_type": "bludgeoning"
+        },
+        {
+          "name": "Javelin",
+          "attack_bonus": 6,
+          "damage_dice": "2d6+4",
+          "damage_type": "piercing"
+        }
+      ]
+    },
+    {
+      "name": "Owlbear",
+      "size": "Large",
+      "type": "monstrosity",
+      "armor_class": 13,
+      "hit_points": 59,
+      "hit_dice": "7d10+21",
+      "speed": 40,
+      "abilities": {
+        "str": 20,
+        "dex": 12,
+        "con": 17,
+        "int": 3,
+        "wis": 12,
+        "cha": 7
+      },
+      "challenge_rating": "3",
+      "attacks": [
+        {
+          "name": "Beak",
+          "attack_bonus": 7,
+          "damage_dice": "1d10+5",
+          "damage_type": "piercing"
+        },
+        {
+          "name": "Claws",
+          "attack_bonus": 7,
+          "damage_dice": "2d8+5",
+          "damage_type": "slashing"
+        }
+      ]
+    },
+    {
+      "name": "Troll",
+      "size": "Large",
+      "type": "giant",
+      "armor_class": 15,
+      "hit_points": 84,
+      "hit_dice": "8d10+40",
+      "speed": 30,
+      "abilities": {
+        "str": 18,
+        "dex": 13,
+        "con": 20,
+        "int": 7,
+        "wis": 9,
+        "cha": 7
+      },
+      "challenge_rating": "5",
+      "attacks": [
+        {
+          "name": "Bite",
+          "attack_bonus": 7,
+          "damage_dice": "1d6+4",
+          "damage_type": "piercing"
+        },
+        {
+          "name": "Claw",
+          "attack_bonus": 7,
+          "damage_dice": "2d6+4",
+          "damage_type": "slashing"
+        }
+      ]
+    },
+    {
+      "name": "Young Dragon (Generic)",
+      "size": "Large",
+      "type": "dragon",
+      "armor_class": 18,
+      "hit_points": 136,
+      "hit_dice": "16d10+48",
+      "speed": 40,
+      "abilities": {
+        "str": 19,
+        "dex": 10,
+        "con": 17,
+        "int": 12,
+        "wis": 11,
+        "cha": 15
+      },
+      "challenge_rating": "8",
+      "attacks": [
+        {
+          "name": "Bite",
+          "attack_bonus": 7,
+          "damage_dice": "2d10+4",
+          "damage_type": "piercing"
+        },
+        {
+          "name": "Claw",
+          "attack_bonus": 7,
+          "damage_dice": "2d6+4",
+          "damage_type": "slashing"
+        }
+      ]
+    }
+  ]
+}

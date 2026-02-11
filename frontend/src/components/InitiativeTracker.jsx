@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useGame } from "../contexts/GameContext";
 import { useAuth } from "../contexts/AuthContext";
+import CharacterPortrait from "./CharacterPortrait";
+import MonsterStatBlock from "./MonsterStatBlock";
+import srdMonsters from "../data/srd-monsters.json";
 import "./InitiativeTracker.css";
 
 export default function InitiativeTracker() {
@@ -24,11 +27,12 @@ export default function InitiativeTracker() {
     resetActionEconomy,
     autoTrackActions,
     setAutoTrackActions,
+    rollDice,
   } = useGame();
 
   const [showAddNPC, setShowAddNPC] = useState(false);
-  const [npcName, setNpcName] = useState("");
-  const [npcInitiative, setNpcInitiative] = useState("");
+  const [selectedMonster, setSelectedMonster] = useState("");
+  const [customName, setCustomName] = useState("");
 
   const isDM = user?.is_dm;
 
@@ -38,11 +42,30 @@ export default function InitiativeTracker() {
   };
 
   const handleAddNPC = () => {
-    if (!npcName.trim()) return;
-    const initValue = npcInitiative ? parseInt(npcInitiative, 10) : null;
-    addCombatant(npcName.trim(), initValue);
-    setNpcName("");
-    setNpcInitiative("");
+    if (selectedMonster) {
+      // Add from SRD monster list
+      const monster = srdMonsters.monsters.find(
+        (m) => m.name === selectedMonster,
+      );
+      if (monster) {
+        const dexMod = monster.abilities
+          ? Math.floor((monster.abilities.dex - 10) / 2)
+          : 0;
+        addCombatant({
+          name: customName.trim() || monster.name,
+          max_hp: monster.hit_points,
+          armor_class: monster.armor_class,
+          speed: monster.speed,
+          attacks: monster.attacks || [],
+          dex_mod: dexMod,
+        });
+      }
+    } else if (customName.trim()) {
+      // Add custom NPC with just a name
+      addCombatant({ name: customName.trim() });
+    }
+    setSelectedMonster("");
+    setCustomName("");
     setShowAddNPC(false);
   };
 
@@ -125,42 +148,62 @@ export default function InitiativeTracker() {
 
       {/* Combatants List */}
       <div className="combatants-list">
-        {initiative.combatants.map((combatant, index) => (
-          <div
-            key={combatant.id}
-            className={`combatant-item ${index === initiative.current_turn_index ? "active-turn" : ""} ${combatant.type}`}
-          >
-            <div className="combatant-initiative">
-              {combatant.initiative !== null ? combatant.initiative : "—"}
-            </div>
-            <div className="combatant-info">
-              <span className="combatant-name">{combatant.name}</span>
-              {combatant.type === "npc" && (
-                <span className="combatant-type">NPC</span>
+        {initiative.combatants.map((combatant, index) => {
+          const character =
+            combatant.character_id &&
+            characters.find((c) => c.id === combatant.character_id);
+          return (
+            <div
+              key={combatant.id}
+              className={`combatant-item-wrapper ${index === initiative.current_turn_index ? "active-turn" : ""}`}
+            >
+              <div className={`combatant-item ${combatant.type}`}>
+                {character ? (
+                  <CharacterPortrait
+                    character={character}
+                    size="tiny"
+                    editable={false}
+                  />
+                ) : (
+                  <div className="combatant-npc-icon">👹</div>
+                )}
+                <div className="combatant-initiative">
+                  {combatant.initiative !== null ? combatant.initiative : "—"}
+                </div>
+                <div className="combatant-info">
+                  <span className="combatant-name">{combatant.name}</span>
+                  {combatant.type === "npc" && (
+                    <span className="combatant-type">NPC</span>
+                  )}
+                </div>
+                <div className="combatant-actions">
+                  {isDM && combatant.initiative === null && (
+                    <button
+                      onClick={() => rollInitiativeFor(combatant.id)}
+                      className="btn-icon"
+                      title="Roll Initiative"
+                    >
+                      🎲
+                    </button>
+                  )}
+                  {isDM && (
+                    <button
+                      onClick={() => removeCombatant(combatant.id)}
+                      className="btn-icon btn-danger"
+                      title="Remove"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+              {/* Monster Stat Block for NPCs */}
+              {isDM && combatant.type === "npc" && combatant.max_hp && (
+                <MonsterStatBlock combatant={combatant} onRollDice={rollDice} />
               )}
             </div>
-            <div className="combatant-actions">
-              {isDM && combatant.initiative === null && (
-                <button
-                  onClick={() => rollInitiativeFor(combatant.id)}
-                  className="btn-icon"
-                  title="Roll Initiative"
-                >
-                  🎲
-                </button>
-              )}
-              {isDM && (
-                <button
-                  onClick={() => removeCombatant(combatant.id)}
-                  className="btn-icon btn-danger"
-                  title="Remove"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Action Economy for Current Turn */}
@@ -310,21 +353,30 @@ export default function InitiativeTracker() {
       {/* Add NPC Form */}
       {showAddNPC && isDM && (
         <div className="add-npc-form">
+          <select
+            className="monster-select"
+            value={selectedMonster}
+            onChange={(e) => setSelectedMonster(e.target.value)}
+          >
+            <option value="">-- Select Monster --</option>
+            {srdMonsters.monsters.map((monster) => (
+              <option key={monster.name} value={monster.name}>
+                {monster.name} (CR {monster.challenge_rating})
+              </option>
+            ))}
+          </select>
           <input
             type="text"
-            placeholder="NPC Name"
-            value={npcName}
-            onChange={(e) => setNpcName(e.target.value)}
+            placeholder="Custom name (optional)"
+            value={customName}
+            onChange={(e) => setCustomName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAddNPC()}
           />
-          <input
-            type="number"
-            placeholder="Init (optional)"
-            value={npcInitiative}
-            onChange={(e) => setNpcInitiative(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleAddNPC()}
-          />
-          <button onClick={handleAddNPC} className="btn btn-primary btn-sm">
+          <button
+            onClick={handleAddNPC}
+            className="btn btn-primary btn-sm"
+            disabled={!selectedMonster && !customName.trim()}
+          >
             Add
           </button>
         </div>

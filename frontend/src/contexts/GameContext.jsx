@@ -233,10 +233,30 @@ export const GameProvider = ({ children }) => {
     sendInitiativeAction("start_combat", { character_ids: characterIds });
   };
 
-  const addCombatant = (name, initiativeValue = null) => {
-    sendInitiativeAction("add_combatant", {
-      name,
-      initiative: initiativeValue,
+  const addCombatant = (monsterData) => {
+    // Accept either a string (simple name) or full monster object
+    if (typeof monsterData === "string") {
+      sendInitiativeAction("add_combatant", {
+        name: monsterData,
+        initiative: null,
+      });
+    } else {
+      sendInitiativeAction("add_combatant", {
+        name: monsterData.name,
+        initiative: monsterData.initiative || null,
+        max_hp: monsterData.max_hp || monsterData.hit_points || 10,
+        armor_class: monsterData.armor_class || 10,
+        speed: monsterData.speed || 30,
+        attacks: monsterData.attacks || [],
+        dex_mod: monsterData.dex_mod || 0,
+      });
+    }
+  };
+
+  const updateNPC = (combatantId, updates) => {
+    sendInitiativeAction("update_npc", {
+      combatant_id: combatantId,
+      ...updates,
     });
   };
 
@@ -345,6 +365,7 @@ export const GameProvider = ({ children }) => {
     initiative,
     startCombat,
     addCombatant,
+    updateNPC,
     removeCombatant,
     rollInitiativeFor,
     rollAllInitiative,

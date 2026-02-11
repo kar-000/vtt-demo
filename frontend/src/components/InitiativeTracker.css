@@ -98,6 +98,16 @@
   border-style: dashed;
 }
 
+/* Override for items inside wrapper */
+.combatant-item-wrapper .combatant-item.npc {
+  border-style: solid;
+  border-bottom: 1px dashed var(--border-secondary);
+}
+
+.combatant-item-wrapper.active-turn .combatant-item {
+  background: var(--btn-secondary-hover);
+}
+
 .combatant-initiative {
   min-width: 32px;
   height: 32px;
@@ -173,16 +183,41 @@
   min-width: 60px;
 }
 
+/* Combatant Item Wrapper - for monster stat blocks */
+.combatant-item-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--border-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.combatant-item-wrapper.active-turn {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+}
+
+.combatant-item-wrapper .combatant-item {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
 /* Add NPC Form */
 .add-npc-form {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.75rem;
   padding-top: 0.75rem;
   border-top: 1px solid var(--border-secondary);
 }
 
-.add-npc-form input {
+.add-npc-form input,
+.add-npc-form select {
   flex: 1;
   min-width: 0;
   padding: 0.4rem 0.5rem;
@@ -193,9 +228,14 @@
   font-size: 0.85rem;
 }
 
-.add-npc-form input:focus {
+.add-npc-form input:focus,
+.add-npc-form select:focus {
   outline: none;
   border-color: var(--accent-primary);
+}
+
+.monster-select {
+  min-width: 150px;
 }
 
 .add-npc-form input[type="number"] {
