@@ -157,16 +157,24 @@ async def websocket_endpoint(
                     initiative = {"active": True, "round": 1, "current_turn_index": 0, "combatants": combatants}
 
                 elif action == "add_combatant":
-                    # Add NPC/monster to initiative
+                    # Add NPC/monster to initiative with full stat block
                     name = init_data.get("name", "Unknown")
                     init_value = init_data.get("initiative")
                     speed = init_data.get("speed", 30)
+                    max_hp = init_data.get("max_hp", 10)
+                    armor_class = init_data.get("armor_class", 10)
+                    attacks = init_data.get("attacks", [])
+                    dex_mod = init_data.get("dex_mod", 0)
                     combatant = {
                         "id": f"npc_{uuid.uuid4().hex[:8]}",
                         "name": name,
                         "initiative": init_value,
-                        "dex_mod": 0,
+                        "dex_mod": dex_mod,
                         "type": "npc",
+                        "max_hp": max_hp,
+                        "current_hp": max_hp,
+                        "armor_class": armor_class,
+                        "attacks": attacks,
                         "action_economy": {
                             "action": True,
                             "bonus_action": True,
@@ -313,6 +321,19 @@ async def websocket_endpoint(
                             combatant["action_economy"]["bonus_action"] = True
                             combatant["action_economy"]["reaction"] = True
                             combatant["action_economy"]["movement"] = combatant["action_economy"].get("max_movement", 30)
+                            break
+
+                elif action == "update_npc":
+                    # Update NPC stats (HP, etc) - DM only
+                    combatant_id = init_data.get("combatant_id")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id and combatant.get("type") == "npc":
+                            if "current_hp" in init_data:
+                                combatant["current_hp"] = max(0, init_data["current_hp"])
+                            if "max_hp" in init_data:
+                                combatant["max_hp"] = init_data["max_hp"]
+                            if "armor_class" in init_data:
+                                combatant["armor_class"] = init_data["armor_class"]
                             break
 
                 else:
