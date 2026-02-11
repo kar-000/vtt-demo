@@ -147,13 +147,18 @@ export default function Game() {
 
           {mainTab === "map" && (
             <div className="battle-map-section">
-              {isDM && (
+              {isDM && campaignId && (
                 <MapManager
                   campaignId={campaignId}
                   maps={maps}
                   activeMapId={activeMap?.id}
                   onRefresh={loadMaps}
                 />
+              )}
+              {isDM && !campaignId && (
+                <div className="no-campaign-warning">
+                  Create or join a campaign to use battle maps.
+                </div>
               )}
               <BattleMap
                 map={activeMap}

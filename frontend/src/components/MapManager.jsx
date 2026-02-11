@@ -50,6 +50,10 @@ export default function MapManager({
   };
 
   const handleCreate = async () => {
+    if (!campaignId) {
+      setError("No campaign - cannot create map");
+      return;
+    }
     if (!formData.name.trim()) {
       setError("Map name is required");
       return;
@@ -61,7 +65,7 @@ export default function MapManager({
     try {
       // Build payload, excluding null/empty optional fields (Pydantic v1 compatibility)
       const payload = {
-        campaign_id: campaignId,
+        campaign_id: parseInt(campaignId),
         name: formData.name.trim(),
         grid_width: parseInt(formData.grid_width),
         grid_height: parseInt(formData.grid_height),
