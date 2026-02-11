@@ -10,6 +10,7 @@ export default function InitiativeTracker() {
   const { user } = useAuth();
   const {
     characters,
+    allCharacters,
     currentCharacter,
     initiative,
     startCombat,
@@ -29,6 +30,10 @@ export default function InitiativeTracker() {
     setAutoTrackActions,
     rollDice,
   } = useGame();
+
+  // Use allCharacters for DM (to see all players), otherwise use own characters
+  const availableCharacters =
+    allCharacters?.length > 0 ? allCharacters : characters;
 
   const [showAddNPC, setShowAddNPC] = useState(false);
   const [selectedMonster, setSelectedMonster] = useState("");
@@ -166,7 +171,7 @@ export default function InitiativeTracker() {
         {initiative.combatants.map((combatant, index) => {
           const character =
             combatant.character_id &&
-            characters.find((c) => c.id === combatant.character_id);
+            availableCharacters.find((c) => c.id === combatant.character_id);
           return (
             <div
               key={combatant.id}
