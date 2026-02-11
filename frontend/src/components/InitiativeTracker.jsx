@@ -192,6 +192,31 @@ export default function InitiativeTracker() {
                     <span className="combatant-type">NPC</span>
                   )}
                 </div>
+                {/* PC Stats - visible to all */}
+                {character && (
+                  <div className="combatant-pc-stats">
+                    <span className="pc-ac" title="Armor Class">
+                      {character.armor_class}
+                    </span>
+                    <div className="pc-hp-bar-container">
+                      <div
+                        className="pc-hp-bar"
+                        style={{
+                          width: `${Math.max(0, Math.min(100, (character.current_hp / character.max_hp) * 100))}%`,
+                          backgroundColor:
+                            character.current_hp <= character.max_hp * 0.25
+                              ? "var(--color-danger)"
+                              : character.current_hp <= character.max_hp * 0.5
+                                ? "var(--color-warning)"
+                                : "var(--color-success)",
+                        }}
+                      />
+                      <span className="pc-hp-text">
+                        {character.current_hp}/{character.max_hp}
+                      </span>
+                    </div>
+                  </div>
+                )}
                 <div className="combatant-actions">
                   {isDM && combatant.initiative === null && (
                     <button
