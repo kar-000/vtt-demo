@@ -59,15 +59,21 @@ export default function MapManager({
     setError(null);
 
     try {
-      const newMap = await api.createMap({
+      // Build payload, excluding null/empty optional fields (Pydantic v1 compatibility)
+      const payload = {
         campaign_id: campaignId,
         name: formData.name.trim(),
-        description: formData.description.trim() || null,
         grid_width: parseInt(formData.grid_width),
         grid_height: parseInt(formData.grid_height),
         grid_size: parseInt(formData.grid_size),
-        image_data: formData.image_data,
-      });
+      };
+      if (formData.description.trim()) {
+        payload.description = formData.description.trim();
+      }
+      if (formData.image_data) {
+        payload.image_data = formData.image_data;
+      }
+      const newMap = await api.createMap(payload);
 
       onMapCreated?.(newMap);
       setIsCreating(false);
