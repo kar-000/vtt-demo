@@ -203,6 +203,95 @@ class ApiService {
     }
     return this.handleResponse(response);
   }
+
+  // Maps endpoints
+  async getCampaignMaps(campaignId) {
+    const response = await fetch(`${API_BASE}/maps/campaign/${campaignId}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getActiveMap(campaignId) {
+    const response = await fetch(
+      `${API_BASE}/maps/campaign/${campaignId}/active`,
+      {
+        headers: this.getAuthHeaders(),
+      },
+    );
+    return this.handleResponse(response);
+  }
+
+  async getMap(mapId) {
+    const response = await fetch(`${API_BASE}/maps/${mapId}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async createMap(mapData) {
+    const response = await fetch(`${API_BASE}/maps/`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(mapData),
+    });
+    return this.handleResponse(response);
+  }
+
+  async updateMap(mapId, mapData) {
+    const response = await fetch(`${API_BASE}/maps/${mapId}`, {
+      method: "PUT",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(mapData),
+    });
+    return this.handleResponse(response);
+  }
+
+  async deleteMap(mapId) {
+    const response = await fetch(`${API_BASE}/maps/${mapId}`, {
+      method: "DELETE",
+      headers: this.getAuthHeaders(),
+    });
+    if (response.status === 204) {
+      return { success: true };
+    }
+    return this.handleResponse(response);
+  }
+
+  async activateMap(mapId) {
+    const response = await fetch(`${API_BASE}/maps/${mapId}/activate`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async updateMapTokens(mapId, tokens) {
+    const response = await fetch(`${API_BASE}/maps/${mapId}/tokens`, {
+      method: "PATCH",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ tokens }),
+    });
+    return this.handleResponse(response);
+  }
+
+  async moveToken(mapId, tokenId, x, y) {
+    const response = await fetch(`${API_BASE}/maps/${mapId}/token/move`, {
+      method: "PATCH",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ token_id: tokenId, x, y }),
+    });
+    return this.handleResponse(response);
+  }
+
+  async updateFog(mapId, revealedCells, action = "set") {
+    const response = await fetch(`${API_BASE}/maps/${mapId}/fog`, {
+      method: "PATCH",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ revealed_cells: revealedCells, action }),
+    });
+    return this.handleResponse(response);
+  }
 }
 
 export default new ApiService();

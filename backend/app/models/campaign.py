@@ -16,10 +16,8 @@ class Campaign(Base):
     name = Column(String, nullable=False, index=True)
     description = Column(Text, nullable=True)
 
-    # Phase 3 features (prepared for future expansion)
-    # Maps will be stored as JSON
-    # Structure: [{"id": 1, "name": "...", "image_url": "...", "fog_of_war": {...}, "tokens": [...]}]
-    maps = Column(JSON, default=list, nullable=False)
+    # Legacy field - keeping for backwards compatibility but maps are now in separate table
+    maps_legacy = Column(JSON, default=list, nullable=False)
 
     # Campaign settings
     settings = Column(JSON, default=dict, nullable=False)
@@ -32,6 +30,7 @@ class Campaign(Base):
     dm = relationship("User", back_populates="campaigns")
     characters = relationship("Character", back_populates="campaign", cascade="all, delete-orphan")
     notes = relationship("Note", back_populates="campaign", cascade="all, delete-orphan")
+    maps = relationship("Map", back_populates="campaign", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Campaign(id={self.id}, name={self.name}, dm_id={self.dm_id})>"

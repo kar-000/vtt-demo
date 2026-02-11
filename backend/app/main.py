@@ -2,7 +2,7 @@ import logging
 
 from app.core.config import settings
 from app.core.database import init_db
-from app.routes import auth, characters, dice, notes
+from app.routes import auth, characters, dice, maps, notes
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -31,6 +31,7 @@ app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(characters.router, prefix=settings.API_V1_STR)
 app.include_router(dice.router, prefix=settings.API_V1_STR)
 app.include_router(notes.router, prefix=settings.API_V1_STR)
+app.include_router(maps.router, prefix=settings.API_V1_STR)
 
 
 @app.on_event("startup")
