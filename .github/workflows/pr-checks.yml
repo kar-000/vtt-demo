@@ -5,6 +5,11 @@ on:
     branches: [master, main]
     types: [opened, synchronize, reopened]
 
+# Permissions needed for coverage comments and PR status
+permissions:
+  contents: read
+  pull-requests: write
+
 # Ensure only one PR check runs at a time per PR
 concurrency:
   group: pr-${{ github.head_ref }}
@@ -70,12 +75,14 @@ jobs:
 
       - name: Coverage comment on PR
         if: always()
+        continue-on-error: true # Optional - don't fail the build if comment fails
         uses: py-cov-action/python-coverage-comment-action@v3
         with:
           GITHUB_TOKEN: ${{ github.token }}
           MINIMUM_GREEN: 90
           MINIMUM_ORANGE: 75
           COVERAGE_PATH: backend/coverage.xml
+          VERBOSE: true
 
   # ============================================================================
   # CHANGED FILES COVERAGE CHECK (90% minimum for new code)
