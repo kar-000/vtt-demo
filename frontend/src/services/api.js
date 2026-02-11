@@ -143,6 +143,66 @@ class ApiService {
     );
     return this.handleResponse(response);
   }
+
+  // Notes endpoints
+  async getCampaignNotes(campaignId, noteType = null, tag = null) {
+    let url = `${API_BASE}/notes/campaign/${campaignId}`;
+    const params = new URLSearchParams();
+    if (noteType) params.append("note_type", noteType);
+    if (tag) params.append("tag", tag);
+    if (params.toString()) url += `?${params.toString()}`;
+
+    const response = await fetch(url, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getMyNotes(noteType = null) {
+    let url = `${API_BASE}/notes/`;
+    if (noteType) url += `?note_type=${noteType}`;
+
+    const response = await fetch(url, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getNote(noteId) {
+    const response = await fetch(`${API_BASE}/notes/${noteId}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async createNote(noteData) {
+    const response = await fetch(`${API_BASE}/notes/`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(noteData),
+    });
+    return this.handleResponse(response);
+  }
+
+  async updateNote(noteId, noteData) {
+    const response = await fetch(`${API_BASE}/notes/${noteId}`, {
+      method: "PUT",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(noteData),
+    });
+    return this.handleResponse(response);
+  }
+
+  async deleteNote(noteId) {
+    const response = await fetch(`${API_BASE}/notes/${noteId}`, {
+      method: "DELETE",
+      headers: this.getAuthHeaders(),
+    });
+    if (response.status === 204) {
+      return { success: true };
+    }
+    return this.handleResponse(response);
+  }
 }
 
 export default new ApiService();

@@ -105,6 +105,52 @@
   overflow-y: auto;
 }
 
+/* Sidebar Tabs */
+.sidebar-tabs {
+  display: flex;
+  background: var(--bg-card);
+  border: 2px solid var(--border-primary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sidebar-tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sidebar-tab:hover {
+  background: var(--btn-secondary-hover);
+  color: var(--text-primary);
+}
+
+.sidebar-tab.active {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+}
+
+.sidebar-tab:not(:last-child) {
+  border-right: 1px solid var(--border-secondary);
+}
+
+.no-campaign-notes {
+  background: var(--bg-surface);
+  border: 2px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
 @media (max-width: 1024px) {
   .game-content {
     grid-template-columns: 1fr;

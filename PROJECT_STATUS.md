@@ -1,8 +1,43 @@
 # D&D 5e VTT - Project Status
 
-**Last Updated**: 2026-02-07
+**Last Updated**: 2026-02-10
 
-## Current Phase: Phase 2 COMPLETE! 🎉 (47+ tests passing)
+## Current Phase: Phase 3 IN PROGRESS (69 tests passing)
+
+### Phase 3 Progress
+
+14. **Character Portraits** ✅ (2026-02-10)
+    - ✅ CharacterPortrait component with upload/display functionality
+    - ✅ Image upload with validation (JPEG, PNG, GIF, WebP)
+    - ✅ Auto-resize to 200x200 with base64 storage in avatar_url field
+    - ✅ Size variants: large (100px), medium (60px), small (36px), tiny (28px)
+    - ✅ Display on character sheet header
+    - ✅ Display in initiative tracker (tiny size)
+    - ✅ Placeholder/initials fallback when no portrait
+
+15. **Monster Stat Blocks** ✅ (2026-02-10)
+    - ✅ MonsterStatBlock component with expandable details
+    - ✅ Quick stats display (AC + HP bar) collapsed view
+    - ✅ DM HP controls (damage/heal buttons)
+    - ✅ Attack buttons with integrated dice rolling
+    - ✅ SRD monster library (10 common creatures)
+    - ✅ Add monsters from SRD dropdown in initiative tracker
+    - ✅ Color-coded HP bar (green/yellow/red based on %)
+
+16. **Campaign Notes/Journal** ⏳ (In Progress)
+    - Notes model and endpoints
+    - Session notes for DM
+    - Character journals (private/shared)
+    - Markdown support
+
+17. **Battle Maps/Grid** (Planned)
+    - Interactive grid-based maps
+    - Token placement and movement
+    - Real-time sync via WebSocket
+
+---
+
+## Phase 2 COMPLETE! 🎉
 
 ## ⚖️ Legal Foundation: SRD 5.1
 

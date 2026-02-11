@@ -1,5 +1,6 @@
 from .character import CharacterCreate, CharacterResponse, CharacterUpdate
 from .dice import DiceRoll, DiceRollResult
+from .note import NoteCreate, NoteResponse, NoteUpdate
 from .user import Token, UserCreate, UserLogin, UserResponse
 
 __all__ = [
@@ -12,4 +13,7 @@ __all__ = [
     "CharacterResponse",
     "DiceRoll",
     "DiceRollResult",
+    "NoteCreate",
+    "NoteUpdate",
+    "NoteResponse",
 ]

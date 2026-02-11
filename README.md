@@ -1,17 +1,34 @@
 # D&D 5e Virtual Tabletop
 
-A real-time web application for remote D&D 5e sessions with character management, dice rolling, and shared game logs.
+A real-time web application for remote D&D 5e sessions with character management, dice rolling, combat tracking, and shared game logs.
 
-## Current Status: Phase 1
+## Current Status: Phase 3 In Progress
 
-Phase 1 includes:
-- Character creation and management
-- Full character sheet with D&D 5e stats and modifiers
+**Phase 2 Complete** - 69 tests passing
+
+### Core Features (Phase 1)
+- Character creation and management with full D&D 5e stats
 - Clickable stat rolling (d20 + modifier)
-- Manual dice roller (d4, d6, d8, d10, d12, d20, d100)
-- Real-time shared log for all players
-- Basic authentication (DM vs Player roles)
+- Manual dice roller (d4, d6, d8, d10, d12, d20, d100) with polyhedral styling
+- Real-time shared log for all players (WebSocket)
+- JWT-based authentication (DM vs Player roles)
 - SQLite persistence
+
+### Combat Features (Phase 2)
+- **HP Management**: Damage/healing, temp HP, death saves, color-coded HP bar
+- **Custom Attacks**: Add weapons with attack bonus and damage dice, clickable rolls
+- **Spells System**: Full spell management with slots, SRD spell library (~300 spells)
+- **Initiative Tracker**: Real-time combat order, turn tracking, round counter
+- **Action Economy**: Track actions, bonus actions, reactions, movement per turn
+- **DM Tools**: View/edit all player characters, manage combat
+- **Level-Up System**: Multi-step wizard with multiclass support, ASI handling
+- **UI Theming**: Three themes (Dark Medieval, Pink Pony Club, Boring)
+
+### Phase 3 Features (In Progress)
+- **Character Portraits**: Upload avatars, display on sheet and initiative tracker
+- **Monster Stat Blocks**: HP/AC/attacks tracking, SRD monster library, DM combat tools
+- Campaign Notes/Journal (planned)
+- Battle Maps/Grid (planned)
 
 ## Tech Stack
 
@@ -19,14 +36,14 @@ Phase 1 includes:
 - FastAPI (Python web framework)
 - SQLAlchemy (ORM)
 - WebSockets (real-time communication)
-- SQLite (database)
+- SQLite (database, PostgreSQL for production)
 - JWT (authentication)
 
 **Frontend:**
-- React
+- React with hooks and Context API
 - Vite (build tool)
-- WebSocket client
-- Modern CSS
+- WebSocket client with auto-reconnection
+- CSS custom properties for theming
 
 ## Prerequisites
 
@@ -80,8 +97,9 @@ The frontend will be available at `http://localhost:5173`
 1. Start both backend and frontend servers
 2. Open multiple browser windows to `http://localhost:5173`
 3. Register/login as DM or Player
-4. Create characters and start rolling dice
-5. All rolls appear in real-time for all connected users
+4. Create or join a campaign
+5. Create characters and start playing
+6. All rolls appear in real-time for all connected users
 
 ## Project Structure
 
@@ -89,40 +107,43 @@ The frontend will be available at `http://localhost:5173`
 vtt/
 ├── backend/
 │   ├── app/
-│   │   ├── models/        # Database models
+│   │   ├── core/          # Config, database, security, dependencies
+│   │   ├── models/        # SQLAlchemy models
 │   │   ├── routes/        # API endpoints
 │   │   ├── schemas/       # Pydantic schemas
-│   │   ├── services/      # Business logic
-│   │   ├── websocket/     # WebSocket handlers
-│   │   └── main.py        # FastAPI app
-│   ├── requirements.txt
-│   └── README.md
+│   │   └── websocket/     # WebSocket handlers
+│   ├── tests/             # pytest tests (69+ tests)
+│   └── requirements.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── components/    # React components
-│   │   ├── services/      # API and WebSocket services
-│   │   ├── hooks/         # Custom React hooks
-│   │   └── App.jsx
-│   ├── package.json
-│   └── README.md
-├── .gitignore
+│   │   ├── contexts/      # Context providers (Auth, Game, Theme)
+│   │   ├── pages/         # Page components
+│   │   ├── data/          # SRD data files (spells, weapons, monsters)
+│   │   └── services/      # API and WebSocket services
+│   └── package.json
+├── .github/
+│   └── workflows/         # CI/CD pipelines
+├── .pre-commit-config.yaml
+├── CONTRIBUTING.md
+├── PROJECT_STATUS.md
 └── README.md
 ```
 
-## Roadmap
+## Testing
 
-### Phase 2 - Combat & Abilities (Coming Next)
-- Attack rolls with damage
-- Spell system with auto-calculated DC
-- Initiative tracking
-- DM character sheet editing
-- Level-up system
+```bash
+# Run backend tests
+cd backend
+pytest -v
 
-### Phase 3 - Maps & Tokens (Future)
-- Interactive maps with fog of war
-- Movable player and NPC tokens
-- Campaign management
-- Map-based character access
+# Run with coverage
+pytest --cov=app
+```
+
+## Legal
+
+Uses SRD 5.1 content under the Open Gaming License (OGL). See LICENSE.md for details.
 
 ## Contributing
 

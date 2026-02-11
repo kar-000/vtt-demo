@@ -31,6 +31,7 @@ class Campaign(Base):
     # Relationships
     dm = relationship("User", back_populates="campaigns")
     characters = relationship("Character", back_populates="campaign", cascade="all, delete-orphan")
+    notes = relationship("Note", back_populates="campaign", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Campaign(id={self.id}, name={self.name}, dm_id={self.dm_id})>"
