@@ -32,7 +32,17 @@ class ApiService {
   async handleResponse(response) {
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      throw new Error(error.detail || "An error occurred");
+      // Handle FastAPI validation errors (detail can be array or string)
+      let message = "An error occurred";
+      if (typeof error.detail === "string") {
+        message = error.detail;
+      } else if (Array.isArray(error.detail)) {
+        // FastAPI validation errors are arrays of {loc, msg, type}
+        message = error.detail.map((e) => e.msg || e.message).join(", ");
+      } else if (error.detail) {
+        message = JSON.stringify(error.detail);
+      }
+      throw new Error(message);
     }
     return response.json();
   }
