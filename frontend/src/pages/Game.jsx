@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useGame } from "../contexts/GameContext";
@@ -6,6 +6,7 @@ import CharacterSheet from "../components/CharacterSheet";
 import InitiativeTracker from "../components/InitiativeTracker";
 import DiceRoller from "../components/DiceRoller";
 import RollLog from "../components/RollLog";
+import NotesSection from "../components/NotesSection";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import "./Game.css";
 
@@ -13,6 +14,7 @@ export default function Game() {
   const { user } = useAuth();
   const { currentCharacter, connected } = useGame();
   const navigate = useNavigate();
+  const [sidebarTab, setSidebarTab] = useState("combat");
 
   if (!currentCharacter) {
     return (
@@ -62,9 +64,38 @@ export default function Game() {
           <CharacterSheet character={currentCharacter} />
         </div>
         <div className="game-sidebar">
-          <InitiativeTracker />
-          <DiceRoller />
-          <RollLog />
+          <div className="sidebar-tabs">
+            <button
+              className={`sidebar-tab ${sidebarTab === "combat" ? "active" : ""}`}
+              onClick={() => setSidebarTab("combat")}
+            >
+              Combat
+            </button>
+            <button
+              className={`sidebar-tab ${sidebarTab === "notes" ? "active" : ""}`}
+              onClick={() => setSidebarTab("notes")}
+            >
+              Notes
+            </button>
+          </div>
+
+          {sidebarTab === "combat" && (
+            <>
+              <InitiativeTracker />
+              <DiceRoller />
+              <RollLog />
+            </>
+          )}
+
+          {sidebarTab === "notes" && currentCharacter?.campaign_id && (
+            <NotesSection campaignId={currentCharacter.campaign_id} />
+          )}
+
+          {sidebarTab === "notes" && !currentCharacter?.campaign_id && (
+            <div className="no-campaign-notes">
+              <p>Notes require a campaign. Join or create a campaign first.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

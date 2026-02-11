@@ -1,0 +1,26 @@
+[run]
+source = app
+omit =
+    app/__init__.py
+    app/main.py
+    app/*/test_*.py
+    tests/*
+    */migrations/*
+    */__pycache__/*
+branch = True
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+# NOTE: 90% coverage is enforced per-file for new code in PR workflow
+# Overall project minimum is set lower while legacy code is improved
+fail_under = 0
+show_missing = True
+precision = 2
+
+[html]
+directory = htmlcov

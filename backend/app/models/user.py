@@ -21,6 +21,7 @@ class User(Base):
     # Relationships
     characters = relationship("Character", back_populates="owner", cascade="all, delete-orphan")
     campaigns = relationship("Campaign", back_populates="dm", cascade="all, delete-orphan")
+    notes = relationship("Note", back_populates="author", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username}, is_dm={self.is_dm})>"

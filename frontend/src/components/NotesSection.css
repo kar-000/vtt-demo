@@ -1,0 +1,398 @@
+/* Notes Section - Uses theme CSS variables */
+.notes-section {
+  background: var(--gradient-primary);
+  border: 2px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 1rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.notes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.notes-header h3 {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.notes-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.notes-filter {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.notes-filter:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.notes-loading,
+.notes-error,
+.no-notes {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.notes-error {
+  color: var(--color-danger-light);
+  background: var(--color-danger-bg);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+/* Note Form */
+.note-form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.note-title-input {
+  padding: 0.5rem;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.note-title-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.note-content-input {
+  padding: 0.5rem;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.note-content-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.note-form-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.note-type-select {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.note-type-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.note-tags-input {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.note-tags-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.note-public-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.note-public-toggle input {
+  cursor: pointer;
+}
+
+.note-form-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Notes List */
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.note-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.note-card:hover {
+  border-color: var(--accent-primary);
+}
+
+.note-card.expanded {
+  border-color: var(--accent-primary);
+}
+
+.note-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.note-card-header:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.note-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.note-title {
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.note-type-badge {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.note-public-badge {
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success);
+  border-radius: 3px;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-success-light);
+}
+
+.note-author {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.note-expand-icon {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-left: 0.5rem;
+}
+
+/* Expanded Card Body */
+.note-card-body {
+  padding: 0.75rem;
+  border-top: 1px solid var(--border-secondary);
+  animation: slideDown 0.15s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.note-content {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.note-content .no-content {
+  color: var(--text-muted);
+}
+
+.note-tags {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.note-tag {
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-secondary);
+}
+
+.note-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.note-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.note-actions .btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 0.85rem;
+  opacity: 0.6;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.note-actions .btn-icon:hover {
+  opacity: 1;
+  background: var(--btn-secondary-hover);
+}
+
+.note-actions .btn-icon.btn-danger:hover {
+  background: var(--color-danger-bg);
+}
+
+/* Button Styles (scoped) */
+.notes-section .btn {
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.notes-section .btn-primary {
+  background: rgba(76, 153, 76, 0.6);
+  border-color: var(--color-success);
+  color: var(--text-primary);
+}
+
+.notes-section .btn-primary:hover {
+  background: rgba(76, 153, 76, 0.8);
+  border-color: var(--color-success-light);
+}
+
+.notes-section .btn-secondary {
+  background: var(--bg-surface);
+  border-color: var(--border-secondary);
+  color: var(--text-secondary);
+}
+
+.notes-section .btn-secondary:hover {
+  background: var(--btn-secondary-hover);
+  border-color: var(--accent-primary);
+  color: var(--text-accent);
+}
+
+.notes-section .btn-sm {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Scrollbar styling */
+.notes-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notes-list::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 3px;
+}
+
+.notes-list::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+.notes-list::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
