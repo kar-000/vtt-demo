@@ -84,6 +84,7 @@
   border: 2px solid var(--border-secondary);
   border-radius: 4px;
   transition: all 0.2s;
+  min-height: 44px;
 }
 
 .combatant-item:hover {
@@ -195,6 +196,7 @@
   border-radius: 4px;
   overflow: hidden;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .combatant-item-wrapper.active-turn {
