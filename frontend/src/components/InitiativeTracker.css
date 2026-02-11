@@ -69,9 +69,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 250px;
+  max-height: 220px;
   overflow-y: auto;
   margin-bottom: 0.75rem;
+  padding-right: 0.5rem;
 }
 
 .combatant-item {
@@ -300,21 +301,28 @@
 
 /* Scrollbar styling */
 .combatants-list::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .combatants-list::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
 }
 
 .combatants-list::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
+  background: var(--accent-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border-secondary);
 }
 
 .combatants-list::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
+  background: var(--accent-hover);
+}
+
+/* Firefox scrollbar */
+.combatants-list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-primary) rgba(0, 0, 0, 0.3);
 }
 
 /* Action Economy Section */
