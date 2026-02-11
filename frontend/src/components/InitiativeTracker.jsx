@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useGame } from "../contexts/GameContext";
 import { useAuth } from "../contexts/AuthContext";
 import CharacterPortrait from "./CharacterPortrait";
@@ -10,6 +10,7 @@ export default function InitiativeTracker() {
   const { user } = useAuth();
   const {
     characters,
+    allCharacters,
     currentCharacter,
     initiative,
     startCombat,
@@ -30,9 +31,28 @@ export default function InitiativeTracker() {
     rollDice,
   } = useGame();
 
+  // Use allCharacters for DM (to see all players), otherwise use own characters
+  const availableCharacters =
+    allCharacters?.length > 0 ? allCharacters : characters;
+
   const [showAddNPC, setShowAddNPC] = useState(false);
   const [selectedMonster, setSelectedMonster] = useState("");
   const [customName, setCustomName] = useState("");
+  const combatantRefs = useRef({});
+
+  // Auto-scroll to current combatant when turn changes
+  useEffect(() => {
+    if (initiative.active && initiative.combatants.length > 0) {
+      const currentCombatant =
+        initiative.combatants[initiative.current_turn_index];
+      if (currentCombatant && combatantRefs.current[currentCombatant.id]) {
+        combatantRefs.current[currentCombatant.id].scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    }
+  }, [initiative.current_turn_index, initiative.active, initiative.combatants]);
 
   const isDM = user?.is_dm;
 
@@ -151,10 +171,11 @@ export default function InitiativeTracker() {
         {initiative.combatants.map((combatant, index) => {
           const character =
             combatant.character_id &&
-            characters.find((c) => c.id === combatant.character_id);
+            availableCharacters.find((c) => c.id === combatant.character_id);
           return (
             <div
               key={combatant.id}
+              ref={(el) => (combatantRefs.current[combatant.id] = el)}
               className={`combatant-item-wrapper ${index === initiative.current_turn_index ? "active-turn" : ""}`}
             >
               <div className={`combatant-item ${combatant.type}`}>
@@ -176,6 +197,31 @@ export default function InitiativeTracker() {
                     <span className="combatant-type">NPC</span>
                   )}
                 </div>
+                {/* PC Stats - visible to all */}
+                {character && (
+                  <div className="combatant-pc-stats">
+                    <span className="pc-ac" title="Armor Class">
+                      {character.armor_class}
+                    </span>
+                    <div className="pc-hp-bar-container">
+                      <div
+                        className="pc-hp-bar"
+                        style={{
+                          width: `${Math.max(0, Math.min(100, (character.current_hp / character.max_hp) * 100))}%`,
+                          backgroundColor:
+                            character.current_hp <= character.max_hp * 0.25
+                              ? "var(--color-danger)"
+                              : character.current_hp <= character.max_hp * 0.5
+                                ? "var(--color-warning)"
+                                : "var(--color-success)",
+                        }}
+                      />
+                      <span className="pc-hp-text">
+                        {character.current_hp}/{character.max_hp}
+                      </span>
+                    </div>
+                  </div>
+                )}
                 <div className="combatant-actions">
                   {isDM && combatant.initiative === null && (
                     <button

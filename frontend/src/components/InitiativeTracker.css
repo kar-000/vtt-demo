@@ -5,6 +5,7 @@
   border-radius: 4px;
   padding: 1rem;
   box-shadow: var(--shadow-lg);
+  overflow: hidden;
 }
 
 .initiative-collapsed {
@@ -68,9 +69,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 250px;
+  max-height: 220px;
   overflow-y: auto;
   margin-bottom: 0.75rem;
+  padding-right: 0.5rem;
 }
 
 .combatant-item {
@@ -82,6 +84,7 @@
   border: 2px solid var(--border-secondary);
   border-radius: 4px;
   transition: all 0.2s;
+  min-height: 44px;
 }
 
 .combatant-item:hover {
@@ -146,6 +149,55 @@
   letter-spacing: 0.05em;
 }
 
+/* PC Stats (AC/HP) in initiative */
+.combatant-pc-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.pc-ac {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  padding: 0.1rem 0.3rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: var(--text-accent);
+  min-width: 24px;
+  text-align: center;
+}
+
+.pc-hp-bar-container {
+  width: 60px;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pc-hp-bar {
+  height: 100%;
+  transition:
+    width 0.3s,
+    background-color 0.3s;
+}
+
+.pc-hp-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
 .combatant-actions {
   display: flex;
   gap: 0.25rem;
@@ -193,6 +245,7 @@
   border-radius: 4px;
   overflow: hidden;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .combatant-item-wrapper.active-turn {
@@ -299,21 +352,28 @@
 
 /* Scrollbar styling */
 .combatants-list::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .combatants-list::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
 }
 
 .combatants-list::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
+  background: var(--accent-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border-secondary);
 }
 
 .combatants-list::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
+  background: var(--accent-hover);
+}
+
+/* Firefox scrollbar */
+.combatants-list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-primary) rgba(0, 0, 0, 0.3);
 }
 
 /* Action Economy Section */

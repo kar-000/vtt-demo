@@ -305,7 +305,9 @@ body {
 .hp-manager,
 .attacks-section,
 .spells-section,
-.initiative-tracker {
+.initiative-tracker,
+.character-form-page,
+.character-form-container {
   transition:
     background-color 0.3s ease,
     color 0.3s ease,
