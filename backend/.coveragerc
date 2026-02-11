@@ -2,6 +2,7 @@
 source = app
 omit =
     app/__init__.py
+    app/main.py
     app/*/test_*.py
     tests/*
     */migrations/*

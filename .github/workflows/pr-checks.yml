@@ -133,9 +133,18 @@ jobs:
           echo "Checking coverage for changed files..."
           FAILED=false
 
+          # Files to skip (configuration/boilerplate, not business logic)
+          SKIP_FILES="app/main.py app/__init__.py"
+
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             # Strip backend/ prefix for coverage check
             rel_path=${file#backend/}
+
+            # Skip files that are configuration/boilerplate
+            if echo "$SKIP_FILES" | grep -q "$rel_path"; then
+              echo "Skipping $rel_path (configuration file)"
+              continue
+            fi
 
             # Get coverage for this file
             coverage=$(python -m coverage report --include="$rel_path" 2>/dev/null | tail -1 | awk '{print $NF}' | tr -d '%')
