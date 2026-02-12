@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useGame } from "../contexts/GameContext";
@@ -7,14 +7,78 @@ import InitiativeTracker from "../components/InitiativeTracker";
 import DiceRoller from "../components/DiceRoller";
 import RollLog from "../components/RollLog";
 import NotesSection from "../components/NotesSection";
+import BattleMap from "../components/BattleMap";
+import MapManager from "../components/MapManager";
 import ThemeSwitcher from "../components/ThemeSwitcher";
+import api from "../services/api";
 import "./Game.css";
 
 export default function Game() {
   const { user } = useAuth();
-  const { currentCharacter, connected } = useGame();
+  const { currentCharacter, connected, characters, allCharacters, initiative } =
+    useGame();
   const navigate = useNavigate();
   const [sidebarTab, setSidebarTab] = useState("combat");
+  const [mainTab, setMainTab] = useState("character");
+
+  // Map state
+  const [maps, setMaps] = useState([]);
+  const [activeMap, setActiveMap] = useState(null);
+  const [mapsLoading, setMapsLoading] = useState(false);
+
+  const isDM = user?.is_dm;
+  const campaignId = currentCharacter?.campaign_id;
+
+  // Load maps for the campaign
+  const loadMaps = useCallback(async () => {
+    if (!campaignId) return;
+
+    setMapsLoading(true);
+    try {
+      const mapList = await api.getCampaignMaps(campaignId);
+      setMaps(mapList);
+
+      // Load active map if there is one
+      try {
+        const active = await api.getActiveMap(campaignId);
+        setActiveMap(active);
+      } catch {
+        setActiveMap(null);
+      }
+    } catch (err) {
+      console.error("Failed to load maps:", err);
+    } finally {
+      setMapsLoading(false);
+    }
+  }, [campaignId]);
+
+  useEffect(() => {
+    loadMaps();
+  }, [loadMaps]);
+
+  // Token move handler
+  const handleTokenMove = async (tokenId, x, y) => {
+    if (!activeMap) return;
+
+    try {
+      const updated = await api.moveToken(activeMap.id, tokenId, x, y);
+      setActiveMap(updated);
+    } catch (err) {
+      console.error("Failed to move token:", err);
+    }
+  };
+
+  // Update tokens handler
+  const handleTokensUpdate = async (tokens) => {
+    if (!activeMap) return;
+
+    try {
+      const updated = await api.updateMapTokens(activeMap.id, tokens);
+      setActiveMap(updated);
+    } catch (err) {
+      console.error("Failed to update tokens:", err);
+    }
+  };
 
   if (!currentCharacter) {
     return (
@@ -61,8 +125,53 @@ export default function Game() {
 
       <div className="game-content">
         <div className="game-main">
-          <CharacterSheet character={currentCharacter} />
+          <div className="main-tabs">
+            <button
+              className={`main-tab ${mainTab === "character" ? "active" : ""}`}
+              onClick={() => setMainTab("character")}
+            >
+              Character
+            </button>
+            <button
+              className={`main-tab ${mainTab === "map" ? "active" : ""}`}
+              onClick={() => setMainTab("map")}
+            >
+              Battle Map
+              {activeMap && <span className="map-active-indicator"></span>}
+            </button>
+          </div>
+
+          {mainTab === "character" && (
+            <CharacterSheet character={currentCharacter} />
+          )}
+
+          {mainTab === "map" && (
+            <div className="battle-map-section">
+              {isDM && campaignId && (
+                <MapManager
+                  campaignId={campaignId}
+                  maps={maps}
+                  activeMapId={activeMap?.id}
+                  onRefresh={loadMaps}
+                />
+              )}
+              {isDM && !campaignId && (
+                <div className="no-campaign-warning">
+                  Create or join a campaign to use battle maps.
+                </div>
+              )}
+              <BattleMap
+                map={activeMap}
+                tokens={activeMap?.tokens || []}
+                onTokenMove={handleTokenMove}
+                characters={allCharacters || characters}
+                combatants={initiative?.combatants || []}
+                editable={isDM}
+              />
+            </div>
+          )}
         </div>
+
         <div className="game-sidebar">
           <div className="sidebar-tabs">
             <button
