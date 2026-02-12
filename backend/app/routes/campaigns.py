@@ -95,7 +95,12 @@ async def get_campaign(
     # Check access: DM or player with character in campaign
     if not current_user.is_dm:
         has_character = (
-            db.query(Character).filter(Character.campaign_id == campaign_id, Character.owner_id == current_user.id).first()
+            db.query(Character)
+            .filter(
+                Character.campaign_id == campaign_id,
+                Character.owner_id == current_user.id,
+            )
+            .first()
         )
         if not has_character:
             raise HTTPException(
