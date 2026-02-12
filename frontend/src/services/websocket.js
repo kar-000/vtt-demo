@@ -90,6 +90,10 @@ class WebSocketService {
     this.send("chat_message", { message });
   }
 
+  sendMapUpdate(mapData) {
+    this.send("map_update", mapData);
+  }
+
   on(eventType, callback) {
     if (!this.listeners.has(eventType)) {
       this.listeners.set(eventType, []);

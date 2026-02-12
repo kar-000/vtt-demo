@@ -219,6 +219,21 @@
   min-height: 400px;
 }
 
+.battle-map-section .map-controls-row {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.battle-map-section .map-controls-row .map-manager {
+  flex: 1;
+}
+
+.battle-map-section .map-controls-row .token-panel {
+  width: 220px;
+  flex-shrink: 0;
+}
+
 /* Map Manager Styles */
 .map-manager .no-maps-message {
   color: var(--text-muted);

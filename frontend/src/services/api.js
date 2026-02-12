@@ -302,6 +302,72 @@ class ApiService {
     });
     return this.handleResponse(response);
   }
+
+  // Campaign endpoints
+  async getCampaigns() {
+    const response = await fetch(`${API_BASE}/campaigns/`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getCampaign(campaignId) {
+    const response = await fetch(`${API_BASE}/campaigns/${campaignId}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async createCampaign(campaignData) {
+    const response = await fetch(`${API_BASE}/campaigns/`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(campaignData),
+    });
+    return this.handleResponse(response);
+  }
+
+  async updateCampaign(campaignId, campaignData) {
+    const response = await fetch(`${API_BASE}/campaigns/${campaignId}`, {
+      method: "PUT",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(campaignData),
+    });
+    return this.handleResponse(response);
+  }
+
+  async deleteCampaign(campaignId) {
+    const response = await fetch(`${API_BASE}/campaigns/${campaignId}`, {
+      method: "DELETE",
+      headers: this.getAuthHeaders(),
+    });
+    if (response.status === 204) {
+      return { success: true };
+    }
+    return this.handleResponse(response);
+  }
+
+  async joinCampaign(campaignId, characterId) {
+    const response = await fetch(
+      `${API_BASE}/campaigns/${campaignId}/join/${characterId}`,
+      {
+        method: "POST",
+        headers: this.getAuthHeaders(),
+      },
+    );
+    return this.handleResponse(response);
+  }
+
+  async leaveCampaign(campaignId, characterId) {
+    const response = await fetch(
+      `${API_BASE}/campaigns/${campaignId}/leave/${characterId}`,
+      {
+        method: "POST",
+        headers: this.getAuthHeaders(),
+      },
+    );
+    return this.handleResponse(response);
+  }
 }
 
 export default new ApiService();

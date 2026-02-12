@@ -5,6 +5,7 @@ import HPManager from "./HPManager";
 import AttacksSection from "./AttacksSection";
 import SpellsSection from "./SpellsSection";
 import LevelUpModal from "./LevelUpModal";
+import CharacterPortrait from "./CharacterPortrait";
 import "./CharacterSheet.css";
 
 const SKILLS = {
@@ -245,6 +246,12 @@ export default function CharacterSheet({ character }) {
     <div className="character-sheet">
       {/* Header */}
       <div className="sheet-header">
+        <CharacterPortrait
+          character={character}
+          onUpdateCharacter={updateCharacter}
+          size="large"
+          editable={character.owner_id === user?.id || user?.is_dm}
+        />
         <div className="character-title">
           <h2>
             {character.name}

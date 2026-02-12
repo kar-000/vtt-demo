@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useGame } from "../contexts/GameContext";
+import CampaignManager from "../components/CampaignManager";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import "./Dashboard.css";
 
@@ -14,6 +15,7 @@ export default function Dashboard() {
     deleteCharacter,
     createCharacter,
     loadAllCharacters,
+    loadCharacters,
     loading,
   } = useGame();
   const navigate = useNavigate();
@@ -175,6 +177,17 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* DM Section: Campaign Management */}
+        {user?.is_dm && (
+          <CampaignManager
+            characters={allCharacters}
+            onCharacterUpdate={() => {
+              loadCharacters();
+              loadAllCharacters();
+            }}
+          />
+        )}
 
         {/* DM Section: View All Player Characters */}
         {user?.is_dm && (

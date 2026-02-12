@@ -1,0 +1,156 @@
+.campaign-manager {
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.campaign-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.campaign-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.campaign-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.campaign-form input,
+.campaign-form textarea {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.campaign-form textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.no-campaigns {
+  color: var(--text-secondary);
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+.campaign-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.campaign-item {
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.campaign-info {
+  margin-bottom: 0.5rem;
+}
+
+.campaign-info h4 {
+  margin: 0 0 0.25rem 0;
+  color: var(--text-primary);
+}
+
+.campaign-info p {
+  margin: 0 0 0.25rem 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.character-count {
+  color: var(--accent-color);
+  font-size: 0.75rem;
+}
+
+.campaign-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.campaign-actions select {
+  flex: 1;
+  padding: 0.375rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.campaign-characters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.character-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--accent-color);
+  color: white;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+.remove-char {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.7;
+}
+
+.remove-char:hover {
+  opacity: 1;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.btn-icon.btn-danger {
+  color: var(--danger-color, #dc3545);
+}
+
+.btn-icon.btn-danger:hover {
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.error-message {
+  color: var(--danger-color, #dc3545);
+  background: rgba(220, 53, 69, 0.1);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}

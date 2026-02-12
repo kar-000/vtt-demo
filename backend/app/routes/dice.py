@@ -352,6 +352,23 @@ async def websocket_endpoint(
                 # Broadcast updated state to all clients
                 await manager.broadcast_to_campaign(campaign_id, {"type": "initiative_state", "data": initiative})
 
+            elif message_type == "map_update":
+                # Broadcast map changes (token moves, additions, removals, fog, activation)
+                # DM sends the update, all players receive it
+                if not user.is_dm:
+                    await manager.send_personal_message(
+                        {"type": "error", "message": "Only the DM can update the map"},
+                        websocket,
+                    )
+                    continue
+
+                map_data = data.get("data", {})
+                await manager.broadcast_to_campaign(
+                    campaign_id,
+                    {"type": "map_update", "data": map_data},
+                    exclude=websocket,
+                )
+
             else:
                 # Unknown message type
                 await manager.send_personal_message(
