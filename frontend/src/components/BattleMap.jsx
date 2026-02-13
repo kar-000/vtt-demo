@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import api from "../services/api";
 import "./BattleMap.css";
 
 export default function BattleMap({
@@ -8,6 +9,7 @@ export default function BattleMap({
   onTokenMove,
   onTokenAdd,
   onTokenRemove,
+  onMapUpdated,
   characters,
   combatants,
   editable = false,
@@ -27,6 +29,11 @@ export default function BattleMap({
   const [draggedToken, setDraggedToken] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
+
+  // Fog of war state
+  const [fogMode, setFogMode] = useState(false);
+  const [isFogPainting, setIsFogPainting] = useState(false);
+  const [fogAction, setFogAction] = useState(null); // "reveal" or "hide"
 
   // Image loading
   const [mapImage, setMapImage] = useState(null);
@@ -130,17 +137,30 @@ export default function BattleMap({
       }
     }
 
-    // Draw fog of war (if enabled and not DM)
-    if (map?.fog_enabled && !isDM) {
+    // Draw fog of war
+    if (map?.fog_enabled) {
       const revealed = new Set(
         (map.revealed_cells || []).map((c) => `${c.x},${c.y}`),
       );
 
-      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
-      for (let x = 0; x < gridWidth; x++) {
-        for (let y = 0; y < gridHeight; y++) {
-          if (!revealed.has(`${x},${y}`)) {
-            ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
+      if (isDM) {
+        // DM sees a light overlay on hidden cells
+        ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+        for (let x = 0; x < gridWidth; x++) {
+          for (let y = 0; y < gridHeight; y++) {
+            if (!revealed.has(`${x},${y}`)) {
+              ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
+            }
+          }
+        }
+      } else {
+        // Players see opaque fog on hidden cells
+        ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+        for (let x = 0; x < gridWidth; x++) {
+          for (let y = 0; y < gridHeight; y++) {
+            if (!revealed.has(`${x},${y}`)) {
+              ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
+            }
           }
         }
       }
@@ -252,12 +272,51 @@ export default function BattleMap({
     return () => canvas.removeEventListener("wheel", wheelHandler);
   }, [zoom]);
 
+  // Fog of war helpers
+  const toggleFogEnabled = async () => {
+    if (!map) return;
+    try {
+      const updated = await api.updateMap(map.id, {
+        fog_enabled: !map.fog_enabled,
+      });
+      onMapUpdated?.(updated);
+    } catch (err) {
+      console.error("Failed to toggle fog:", err);
+    }
+  };
+
+  const paintFogCell = async (screenX, screenY, action) => {
+    if (!map) return;
+    const grid = screenToGrid(screenX, screenY);
+    if (grid.x < 0 || grid.x >= gridWidth || grid.y < 0 || grid.y >= gridHeight)
+      return;
+
+    try {
+      const updated = await api.updateFog(
+        map.id,
+        [{ x: grid.x, y: grid.y }],
+        action,
+      );
+      onMapUpdated?.(updated);
+    } catch (err) {
+      console.error("Failed to update fog:", err);
+    }
+  };
+
   // Mouse handlers
   const handleMouseDown = (e) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
     const screenX = e.clientX;
     const screenY = e.clientY;
+
+    // Fog painting mode
+    if (fogMode && isDM && map?.fog_enabled) {
+      e.preventDefault();
+      const action = e.button === 2 ? "remove" : "add"; // right-click hides, left-click reveals
+      setIsFogPainting(true);
+      setFogAction(action);
+      paintFogCell(screenX, screenY, action);
+      return;
+    }
 
     // Check for token drag
     if (editable && isDM) {
@@ -280,6 +339,12 @@ export default function BattleMap({
   };
 
   const handleMouseMove = (e) => {
+    // Fog painting drag
+    if (isFogPainting && fogMode && isDM && fogAction) {
+      paintFogCell(e.clientX, e.clientY, fogAction);
+      return;
+    }
+
     if (isPanning) {
       const dx = e.clientX - lastPanPoint.x;
       const dy = e.clientY - lastPanPoint.y;
@@ -295,6 +360,12 @@ export default function BattleMap({
   };
 
   const handleMouseUp = (e) => {
+    if (isFogPainting) {
+      setIsFogPainting(false);
+      setFogAction(null);
+      return;
+    }
+
     if (isPanning) {
       setIsPanning(false);
     }
@@ -318,9 +389,9 @@ export default function BattleMap({
   };
 
   const handleDoubleClick = (e) => {
+    if (fogMode) return; // Don't remove tokens in fog mode
     if (!editable || !isDM) return;
 
-    const grid = screenToGrid(e.clientX, e.clientY);
     const existingToken = getTokenAtPosition(e.clientX, e.clientY);
 
     if (existingToken) {
@@ -369,13 +440,40 @@ export default function BattleMap({
         >
           ↺
         </button>
+        {isDM && editable && (
+          <>
+            <span className="control-divider">|</span>
+            <button
+              className={`btn-map-control ${map?.fog_enabled ? "active" : ""}`}
+              onClick={toggleFogEnabled}
+              title={
+                map?.fog_enabled ? "Disable Fog of War" : "Enable Fog of War"
+              }
+            >
+              ☁
+            </button>
+            {map?.fog_enabled && (
+              <button
+                className={`btn-map-control ${fogMode ? "active" : ""}`}
+                onClick={() => setFogMode(!fogMode)}
+                title={
+                  fogMode
+                    ? "Exit Fog Edit Mode"
+                    : "Edit Fog (click=reveal, right-click=hide)"
+                }
+              >
+                ✎
+              </button>
+            )}
+          </>
+        )}
       </div>
 
       <canvas
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}
-        className="battle-map-canvas"
+        className={`battle-map-canvas ${fogMode ? "fog-cursor" : ""}`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -386,9 +484,19 @@ export default function BattleMap({
 
       {isDM && editable && (
         <div className="map-instructions">
-          <span>Drag tokens to move</span>
-          <span>Scroll to zoom</span>
-          <span>Drag empty space to pan</span>
+          {fogMode ? (
+            <>
+              <span>Click to reveal</span>
+              <span>Right-click to hide</span>
+              <span>Drag to paint</span>
+            </>
+          ) : (
+            <>
+              <span>Drag tokens to move</span>
+              <span>Scroll to zoom</span>
+              <span>Drag empty space to pan</span>
+            </>
+          )}
         </div>
       )}
     </div>

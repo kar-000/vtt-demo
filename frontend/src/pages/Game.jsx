@@ -10,6 +10,7 @@ import NotesSection from "../components/NotesSection";
 import BattleMap from "../components/BattleMap";
 import MapManager from "../components/MapManager";
 import TokenPanel from "../components/TokenPanel";
+import CampaignManager from "../components/CampaignManager";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import api from "../services/api";
 import websocket from "../services/websocket";
@@ -17,8 +18,15 @@ import "./Game.css";
 
 export default function Game() {
   const { user } = useAuth();
-  const { currentCharacter, connected, characters, allCharacters, initiative } =
-    useGame();
+  const {
+    currentCharacter,
+    connected,
+    characters,
+    allCharacters,
+    initiative,
+    loadCharacters,
+    loadAllCharacters,
+  } = useGame();
   const navigate = useNavigate();
   const [sidebarTab, setSidebarTab] = useState("combat");
   const [mainTab, setMainTab] = useState("character");
@@ -185,10 +193,28 @@ export default function Game() {
               Battle Map
               {activeMap && <span className="map-active-indicator"></span>}
             </button>
+            {isDM && (
+              <button
+                className={`main-tab ${mainTab === "campaign" ? "active" : ""}`}
+                onClick={() => setMainTab("campaign")}
+              >
+                Campaign
+              </button>
+            )}
           </div>
 
           {mainTab === "character" && (
             <CharacterSheet character={currentCharacter} />
+          )}
+
+          {mainTab === "campaign" && isDM && (
+            <CampaignManager
+              characters={allCharacters || characters}
+              onCharacterUpdate={() => {
+                loadCharacters();
+                loadAllCharacters();
+              }}
+            />
           )}
 
           {mainTab === "map" && (
@@ -224,6 +250,7 @@ export default function Game() {
                 tokens={activeMap?.tokens || []}
                 onTokenMove={handleTokenMove}
                 onTokenRemove={handleRemoveToken}
+                onMapUpdated={setActiveMap}
                 characters={allCharacters || characters}
                 combatants={initiative?.combatants || []}
                 editable={isDM}

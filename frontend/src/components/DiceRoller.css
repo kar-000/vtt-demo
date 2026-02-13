@@ -122,14 +122,12 @@
   margin-top: 2px;
 }
 
-/* d20 - Icosahedron-inspired triangle */
+/* d20 - Icosahedron-inspired shape */
 .dice-d20 {
-  width: 54px;
-  height: 47px;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  padding-top: 10px;
+  width: 50px;
+  height: 50px;
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
   background: var(--dice-d20);
-  transform-origin: 50% 66%; /* Centroid of triangle */
 }
 .dice-d20 .dice-label {
   font-size: 0.85rem;
