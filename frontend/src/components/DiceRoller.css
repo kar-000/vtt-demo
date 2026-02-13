@@ -17,6 +17,54 @@
   padding-bottom: 0.5rem;
 }
 
+/* Advantage/Disadvantage Toggle */
+.advantage-toggle {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.adv-btn {
+  padding: 0.35rem 1rem;
+  border: 2px solid var(--border-light);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-dark-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.adv-btn:hover {
+  border-color: var(--text-dark-secondary);
+}
+
+.adv-advantage.active {
+  background: #27ae60;
+  border-color: #27ae60;
+  color: #fff;
+}
+
+.adv-disadvantage.active {
+  background: #e74c3c;
+  border-color: #e74c3c;
+  color: #fff;
+}
+
+.preview-adv {
+  font-size: 0.85rem;
+}
+
+.preview-adv.adv {
+  color: #27ae60;
+}
+
+.preview-adv.dis {
+  color: #e74c3c;
+}
+
 .quick-roll-section {
   display: flex;
   flex-direction: column;

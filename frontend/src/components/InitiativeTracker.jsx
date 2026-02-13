@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useGame } from "../contexts/GameContext";
 import { useAuth } from "../contexts/AuthContext";
 import CharacterPortrait from "./CharacterPortrait";
+import ConditionManager from "./ConditionManager";
 import MonsterStatBlock from "./MonsterStatBlock";
 import srdMonsters from "../data/srd-monsters.json";
 import "./InitiativeTracker.css";
@@ -29,6 +30,8 @@ export default function InitiativeTracker() {
     autoTrackActions,
     setAutoTrackActions,
     rollDice,
+    addCondition,
+    removeCondition,
   } = useGame();
 
   // Use allCharacters for DM (to see all players), otherwise use own characters
@@ -243,6 +246,13 @@ export default function InitiativeTracker() {
                   )}
                 </div>
               </div>
+              {/* Condition Badges */}
+              <ConditionManager
+                combatant={combatant}
+                onAddCondition={addCondition}
+                onRemoveCondition={removeCondition}
+                isDM={isDM}
+              />
               {/* Monster Stat Block for NPCs */}
               {isDM && combatant.type === "npc" && combatant.max_hp && (
                 <MonsterStatBlock combatant={combatant} onRollDice={rollDice} />

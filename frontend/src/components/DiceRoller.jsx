@@ -11,6 +11,7 @@ export default function DiceRoller() {
   const [modifier, setModifier] = useState(0);
   const [rollingDice, setRollingDice] = useState(null);
   const [isCustomRolling, setIsCustomRolling] = useState(false);
+  const [advantage, setAdvantage] = useState(null); // null | "advantage" | "disadvantage"
 
   const handleRoll = () => {
     if (isCustomRolling) return;
@@ -19,7 +20,7 @@ export default function DiceRoller() {
       return;
     }
     setIsCustomRolling(true);
-    rollDice(selectedDice, numDice, modifier, "manual");
+    rollDice(selectedDice, numDice, modifier, "manual", null, advantage);
     setTimeout(() => setIsCustomRolling(false), 500);
   };
 
@@ -30,13 +31,37 @@ export default function DiceRoller() {
       return;
     }
     setRollingDice(diceType);
-    rollDice(diceType, 1, 0, "manual");
+    // Apply advantage only to d20 rolls
+    const advForRoll = diceType === 20 ? advantage : null;
+    rollDice(diceType, 1, 0, "manual", null, advForRoll);
     setTimeout(() => setRollingDice(null), 500);
+  };
+
+  const toggleAdvantage = (mode) => {
+    setAdvantage((prev) => (prev === mode ? null : mode));
   };
 
   return (
     <div className="dice-roller">
       <h3>Dice Roller</h3>
+
+      {/* Advantage/Disadvantage Toggle */}
+      <div className="advantage-toggle">
+        <button
+          className={`adv-btn adv-advantage ${advantage === "advantage" ? "active" : ""}`}
+          onClick={() => toggleAdvantage("advantage")}
+          title="Roll with Advantage (2d20, take highest)"
+        >
+          ADV
+        </button>
+        <button
+          className={`adv-btn adv-disadvantage ${advantage === "disadvantage" ? "active" : ""}`}
+          onClick={() => toggleAdvantage("disadvantage")}
+          title="Roll with Disadvantage (2d20, take lowest)"
+        >
+          DIS
+        </button>
+      </div>
 
       <div className="quick-roll-section">
         <div className="quick-roll-label">Quick Roll:</div>
@@ -101,6 +126,14 @@ export default function DiceRoller() {
         <div className="roll-preview">
           Roll: {numDice}d{selectedDice}
           {modifier !== 0 && ` ${modifier >= 0 ? "+" : ""}${modifier}`}
+          {advantage && selectedDice === 20 && numDice === 1 && (
+            <span
+              className={`preview-adv ${advantage === "advantage" ? "adv" : "dis"}`}
+            >
+              {" "}
+              ({advantage === "advantage" ? "ADV" : "DIS"})
+            </span>
+          )}
         </div>
 
         <button

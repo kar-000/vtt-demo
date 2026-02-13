@@ -72,8 +72,23 @@ async def websocket_endpoint(
                 # Perform roll
                 num_dice = roll_data.get("num_dice", 1)
                 modifier = roll_data.get("modifier", 0)
-                rolls = roll_dice(num_dice, dice_type)
-                total = sum(rolls) + modifier
+                advantage = roll_data.get("advantage")  # None, "advantage", or "disadvantage"
+
+                # Handle advantage/disadvantage for d20 rolls
+                if advantage in ("advantage", "disadvantage") and dice_type == 20 and num_dice == 1:
+                    roll1 = roll_dice(1, 20)[0]
+                    roll2 = roll_dice(1, 20)[0]
+                    if advantage == "advantage":
+                        used = max(roll1, roll2)
+                    else:
+                        used = min(roll1, roll2)
+                    rolls = [used]
+                    all_rolls = [roll1, roll2]
+                    total = used + modifier
+                else:
+                    rolls = roll_dice(num_dice, dice_type)
+                    all_rolls = None
+                    total = sum(rolls) + modifier
 
                 # Create result
                 result = {
@@ -87,6 +102,8 @@ async def websocket_endpoint(
                         "total": total,
                         "roll_type": roll_data.get("roll_type", "manual"),
                         "label": roll_data.get("label"),
+                        "advantage": advantage,
+                        "all_rolls": all_rolls,
                         "timestamp": datetime.utcnow().isoformat() + "Z",
                         "user_id": user.id,
                         "username": user.username,
@@ -249,6 +266,19 @@ async def websocket_endpoint(
                             current["action_economy"]["movement"] = current["action_economy"].get("max_movement", 30)
                             # Note: Reaction resets at start of YOUR next turn, not when others' turns change
                             current["action_economy"]["reaction"] = True
+                        # Tick down condition durations for the new current combatant
+                        conditions = current.get("conditions", [])
+                        remaining = []
+                        for cond in conditions:
+                            if cond.get("duration_type") == "rounds" and cond.get("duration") is not None:
+                                cond["duration"] -= 1
+                                if cond["duration"] > 0:
+                                    remaining.append(cond)
+                                # duration <= 0: condition expires (dropped from list)
+                            else:
+                                # indefinite or concentration: keep until manually removed
+                                remaining.append(cond)
+                        current["conditions"] = remaining
 
                 elif action == "previous_turn":
                     # Go back to previous turn
@@ -334,6 +364,42 @@ async def websocket_endpoint(
                                 combatant["max_hp"] = init_data["max_hp"]
                             if "armor_class" in init_data:
                                 combatant["armor_class"] = init_data["armor_class"]
+                            break
+
+                elif action == "add_condition":
+                    # Add a condition to a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    condition = {
+                        "name": init_data.get("name", "Unknown"),
+                        "duration": init_data.get("duration"),  # None = indefinite
+                        "duration_type": init_data.get("duration_type", "indefinite"),
+                        "source": init_data.get("source", ""),
+                    }
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id:
+                            conditions = combatant.get("conditions", [])
+                            # Don't add duplicate conditions
+                            if not any(c["name"] == condition["name"] for c in conditions):
+                                conditions.append(condition)
+                                combatant["conditions"] = conditions
+                            break
+
+                elif action == "remove_condition":
+                    # Remove a condition from a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    condition_name = init_data.get("name")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id:
+                            conditions = combatant.get("conditions", [])
+                            combatant["conditions"] = [c for c in conditions if c["name"] != condition_name]
+                            break
+
+                elif action == "clear_conditions":
+                    # Remove all conditions from a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id:
+                            combatant["conditions"] = []
                             break
 
                 else:

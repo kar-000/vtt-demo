@@ -67,11 +67,30 @@ export default function RollLog() {
   };
 
   const formatRollDetails = (roll) => {
-    const rollsStr = roll.rolls.join(" + ");
     const modStr =
       roll.modifier !== 0
         ? ` ${roll.modifier >= 0 ? "+" : ""}${roll.modifier}`
         : "";
+
+    // Advantage/disadvantage display
+    if (roll.advantage && roll.all_rolls && roll.all_rolls.length === 2) {
+      const [r1, r2] = roll.all_rolls;
+      const used = roll.rolls[0];
+      const dropped = r1 === used ? r2 : r1;
+      const advLabel = roll.advantage === "advantage" ? "ADV" : "DIS";
+      return (
+        <span>
+          2d{roll.dice_type}{" "}
+          <span className="adv-label" data-type={roll.advantage}>
+            {advLabel}
+          </span>{" "}
+          (<span className="roll-used">{used}</span>,{" "}
+          <span className="roll-dropped">{dropped}</span>){modStr}
+        </span>
+      );
+    }
+
+    const rollsStr = roll.rolls.join(" + ");
     return `${roll.num_dice}d${roll.dice_type} (${rollsStr})${modStr}`;
   };
 

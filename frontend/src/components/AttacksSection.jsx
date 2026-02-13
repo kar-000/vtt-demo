@@ -120,15 +120,22 @@ export default function AttacksSection({
     }
   };
 
-  const handleRollAttack = (attack) => {
+  const handleRollAttack = (attack, advantage = null) => {
     const bonus = parseInt(attack.attack_bonus) || 0;
     const sign = bonus >= 0 ? "+" : "";
+    const advLabel =
+      advantage === "advantage"
+        ? " (ADV)"
+        : advantage === "disadvantage"
+          ? " (DIS)"
+          : "";
     onRollDice(
       "d20",
       1,
       bonus,
       "attack",
-      `${character.name} attacks with ${attack.name} (1d20${sign}${bonus})`,
+      `${character.name} attacks with ${attack.name} (1d20${sign}${bonus})${advLabel}`,
+      advantage,
     );
     // Auto-consume action when attacking
     consumeActionEconomy("action");
@@ -302,17 +309,33 @@ export default function AttacksSection({
                   )}
                 </div>
                 <div className="attack-details">
-                  <button
-                    onClick={() => handleRollAttack(attack)}
-                    className="roll-button attack-roll"
-                    title="Roll attack"
-                  >
-                    <span className="roll-label">Attack</span>
-                    <span className="roll-value">
-                      {attack.attack_bonus >= 0 ? "+" : ""}
-                      {attack.attack_bonus}
-                    </span>
-                  </button>
+                  <div className="attack-roll-group">
+                    <button
+                      onClick={() => handleRollAttack(attack)}
+                      className="roll-button attack-roll"
+                      title="Roll attack"
+                    >
+                      <span className="roll-label">Attack</span>
+                      <span className="roll-value">
+                        {attack.attack_bonus >= 0 ? "+" : ""}
+                        {attack.attack_bonus}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => handleRollAttack(attack, "advantage")}
+                      className="adv-mini-btn adv-up"
+                      title="Attack with Advantage"
+                    >
+                      A
+                    </button>
+                    <button
+                      onClick={() => handleRollAttack(attack, "disadvantage")}
+                      className="adv-mini-btn adv-down"
+                      title="Attack with Disadvantage"
+                    >
+                      D
+                    </button>
+                  </div>
                   <button
                     onClick={() => handleRollDamage(attack)}
                     className="roll-button damage-roll"

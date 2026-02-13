@@ -147,3 +147,32 @@
 .chat-part:last-child {
   margin-bottom: 0;
 }
+
+/* Advantage/Disadvantage Roll Display */
+.adv-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+}
+
+.adv-label[data-type="advantage"] {
+  background: rgba(39, 174, 96, 0.2);
+  color: #27ae60;
+}
+
+.adv-label[data-type="disadvantage"] {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
+.roll-used {
+  font-weight: 700;
+}
+
+.roll-dropped {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
