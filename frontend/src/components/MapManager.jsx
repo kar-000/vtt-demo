@@ -79,6 +79,10 @@ export default function MapManager({
       }
       const newMap = await api.createMap(payload);
 
+      // Auto-activate the newly created map
+      await api.activateMap(newMap.id);
+      onMapActivated?.(newMap.id);
+
       onMapCreated?.(newMap);
       setIsCreating(false);
       setFormData({
@@ -227,6 +231,7 @@ export default function MapManager({
                   }))
                 }
               />
+              <span className="field-hint">Number of columns</span>
             </div>
             <div className="form-group">
               <label>Height (squares)</label>
@@ -242,6 +247,7 @@ export default function MapManager({
                   }))
                 }
               />
+              <span className="field-hint">Number of rows</span>
             </div>
             <div className="form-group">
               <label>Grid Size (px)</label>
@@ -257,6 +263,7 @@ export default function MapManager({
                   }))
                 }
               />
+              <span className="field-hint">Pixels per square (zoom)</span>
             </div>
           </div>
 

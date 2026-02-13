@@ -252,6 +252,14 @@
   resize: vertical;
 }
 
+.map-form .field-hint {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+  opacity: 0.8;
+}
+
 .map-form-actions {
   display: flex;
   justify-content: flex-end;
@@ -292,6 +300,67 @@
 
 .image-upload input[type="file"] {
   display: none;
+}
+
+/* Map List Buttons */
+.map-list-item .btn-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.map-list-item .btn-icon:hover {
+  background: var(--color-primary-hover, #5a67d8);
+  transform: scale(1.05);
+}
+
+.map-list-item .btn-icon.btn-danger {
+  background: var(--color-danger, #dc3545);
+}
+
+.map-list-item .btn-icon.btn-danger:hover {
+  background: #c82333;
+}
+
+.map-list-item .btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.active-badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  background: var(--color-success, #28a745);
+  color: #fff;
+  font-size: 0.7rem;
+  border-radius: 10px;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+}
+
+.no-maps-message {
+  color: var(--color-text-secondary);
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+.error-message {
+  color: var(--color-danger, #dc3545);
+  background: rgba(220, 53, 69, 0.1);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
 }
 
 /* Responsive */

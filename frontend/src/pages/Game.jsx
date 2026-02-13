@@ -9,8 +9,10 @@ import RollLog from "../components/RollLog";
 import NotesSection from "../components/NotesSection";
 import BattleMap from "../components/BattleMap";
 import MapManager from "../components/MapManager";
+import TokenPanel from "../components/TokenPanel";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import api from "../services/api";
+import websocket from "../services/websocket";
 import "./Game.css";
 
 export default function Game() {
@@ -56,6 +58,22 @@ export default function Game() {
     loadMaps();
   }, [loadMaps]);
 
+  // Listen for real-time map updates from WebSocket
+  useEffect(() => {
+    const handleMapUpdate = (data) => {
+      if (data.action === "tokens_updated" && data.map_id === activeMap?.id) {
+        setActiveMap((prev) =>
+          prev ? { ...prev, tokens: data.tokens } : prev,
+        );
+      } else if (data.action === "map_activated") {
+        loadMaps();
+      }
+    };
+
+    websocket.on("map_update", handleMapUpdate);
+    return () => websocket.off("map_update", handleMapUpdate);
+  }, [activeMap?.id, loadMaps]);
+
   // Token move handler
   const handleTokenMove = async (tokenId, x, y) => {
     if (!activeMap) return;
@@ -63,6 +81,12 @@ export default function Game() {
     try {
       const updated = await api.moveToken(activeMap.id, tokenId, x, y);
       setActiveMap(updated);
+      // Broadcast to other players
+      websocket.sendMapUpdate({
+        action: "tokens_updated",
+        map_id: activeMap.id,
+        tokens: updated.tokens,
+      });
     } catch (err) {
       console.error("Failed to move token:", err);
     }
@@ -75,9 +99,31 @@ export default function Game() {
     try {
       const updated = await api.updateMapTokens(activeMap.id, tokens);
       setActiveMap(updated);
+      // Broadcast to other players
+      websocket.sendMapUpdate({
+        action: "tokens_updated",
+        map_id: activeMap.id,
+        tokens: updated.tokens,
+      });
     } catch (err) {
       console.error("Failed to update tokens:", err);
     }
+  };
+
+  // Add token handler
+  const handleAddToken = async (token) => {
+    if (!activeMap) return;
+
+    const newTokens = [...(activeMap.tokens || []), token];
+    await handleTokensUpdate(newTokens);
+  };
+
+  // Remove token handler
+  const handleRemoveToken = async (tokenId) => {
+    if (!activeMap) return;
+
+    const newTokens = (activeMap.tokens || []).filter((t) => t.id !== tokenId);
+    await handleTokensUpdate(newTokens);
   };
 
   if (!currentCharacter) {
@@ -148,12 +194,25 @@ export default function Game() {
           {mainTab === "map" && (
             <div className="battle-map-section">
               {isDM && campaignId && (
-                <MapManager
-                  campaignId={campaignId}
-                  maps={maps}
-                  activeMapId={activeMap?.id}
-                  onRefresh={loadMaps}
-                />
+                <div className="map-controls-row">
+                  <MapManager
+                    campaignId={campaignId}
+                    maps={maps}
+                    activeMapId={activeMap?.id}
+                    onRefresh={loadMaps}
+                    onMapActivated={() => {
+                      websocket.sendMapUpdate({ action: "map_activated" });
+                    }}
+                  />
+                  {activeMap && (
+                    <TokenPanel
+                      characters={allCharacters || characters}
+                      combatants={initiative?.combatants || []}
+                      tokens={activeMap?.tokens || []}
+                      onAddToken={handleAddToken}
+                    />
+                  )}
+                </div>
               )}
               {isDM && !campaignId && (
                 <div className="no-campaign-warning">
@@ -164,6 +223,7 @@ export default function Game() {
                 map={activeMap}
                 tokens={activeMap?.tokens || []}
                 onTokenMove={handleTokenMove}
+                onTokenRemove={handleRemoveToken}
                 characters={allCharacters || characters}
                 combatants={initiative?.combatants || []}
                 editable={isDM}

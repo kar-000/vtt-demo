@@ -26,6 +26,7 @@ export default function BattleMap({
   // Drag state
   const [draggedToken, setDraggedToken] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
 
   // Image loading
   const [mapImage, setMapImage] = useState(null);
@@ -49,48 +50,42 @@ export default function BattleMap({
   const canvasHeight = gridHeight * gridSize;
 
   // Convert screen coordinates to grid coordinates
-  const screenToGrid = useCallback(
-    (screenX, screenY) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return { x: 0, y: 0 };
+  const screenToGrid = (screenX, screenY) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
 
-      const rect = canvas.getBoundingClientRect();
-      const x = (screenX - rect.left - pan.x) / zoom;
-      const y = (screenY - rect.top - pan.y) / zoom;
+    const rect = canvas.getBoundingClientRect();
+    // Account for CSS scaling: canvas display size may differ from attribute size
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = ((screenX - rect.left) * scaleX - pan.x) / zoom;
+    const y = ((screenY - rect.top) * scaleY - pan.y) / zoom;
 
-      return {
-        x: Math.floor(x / gridSize),
-        y: Math.floor(y / gridSize),
-      };
-    },
-    [pan, zoom, gridSize],
-  );
+    return {
+      x: Math.floor(x / gridSize),
+      y: Math.floor(y / gridSize),
+    };
+  };
 
   // Convert grid coordinates to screen position
-  const gridToScreen = useCallback(
-    (gridX, gridY) => {
-      return {
-        x: gridX * gridSize * zoom + pan.x,
-        y: gridY * gridSize * zoom + pan.y,
-      };
-    },
-    [gridSize, zoom, pan],
-  );
+  const gridToScreen = (gridX, gridY) => {
+    return {
+      x: gridX * gridSize * zoom + pan.x,
+      y: gridY * gridSize * zoom + pan.y,
+    };
+  };
 
   // Find token at screen position
-  const getTokenAtPosition = useCallback(
-    (screenX, screenY) => {
-      const grid = screenToGrid(screenX, screenY);
-      return tokens.find(
-        (t) =>
-          grid.x >= t.x &&
-          grid.x < t.x + (t.size || 1) &&
-          grid.y >= t.y &&
-          grid.y < t.y + (t.size || 1),
-      );
-    },
-    [tokens, screenToGrid],
-  );
+  const getTokenAtPosition = (screenX, screenY) => {
+    const grid = screenToGrid(screenX, screenY);
+    return tokens.find(
+      (t) =>
+        grid.x >= t.x &&
+        grid.x < t.x + (t.size || 1) &&
+        grid.y >= t.y &&
+        grid.y < t.y + (t.size || 1),
+    );
+  };
 
   // Draw the map
   const draw = useCallback(() => {
@@ -154,20 +149,45 @@ export default function BattleMap({
     // Draw tokens
     tokens.forEach((token) => {
       const size = (token.size || 1) * gridSize;
-      const x = token.x * gridSize;
-      const y = token.y * gridSize;
+      const isDragging = draggedToken?.id === token.id;
+
+      // If dragging this token, draw at drag position; otherwise at stored position
+      let x, y;
+      if (isDragging) {
+        // Calculate snapped grid position for preview
+        const snapX = Math.max(
+          0,
+          Math.min(
+            gridWidth - (token.size || 1),
+            dragPosition.x - dragOffset.x,
+          ),
+        );
+        const snapY = Math.max(
+          0,
+          Math.min(
+            gridHeight - (token.size || 1),
+            dragPosition.y - dragOffset.y,
+          ),
+        );
+        x = snapX * gridSize;
+        y = snapY * gridSize;
+      } else {
+        x = token.x * gridSize;
+        y = token.y * gridSize;
+      }
 
       // Token background
       ctx.fillStyle = token.color || "#3498db";
+      ctx.globalAlpha = isDragging ? 0.7 : 1;
       ctx.beginPath();
       ctx.arc(x + size / 2, y + size / 2, size / 2 - 2, 0, Math.PI * 2);
       ctx.fill();
 
       // Token border
-      ctx.strokeStyle =
-        draggedToken?.id === token.id ? "#fff" : "rgba(0,0,0,0.5)";
-      ctx.lineWidth = draggedToken?.id === token.id ? 3 / zoom : 2 / zoom;
+      ctx.strokeStyle = isDragging ? "#fff" : "rgba(0,0,0,0.5)";
+      ctx.lineWidth = isDragging ? 3 / zoom : 2 / zoom;
       ctx.stroke();
+      ctx.globalAlpha = 1;
 
       // Token label
       ctx.fillStyle = "#fff";
@@ -197,12 +217,40 @@ export default function BattleMap({
     canvasHeight,
     isDM,
     draggedToken,
+    dragPosition,
+    dragOffset,
   ]);
 
   // Redraw on changes
   useEffect(() => {
     draw();
   }, [draw]);
+
+  // Wheel handler with non-passive listener to prevent page scroll
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const wheelHandler = (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      const newZoom = Math.max(0.25, Math.min(3, zoom * delta));
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const zoomFactor = newZoom / zoom;
+      setPan((prev) => ({
+        x: mouseX - (mouseX - prev.x) * zoomFactor,
+        y: mouseY - (mouseY - prev.y) * zoomFactor,
+      }));
+      setZoom(newZoom);
+    };
+
+    canvas.addEventListener("wheel", wheelHandler, { passive: false });
+    return () => canvas.removeEventListener("wheel", wheelHandler);
+  }, [zoom]);
 
   // Mouse handlers
   const handleMouseDown = (e) => {
@@ -218,12 +266,13 @@ export default function BattleMap({
         setDraggedToken(token);
         const grid = screenToGrid(screenX, screenY);
         setDragOffset({ x: grid.x - token.x, y: grid.y - token.y });
+        setDragPosition(grid);
         return;
       }
     }
 
-    // Start panning (middle click or ctrl+left click)
-    if (e.button === 1 || (e.button === 0 && e.ctrlKey)) {
+    // Start panning (left click on empty space, middle click, or ctrl+left click)
+    if (e.button === 0 || e.button === 1) {
       e.preventDefault();
       setIsPanning(true);
       setLastPanPoint({ x: e.clientX, y: e.clientY });
@@ -239,8 +288,9 @@ export default function BattleMap({
     }
 
     if (draggedToken && editable) {
-      // Token dragging is handled visually, actual move on mouse up
-      draw();
+      // Update drag position for visual feedback
+      const grid = screenToGrid(e.clientX, e.clientY);
+      setDragPosition(grid);
     }
   };
 
@@ -265,25 +315,6 @@ export default function BattleMap({
       }
       setDraggedToken(null);
     }
-  };
-
-  const handleWheel = (e) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    const newZoom = Math.max(0.25, Math.min(3, zoom * delta));
-
-    // Zoom toward cursor position
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    const zoomFactor = newZoom / zoom;
-    setPan((prev) => ({
-      x: mouseX - (mouseX - prev.x) * zoomFactor,
-      y: mouseY - (mouseY - prev.y) * zoomFactor,
-    }));
-    setZoom(newZoom);
   };
 
   const handleDoubleClick = (e) => {
@@ -349,7 +380,6 @@ export default function BattleMap({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        onWheel={handleWheel}
         onDoubleClick={handleDoubleClick}
         onContextMenu={(e) => e.preventDefault()}
       />
@@ -358,7 +388,7 @@ export default function BattleMap({
         <div className="map-instructions">
           <span>Drag tokens to move</span>
           <span>Scroll to zoom</span>
-          <span>Ctrl+drag to pan</span>
+          <span>Drag empty space to pan</span>
         </div>
       )}
     </div>
