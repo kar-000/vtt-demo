@@ -49,6 +49,19 @@ async def websocket_endpoint(
     # Connect to WebSocket manager
     await manager.connect(websocket, campaign_id, user.id, user.username)
 
+    # Send current initiative state on connect so client has up-to-date data
+    try:
+        campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+        if campaign and campaign.settings:
+            init_state = campaign.settings.get("initiative")
+            if init_state and init_state.get("active"):
+                await manager.send_personal_message(
+                    {"type": "initiative_state", "data": init_state},
+                    websocket,
+                )
+    except Exception:
+        pass  # Non-critical, client will get state on next action
+
     try:
         while True:
             # Receive message from client
@@ -161,6 +174,7 @@ async def websocket_endpoint(
                                 "dex_mod": char.dexterity_modifier,
                                 "type": "pc",
                                 "character_id": char.id,
+                                "conditions": [],
                                 "action_economy": {
                                     "action": True,
                                     "bonus_action": True,
@@ -192,6 +206,7 @@ async def websocket_endpoint(
                         "current_hp": max_hp,
                         "armor_class": armor_class,
                         "attacks": attacks,
+                        "conditions": [],
                         "action_economy": {
                             "action": True,
                             "bonus_action": True,

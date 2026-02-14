@@ -77,7 +77,21 @@ export const GameProvider = ({ children }) => {
     });
 
     websocket.on("initiative_state", (data) => {
+      console.log(
+        "Initiative state received:",
+        JSON.stringify(
+          data.combatants?.map((c) => ({
+            id: c.id,
+            name: c.name,
+            conditions: c.conditions,
+          })) || [],
+        ),
+      );
       setInitiative(data);
+    });
+
+    websocket.on("error", (data) => {
+      console.error("Server error:", data.message || data);
     });
 
     websocket.on("chat_message", (data) => {

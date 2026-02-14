@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import conditions from "../data/srd-conditions.json";
 import "./ConditionManager.css";
 
@@ -11,6 +11,26 @@ export default function ConditionManager({
   const [showPicker, setShowPicker] = useState(false);
   const [durationInput, setDurationInput] = useState("");
   const [durationType, setDurationType] = useState("indefinite");
+  const [pickerPos, setPickerPos] = useState({ top: 0, left: 0 });
+  const addBtnRef = useRef(null);
+  const pickerRef = useRef(null);
+
+  // Close picker on outside click
+  useEffect(() => {
+    if (!showPicker) return;
+    const handleClick = (e) => {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(e.target) &&
+        addBtnRef.current &&
+        !addBtnRef.current.contains(e.target)
+      ) {
+        setShowPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showPicker]);
 
   const activeConditions = combatant.conditions || [];
 
@@ -71,8 +91,15 @@ export default function ConditionManager({
 
         {isDM && (
           <button
+            ref={addBtnRef}
             className="condition-add-btn"
-            onClick={() => setShowPicker(!showPicker)}
+            onClick={() => {
+              if (!showPicker && addBtnRef.current) {
+                const rect = addBtnRef.current.getBoundingClientRect();
+                setPickerPos({ top: rect.bottom + 4, left: rect.left });
+              }
+              setShowPicker(!showPicker);
+            }}
             title="Add condition"
           >
             +
@@ -80,9 +107,17 @@ export default function ConditionManager({
         )}
       </div>
 
-      {/* Condition picker dropdown */}
+      {/* Condition picker dropdown - fixed position to escape overflow containers */}
       {showPicker && isDM && (
-        <div className="condition-picker">
+        <div
+          ref={pickerRef}
+          className="condition-picker"
+          style={{
+            position: "fixed",
+            top: pickerPos.top,
+            left: pickerPos.left,
+          }}
+        >
           <div className="condition-picker-header">
             <span>Add Condition</span>
             <div className="duration-controls">
