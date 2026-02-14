@@ -5,7 +5,7 @@ import "./DiceRoller.css";
 const DICE_TYPES = [4, 6, 8, 10, 12, 20, 100];
 
 export default function DiceRoller() {
-  const { rollDice, currentCharacter } = useGame();
+  const { rollDice, currentCharacter, whisperMode, setWhisperMode } = useGame();
   const [selectedDice, setSelectedDice] = useState(20);
   const [numDice, setNumDice] = useState(1);
   const [modifier, setModifier] = useState(0);
@@ -45,22 +45,36 @@ export default function DiceRoller() {
     <div className="dice-roller">
       <h3>Dice Roller</h3>
 
-      {/* Advantage/Disadvantage Toggle */}
-      <div className="advantage-toggle">
-        <button
-          className={`adv-btn adv-advantage ${advantage === "advantage" ? "active" : ""}`}
-          onClick={() => toggleAdvantage("advantage")}
-          title="Roll with Advantage (2d20, take highest)"
-        >
-          ADV
-        </button>
-        <button
-          className={`adv-btn adv-disadvantage ${advantage === "disadvantage" ? "active" : ""}`}
-          onClick={() => toggleAdvantage("disadvantage")}
-          title="Roll with Disadvantage (2d20, take lowest)"
-        >
-          DIS
-        </button>
+      {/* Roll Modifiers */}
+      <div className="roll-modifiers">
+        {/* Advantage/Disadvantage Toggle */}
+        <div className="advantage-toggle">
+          <button
+            className={`adv-btn adv-advantage ${advantage === "advantage" ? "active" : ""}`}
+            onClick={() => toggleAdvantage("advantage")}
+            title="Roll with Advantage (2d20, take highest)"
+          >
+            ADV
+          </button>
+          <button
+            className={`adv-btn adv-disadvantage ${advantage === "disadvantage" ? "active" : ""}`}
+            onClick={() => toggleAdvantage("disadvantage")}
+            title="Roll with Disadvantage (2d20, take lowest)"
+          >
+            DIS
+          </button>
+        </div>
+
+        {/* Whisper Toggle */}
+        <div className="whisper-toggle">
+          <button
+            className={`adv-btn whisper-btn ${whisperMode === "dm" ? "active" : ""}`}
+            onClick={() => setWhisperMode(whisperMode === "dm" ? null : "dm")}
+            title="Whisper rolls to DM only"
+          >
+            <span className="whisper-icon">&#128065;</span> WHISPER
+          </button>
+        </div>
       </div>
 
       <div className="quick-roll-section">
@@ -123,7 +137,8 @@ export default function DiceRoller() {
           </div>
         </div>
 
-        <div className="roll-preview">
+        <div className={`roll-preview${whisperMode ? " whisper-active" : ""}`}>
+          {whisperMode && <span className="preview-whisper">&#128065; </span>}
           Roll: {numDice}d{selectedDice}
           {modifier !== 0 && ` ${modifier >= 0 ? "+" : ""}${modifier}`}
           {advantage && selectedDice === 20 && numDice === 1 && (

@@ -176,3 +176,15 @@
   opacity: 0.4;
   text-decoration: line-through;
 }
+
+/* Whispered roll styling */
+.whisper-entry {
+  border-left-color: #8e44ad;
+  background: rgba(142, 68, 173, 0.08);
+  opacity: 0.85;
+}
+
+.whisper-badge {
+  color: #8e44ad;
+  font-size: 0.85rem;
+}

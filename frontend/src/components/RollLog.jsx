@@ -107,10 +107,15 @@ export default function RollLog() {
           {rollLog.map((entry, index) => (
             <div
               key={index}
-              className={`log-entry ${entry.type === "chat" ? "chat-entry" : ""}`}
+              className={`log-entry ${entry.type === "chat" ? "chat-entry" : ""}${entry.whisper_to ? " whisper-entry" : ""}`}
             >
               <div className="log-header">
                 <span className="character-name">
+                  {entry.whisper_to && (
+                    <span className="whisper-badge" title="Whispered">
+                      &#128065;{" "}
+                    </span>
+                  )}
                   {entry.character_name || entry.username}
                 </span>
                 <span className="roll-time">{formatTime(entry.timestamp)}</span>

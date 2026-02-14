@@ -13,6 +13,7 @@ export const GameProvider = ({ children }) => {
   const [rollLog, setRollLog] = useState([]);
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [whisperMode, setWhisperMode] = useState(null); // null = public, "dm" = DM-only
   const [initiative, setInitiative] = useState({
     active: false,
     round: 1,
@@ -101,7 +102,7 @@ export const GameProvider = ({ children }) => {
   };
 
   const postToChat = (message) => {
-    websocket.sendChatMessage(message);
+    websocket.sendChatMessage(message, whisperMode);
   };
 
   const loadCharacters = async () => {
@@ -240,6 +241,9 @@ export const GameProvider = ({ children }) => {
     if (advantage) {
       rollPayload.advantage = advantage;
     }
+    if (whisperMode) {
+      rollPayload.whisper_to = whisperMode;
+    }
     websocket.rollDice(rollPayload);
   };
 
@@ -270,6 +274,10 @@ export const GameProvider = ({ children }) => {
         dex_mod: monsterData.dex_mod || 0,
       });
     }
+  };
+
+  const addPC = (characterId) => {
+    sendInitiativeAction("add_pc", { character_id: characterId });
   };
 
   const updateNPC = (combatantId, updates) => {
@@ -406,6 +414,7 @@ export const GameProvider = ({ children }) => {
     initiative,
     startCombat,
     addCombatant,
+    addPC,
     updateNPC,
     removeCombatant,
     rollInitiativeFor,
@@ -428,6 +437,9 @@ export const GameProvider = ({ children }) => {
     addCondition,
     removeCondition,
     clearConditions,
+    // Whisper
+    whisperMode,
+    setWhisperMode,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

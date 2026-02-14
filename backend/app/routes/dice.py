@@ -103,6 +103,9 @@ async def websocket_endpoint(
                     all_rolls = None
                     total = sum(rolls) + modifier
 
+                # Whisper support: null = public, "dm" = DM-only, int = specific user
+                whisper_to = roll_data.get("whisper_to")
+
                 # Create result
                 result = {
                     "type": "dice_roll_result",
@@ -120,24 +123,55 @@ async def websocket_endpoint(
                         "timestamp": datetime.utcnow().isoformat() + "Z",
                         "user_id": user.id,
                         "username": user.username,
+                        "whisper_to": whisper_to,
                     },
                 }
 
-                # Broadcast to all users in the campaign
-                await manager.broadcast_to_campaign(campaign_id, result)
+                if whisper_to == "dm":
+                    # Send to DM only (+ the roller)
+                    dm_user = db.query(User).filter(User.is_dm == True).first()  # noqa: E712
+                    if dm_user:
+                        await manager.send_to_user(campaign_id, dm_user.id, result)
+                    # Also send to the roller if they're not the DM
+                    if not user.is_dm:
+                        await manager.send_personal_message(result, websocket)
+                elif whisper_to is not None:
+                    # Send to specific user + the roller
+                    target_id = int(whisper_to)
+                    await manager.send_to_user(campaign_id, target_id, result)
+                    if user.id != target_id:
+                        await manager.send_personal_message(result, websocket)
+                else:
+                    # Public roll - broadcast to all
+                    await manager.broadcast_to_campaign(campaign_id, result)
 
             elif message_type == "chat_message":
                 # Handle chat messages
                 chat_data = data.get("data", {})
+                whisper_to = chat_data.get("whisper_to")
                 message = {
                     "type": "chat_message",
                     "data": {
                         "username": user.username,
                         "message": chat_data.get("message", ""),
                         "timestamp": datetime.utcnow().isoformat() + "Z",
+                        "whisper_to": whisper_to,
                     },
                 }
-                await manager.broadcast_to_campaign(campaign_id, message)
+
+                if whisper_to == "dm":
+                    dm_user = db.query(User).filter(User.is_dm == True).first()  # noqa: E712
+                    if dm_user:
+                        await manager.send_to_user(campaign_id, dm_user.id, message)
+                    if not user.is_dm:
+                        await manager.send_personal_message(message, websocket)
+                elif whisper_to is not None:
+                    target_id = int(whisper_to)
+                    await manager.send_to_user(campaign_id, target_id, message)
+                    if user.id != target_id:
+                        await manager.send_personal_message(message, websocket)
+                else:
+                    await manager.broadcast_to_campaign(campaign_id, message)
 
             elif message_type == "initiative_update":
                 # Handle initiative tracker updates
@@ -380,6 +414,46 @@ async def websocket_endpoint(
                             if "armor_class" in init_data:
                                 combatant["armor_class"] = init_data["armor_class"]
                             break
+
+                elif action == "add_pc":
+                    # Re-add a PC to initiative (e.g., after removal)
+                    char_id = init_data.get("character_id")
+                    if char_id:
+                        # Check character isn't already in initiative
+                        already_in = any(c.get("character_id") == char_id for c in initiative["combatants"])
+                        if not already_in:
+                            char = db.query(Character).filter(Character.id == char_id).first()
+                            if char:
+                                init_value = init_data.get("initiative")
+                                initiative["combatants"].append(
+                                    {
+                                        "id": f"char_{char.id}",
+                                        "name": char.name,
+                                        "initiative": init_value,
+                                        "dex_mod": char.dexterity_modifier,
+                                        "type": "pc",
+                                        "character_id": char.id,
+                                        "conditions": [],
+                                        "action_economy": {
+                                            "action": True,
+                                            "bonus_action": True,
+                                            "reaction": True,
+                                            "movement": char.speed or 30,
+                                            "max_movement": char.speed or 30,
+                                        },
+                                    }
+                                )
+                                # Re-sort if initiative value provided
+                                if init_value is not None:
+                                    initiative["combatants"] = sorted(
+                                        initiative["combatants"],
+                                        key=lambda x: (
+                                            x["initiative"] or -999,
+                                            x.get("dex_mod", 0),
+                                            x["name"],
+                                        ),
+                                        reverse=True,
+                                    )
 
                 elif action == "add_condition":
                     # Add a condition to a combatant

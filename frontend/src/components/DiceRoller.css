@@ -17,6 +17,14 @@
   padding-bottom: 0.5rem;
 }
 
+/* Roll Modifiers Row */
+.roll-modifiers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* Advantage/Disadvantage Toggle */
 .advantage-toggle {
   display: flex;
@@ -63,6 +71,33 @@
 
 .preview-adv.dis {
   color: #e74c3c;
+}
+
+/* Whisper Toggle */
+.whisper-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.whisper-btn.active {
+  background: #8e44ad;
+  border-color: #8e44ad;
+  color: #fff;
+}
+
+.whisper-icon {
+  font-size: 0.9rem;
+  margin-right: 0.2rem;
+}
+
+.preview-whisper {
+  color: #8e44ad;
+  font-size: 0.9rem;
+}
+
+.roll-preview.whisper-active {
+  border-color: #8e44ad;
+  background: rgba(142, 68, 173, 0.08);
 }
 
 .quick-roll-section {
