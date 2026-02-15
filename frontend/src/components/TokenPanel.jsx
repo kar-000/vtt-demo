@@ -41,6 +41,7 @@ export default function TokenPanel({
     onAddToken?.({
       id: `char-${character.id}-${Date.now()}`,
       characterId: character.id,
+      combatant_id: "char_" + character.id,
       name: character.name,
       color: "#3498db",
       size: 1,
@@ -52,6 +53,7 @@ export default function TokenPanel({
   const handleAddCombatantToken = (combatant) => {
     onAddToken?.({
       id: `combatant-${combatant.id}-${Date.now()}`,
+      combatant_id: combatant.id,
       name: combatant.name,
       color: "#e74c3c",
       size: combatant.size || 1,
