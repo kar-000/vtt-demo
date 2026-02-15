@@ -1,8 +1,10 @@
 import { useGame } from "../contexts/GameContext";
+import { useAuth } from "../contexts/AuthContext";
 import "./RollLog.css";
 
 export default function RollLog() {
   const { rollLog } = useGame();
+  const { user } = useAuth();
 
   // Parse simple markdown-like formatting in chat messages
   const formatChatMessage = (message) => {
@@ -109,13 +111,29 @@ export default function RollLog() {
               key={index}
               className={`log-entry ${entry.type === "chat" ? "chat-entry" : ""}${entry.whisper_to ? " whisper-entry" : ""}`}
             >
-              <div className="log-header">
-                <span className="character-name">
-                  {entry.whisper_to && (
-                    <span className="whisper-badge" title="Whispered">
-                      &#128065;{" "}
+              {entry.whisper_to && (
+                <div className="whisper-banner">
+                  <span className="whisper-icon-sm">&#128065;</span>
+                  {entry.whisper_to === "dm" ? (
+                    entry.user_id === user?.id ? (
+                      <span>whispered to DM</span>
+                    ) : (
+                      <span>
+                        whispered by{" "}
+                        <strong>
+                          {entry.character_name || entry.username}
+                        </strong>
+                      </span>
+                    )
+                  ) : (
+                    <span>
+                      whispered to <strong>you</strong>
                     </span>
                   )}
+                </div>
+              )}
+              <div className="log-header">
+                <span className="character-name">
                   {entry.character_name || entry.username}
                 </span>
                 <span className="roll-time">{formatTime(entry.timestamp)}</span>

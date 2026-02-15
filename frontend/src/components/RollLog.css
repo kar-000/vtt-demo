@@ -179,12 +179,42 @@
 
 /* Whispered roll styling */
 .whisper-entry {
-  border-left-color: #8e44ad;
-  background: rgba(142, 68, 173, 0.08);
-  opacity: 0.85;
+  border-left: 4px solid #8e44ad;
+  background: rgba(142, 68, 173, 0.12);
+  border-right: 2px solid rgba(142, 68, 173, 0.3);
+  position: relative;
 }
 
-.whisper-badge {
-  color: #8e44ad;
-  font-size: 0.85rem;
+.whisper-entry::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8e44ad, rgba(142, 68, 173, 0.2));
+}
+
+.whisper-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  margin-bottom: 0.5rem;
+  background: rgba(142, 68, 173, 0.2);
+  border: 1px solid rgba(142, 68, 173, 0.35);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #7b2d8e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.whisper-banner strong {
+  color: #5b1a6e;
+}
+
+.whisper-icon-sm {
+  font-size: 0.9rem;
 }
