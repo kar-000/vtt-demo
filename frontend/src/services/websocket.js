@@ -86,8 +86,12 @@ class WebSocketService {
     this.send("dice_roll", diceData);
   }
 
-  sendChatMessage(message) {
-    this.send("chat_message", { message });
+  sendChatMessage(message, whisperTo = null) {
+    const data = { message };
+    if (whisperTo) {
+      data.whisper_to = whisperTo;
+    }
+    this.send("chat_message", data);
   }
 
   sendMapUpdate(mapData) {

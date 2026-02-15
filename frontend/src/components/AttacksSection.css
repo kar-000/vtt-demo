@@ -149,6 +149,43 @@
   gap: 0.5rem;
 }
 
+.attack-roll-group {
+  display: flex;
+  gap: 0.15rem;
+  align-items: stretch;
+}
+
+.adv-mini-btn {
+  width: 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.adv-mini-btn.adv-up {
+  background: rgba(39, 174, 96, 0.2);
+  color: #27ae60;
+}
+
+.adv-mini-btn.adv-up:hover {
+  background: #27ae60;
+  color: #fff;
+}
+
+.adv-mini-btn.adv-down {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
+.adv-mini-btn.adv-down:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
 .roll-button {
   display: flex;
   flex-direction: column;

@@ -13,6 +13,7 @@ export const GameProvider = ({ children }) => {
   const [rollLog, setRollLog] = useState([]);
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [whisperMode, setWhisperMode] = useState(null); // null = public, "dm" = DM-only
   const [initiative, setInitiative] = useState({
     active: false,
     round: 1,
@@ -77,7 +78,21 @@ export const GameProvider = ({ children }) => {
     });
 
     websocket.on("initiative_state", (data) => {
+      console.log(
+        "Initiative state received:",
+        JSON.stringify(
+          data.combatants?.map((c) => ({
+            id: c.id,
+            name: c.name,
+            conditions: c.conditions,
+          })) || [],
+        ),
+      );
       setInitiative(data);
+    });
+
+    websocket.on("error", (data) => {
+      console.error("Server error:", data.message || data);
     });
 
     websocket.on("chat_message", (data) => {
@@ -87,7 +102,7 @@ export const GameProvider = ({ children }) => {
   };
 
   const postToChat = (message) => {
-    websocket.sendChatMessage(message);
+    websocket.sendChatMessage(message, whisperMode);
   };
 
   const loadCharacters = async () => {
@@ -199,6 +214,7 @@ export const GameProvider = ({ children }) => {
     modifier = 0,
     rollType = "manual",
     label = null,
+    advantage = null,
   ) => {
     if (!currentCharacter) {
       console.error("No character selected");
@@ -214,14 +230,21 @@ export const GameProvider = ({ children }) => {
       }
     }
 
-    websocket.rollDice({
+    const rollPayload = {
       character_name: currentCharacter.name,
       dice_type: diceTypeInt,
       num_dice: numDice,
       modifier,
       roll_type: rollType,
       label,
-    });
+    };
+    if (advantage) {
+      rollPayload.advantage = advantage;
+    }
+    if (whisperMode) {
+      rollPayload.whisper_to = whisperMode;
+    }
+    websocket.rollDice(rollPayload);
   };
 
   // Initiative tracker methods
@@ -251,6 +274,10 @@ export const GameProvider = ({ children }) => {
         dex_mod: monsterData.dex_mod || 0,
       });
     }
+  };
+
+  const addPC = (characterId) => {
+    sendInitiativeAction("add_pc", { character_id: characterId });
   };
 
   const updateNPC = (combatantId, updates) => {
@@ -312,6 +339,28 @@ export const GameProvider = ({ children }) => {
     sendInitiativeAction("reset_action_economy", { combatant_id: combatantId });
   };
 
+  // Condition methods
+  const addCondition = (combatantId, conditionData) => {
+    sendInitiativeAction("add_condition", {
+      combatant_id: combatantId,
+      name: conditionData.name,
+      duration: conditionData.duration || null,
+      duration_type: conditionData.duration_type || "indefinite",
+      source: conditionData.source || "",
+    });
+  };
+
+  const removeCondition = (combatantId, conditionName) => {
+    sendInitiativeAction("remove_condition", {
+      combatant_id: combatantId,
+      name: conditionName,
+    });
+  };
+
+  const clearConditions = (combatantId) => {
+    sendInitiativeAction("clear_conditions", { combatant_id: combatantId });
+  };
+
   // Get combatant ID for current character (if in combat)
   const getCurrentCombatantId = () => {
     if (!initiative.active || !currentCharacter) return null;
@@ -365,6 +414,7 @@ export const GameProvider = ({ children }) => {
     initiative,
     startCombat,
     addCombatant,
+    addPC,
     updateNPC,
     removeCombatant,
     rollInitiativeFor,
@@ -383,6 +433,13 @@ export const GameProvider = ({ children }) => {
     autoTrackActions,
     setAutoTrackActions,
     consumeActionEconomy,
+    // Conditions
+    addCondition,
+    removeCondition,
+    clearConditions,
+    // Whisper
+    whisperMode,
+    setWhisperMode,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

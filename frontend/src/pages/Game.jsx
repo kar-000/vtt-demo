@@ -66,6 +66,13 @@ export default function Game() {
     loadMaps();
   }, [loadMaps]);
 
+  // Load all characters for DM so they can see/add PCs in initiative
+  useEffect(() => {
+    if (isDM) {
+      loadAllCharacters();
+    }
+  }, [isDM]);
+
   // Listen for real-time map updates from WebSocket
   useEffect(() => {
     const handleMapUpdate = (data) => {
