@@ -49,6 +49,19 @@ async def websocket_endpoint(
     # Connect to WebSocket manager
     await manager.connect(websocket, campaign_id, user.id, user.username)
 
+    # Send current initiative state on connect so client has up-to-date data
+    try:
+        campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+        if campaign and campaign.settings:
+            init_state = campaign.settings.get("initiative")
+            if init_state and init_state.get("active"):
+                await manager.send_personal_message(
+                    {"type": "initiative_state", "data": init_state},
+                    websocket,
+                )
+    except Exception:
+        pass  # Non-critical, client will get state on next action
+
     try:
         while True:
             # Receive message from client
@@ -72,8 +85,26 @@ async def websocket_endpoint(
                 # Perform roll
                 num_dice = roll_data.get("num_dice", 1)
                 modifier = roll_data.get("modifier", 0)
-                rolls = roll_dice(num_dice, dice_type)
-                total = sum(rolls) + modifier
+                advantage = roll_data.get("advantage")  # None, "advantage", or "disadvantage"
+
+                # Handle advantage/disadvantage for d20 rolls
+                if advantage in ("advantage", "disadvantage") and dice_type == 20 and num_dice == 1:
+                    roll1 = roll_dice(1, 20)[0]
+                    roll2 = roll_dice(1, 20)[0]
+                    if advantage == "advantage":
+                        used = max(roll1, roll2)
+                    else:
+                        used = min(roll1, roll2)
+                    rolls = [used]
+                    all_rolls = [roll1, roll2]
+                    total = used + modifier
+                else:
+                    rolls = roll_dice(num_dice, dice_type)
+                    all_rolls = None
+                    total = sum(rolls) + modifier
+
+                # Whisper support: null = public, "dm" = DM-only, int = specific user
+                whisper_to = roll_data.get("whisper_to")
 
                 # Create result
                 result = {
@@ -87,27 +118,60 @@ async def websocket_endpoint(
                         "total": total,
                         "roll_type": roll_data.get("roll_type", "manual"),
                         "label": roll_data.get("label"),
+                        "advantage": advantage,
+                        "all_rolls": all_rolls,
                         "timestamp": datetime.utcnow().isoformat() + "Z",
                         "user_id": user.id,
                         "username": user.username,
+                        "whisper_to": whisper_to,
                     },
                 }
 
-                # Broadcast to all users in the campaign
-                await manager.broadcast_to_campaign(campaign_id, result)
+                if whisper_to == "dm":
+                    # Send to DM only (+ the roller)
+                    dm_user = db.query(User).filter(User.is_dm == True).first()  # noqa: E712
+                    if dm_user:
+                        await manager.send_to_user(campaign_id, dm_user.id, result)
+                    # Also send to the roller if they're not the DM
+                    if not user.is_dm:
+                        await manager.send_personal_message(result, websocket)
+                elif whisper_to is not None:
+                    # Send to specific user + the roller
+                    target_id = int(whisper_to)
+                    await manager.send_to_user(campaign_id, target_id, result)
+                    if user.id != target_id:
+                        await manager.send_personal_message(result, websocket)
+                else:
+                    # Public roll - broadcast to all
+                    await manager.broadcast_to_campaign(campaign_id, result)
 
             elif message_type == "chat_message":
                 # Handle chat messages
                 chat_data = data.get("data", {})
+                whisper_to = chat_data.get("whisper_to")
                 message = {
                     "type": "chat_message",
                     "data": {
                         "username": user.username,
                         "message": chat_data.get("message", ""),
                         "timestamp": datetime.utcnow().isoformat() + "Z",
+                        "whisper_to": whisper_to,
                     },
                 }
-                await manager.broadcast_to_campaign(campaign_id, message)
+
+                if whisper_to == "dm":
+                    dm_user = db.query(User).filter(User.is_dm == True).first()  # noqa: E712
+                    if dm_user:
+                        await manager.send_to_user(campaign_id, dm_user.id, message)
+                    if not user.is_dm:
+                        await manager.send_personal_message(message, websocket)
+                elif whisper_to is not None:
+                    target_id = int(whisper_to)
+                    await manager.send_to_user(campaign_id, target_id, message)
+                    if user.id != target_id:
+                        await manager.send_personal_message(message, websocket)
+                else:
+                    await manager.broadcast_to_campaign(campaign_id, message)
 
             elif message_type == "initiative_update":
                 # Handle initiative tracker updates
@@ -144,6 +208,7 @@ async def websocket_endpoint(
                                 "dex_mod": char.dexterity_modifier,
                                 "type": "pc",
                                 "character_id": char.id,
+                                "conditions": [],
                                 "action_economy": {
                                     "action": True,
                                     "bonus_action": True,
@@ -175,6 +240,7 @@ async def websocket_endpoint(
                         "current_hp": max_hp,
                         "armor_class": armor_class,
                         "attacks": attacks,
+                        "conditions": [],
                         "action_economy": {
                             "action": True,
                             "bonus_action": True,
@@ -249,6 +315,19 @@ async def websocket_endpoint(
                             current["action_economy"]["movement"] = current["action_economy"].get("max_movement", 30)
                             # Note: Reaction resets at start of YOUR next turn, not when others' turns change
                             current["action_economy"]["reaction"] = True
+                        # Tick down condition durations for the new current combatant
+                        conditions = current.get("conditions", [])
+                        remaining = []
+                        for cond in conditions:
+                            if cond.get("duration_type") == "rounds" and cond.get("duration") is not None:
+                                cond["duration"] -= 1
+                                if cond["duration"] > 0:
+                                    remaining.append(cond)
+                                # duration <= 0: condition expires (dropped from list)
+                            else:
+                                # indefinite or concentration: keep until manually removed
+                                remaining.append(cond)
+                        current["conditions"] = remaining
 
                 elif action == "previous_turn":
                     # Go back to previous turn
@@ -334,6 +413,82 @@ async def websocket_endpoint(
                                 combatant["max_hp"] = init_data["max_hp"]
                             if "armor_class" in init_data:
                                 combatant["armor_class"] = init_data["armor_class"]
+                            break
+
+                elif action == "add_pc":
+                    # Re-add a PC to initiative (e.g., after removal)
+                    char_id = init_data.get("character_id")
+                    if char_id:
+                        # Check character isn't already in initiative
+                        already_in = any(c.get("character_id") == char_id for c in initiative["combatants"])
+                        if not already_in:
+                            char = db.query(Character).filter(Character.id == char_id).first()
+                            if char:
+                                init_value = init_data.get("initiative")
+                                initiative["combatants"].append(
+                                    {
+                                        "id": f"char_{char.id}",
+                                        "name": char.name,
+                                        "initiative": init_value,
+                                        "dex_mod": char.dexterity_modifier,
+                                        "type": "pc",
+                                        "character_id": char.id,
+                                        "conditions": [],
+                                        "action_economy": {
+                                            "action": True,
+                                            "bonus_action": True,
+                                            "reaction": True,
+                                            "movement": char.speed or 30,
+                                            "max_movement": char.speed or 30,
+                                        },
+                                    }
+                                )
+                                # Re-sort if initiative value provided
+                                if init_value is not None:
+                                    initiative["combatants"] = sorted(
+                                        initiative["combatants"],
+                                        key=lambda x: (
+                                            x["initiative"] or -999,
+                                            x.get("dex_mod", 0),
+                                            x["name"],
+                                        ),
+                                        reverse=True,
+                                    )
+
+                elif action == "add_condition":
+                    # Add a condition to a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    condition = {
+                        "name": init_data.get("name", "Unknown"),
+                        "duration": init_data.get("duration"),  # None = indefinite
+                        "duration_type": init_data.get("duration_type", "indefinite"),
+                        "source": init_data.get("source", ""),
+                    }
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id:
+                            conditions = combatant.get("conditions", [])
+                            # Don't add duplicate conditions
+                            if not any(c["name"] == condition["name"] for c in conditions):
+                                conditions.append(condition)
+                                combatant["conditions"] = conditions
+                            break
+
+                elif action == "remove_condition":
+                    # Remove a condition from a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    condition_name = init_data.get("name")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id:
+                            conditions = combatant.get("conditions", [])
+                            combatant["conditions"] = [c for c in conditions if c["name"] != condition_name]
+                            break
+
+                elif action == "clear_conditions":
+                    # Remove all conditions from a combatant
+                    combatant_id = init_data.get("combatant_id")
+                    for combatant in initiative["combatants"]:
+                        if combatant["id"] == combatant_id:
+                            combatant["conditions"] = []
                             break
 
                 else:

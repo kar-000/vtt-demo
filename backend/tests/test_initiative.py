@@ -386,3 +386,118 @@ class TestInitiativeActions:
             response = ws.receive_json()
             assert response["data"]["round"] == 2
             assert response["data"]["current_turn_index"] == 0
+
+
+class TestConditions:
+    """Test condition add/remove on combatants."""
+
+    def test_add_condition_to_combatant(self):
+        """Adding a condition should persist in the initiative state."""
+        token = create_user("dm_cond", "dm_cond@test.com", is_dm=True)
+        create_character(token, "Fighter")
+
+        db = TestingSessionLocal()
+        create_campaign(db, 1)
+        db.close()
+
+        with client.websocket_connect(f"/api/v1/ws/game/1?token={token}") as ws:
+            # Start combat
+            ws.send_json({"type": "initiative_update", "data": {"action": "start_combat", "data": {}}})
+            response = ws.receive_json()
+            combatant_id = response["data"]["combatants"][0]["id"]
+
+            # Add condition
+            ws.send_json(
+                {
+                    "type": "initiative_update",
+                    "data": {
+                        "action": "add_condition",
+                        "data": {
+                            "combatant_id": combatant_id,
+                            "name": "Prone",
+                            "duration_type": "indefinite",
+                        },
+                    },
+                }
+            )
+            response = ws.receive_json()
+
+            # Verify condition is present
+            combatant = response["data"]["combatants"][0]
+            assert "conditions" in combatant
+            assert len(combatant["conditions"]) == 1
+            assert combatant["conditions"][0]["name"] == "Prone"
+
+    def test_condition_persists_after_next_turn(self):
+        """Indefinite conditions should survive turn changes."""
+        token = create_user("dm_cond2", "dm_cond2@test.com", is_dm=True)
+        create_character(token, "Fighter")
+        create_character(token, "Rogue")
+
+        db = TestingSessionLocal()
+        create_campaign(db, 1)
+        db.close()
+
+        with client.websocket_connect(f"/api/v1/ws/game/1?token={token}") as ws:
+            ws.send_json({"type": "initiative_update", "data": {"action": "start_combat", "data": {}}})
+            response = ws.receive_json()
+            combatant_id = response["data"]["combatants"][0]["id"]
+
+            # Add indefinite condition
+            ws.send_json(
+                {
+                    "type": "initiative_update",
+                    "data": {
+                        "action": "add_condition",
+                        "data": {
+                            "combatant_id": combatant_id,
+                            "name": "Blinded",
+                            "duration_type": "indefinite",
+                        },
+                    },
+                }
+            )
+            ws.receive_json()
+
+            # Advance turn
+            ws.send_json({"type": "initiative_update", "data": {"action": "next_turn", "data": {}}})
+            response = ws.receive_json()
+
+            # Condition should still be on the combatant
+            combatant = next(c for c in response["data"]["combatants"] if c["id"] == combatant_id)
+            assert len(combatant["conditions"]) == 1
+            assert combatant["conditions"][0]["name"] == "Blinded"
+
+    def test_remove_condition(self):
+        """Removing a condition should work."""
+        token = create_user("dm_cond3", "dm_cond3@test.com", is_dm=True)
+        create_character(token, "Fighter")
+
+        db = TestingSessionLocal()
+        create_campaign(db, 1)
+        db.close()
+
+        with client.websocket_connect(f"/api/v1/ws/game/1?token={token}") as ws:
+            ws.send_json({"type": "initiative_update", "data": {"action": "start_combat", "data": {}}})
+            response = ws.receive_json()
+            combatant_id = response["data"]["combatants"][0]["id"]
+
+            # Add then remove condition
+            ws.send_json(
+                {
+                    "type": "initiative_update",
+                    "data": {"action": "add_condition", "data": {"combatant_id": combatant_id, "name": "Stunned"}},
+                }
+            )
+            ws.receive_json()
+
+            ws.send_json(
+                {
+                    "type": "initiative_update",
+                    "data": {"action": "remove_condition", "data": {"combatant_id": combatant_id, "name": "Stunned"}},
+                }
+            )
+            response = ws.receive_json()
+
+            combatant = response["data"]["combatants"][0]
+            assert len(combatant.get("conditions", [])) == 0

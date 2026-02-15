@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useGame } from "../contexts/GameContext";
 import { useAuth } from "../contexts/AuthContext";
 import CharacterPortrait from "./CharacterPortrait";
+import ConditionManager from "./ConditionManager";
 import MonsterStatBlock from "./MonsterStatBlock";
 import srdMonsters from "../data/srd-monsters.json";
 import "./InitiativeTracker.css";
@@ -15,6 +16,7 @@ export default function InitiativeTracker() {
     initiative,
     startCombat,
     addCombatant,
+    addPC,
     removeCombatant,
     rollInitiativeFor,
     rollAllInitiative,
@@ -29,6 +31,8 @@ export default function InitiativeTracker() {
     autoTrackActions,
     setAutoTrackActions,
     rollDice,
+    addCondition,
+    removeCondition,
   } = useGame();
 
   // Use allCharacters for DM (to see all players), otherwise use own characters
@@ -36,6 +40,7 @@ export default function InitiativeTracker() {
     allCharacters?.length > 0 ? allCharacters : characters;
 
   const [showAddNPC, setShowAddNPC] = useState(false);
+  const [showAddPC, setShowAddPC] = useState(false);
   const [selectedMonster, setSelectedMonster] = useState("");
   const [customName, setCustomName] = useState("");
   const combatantRefs = useRef({});
@@ -243,6 +248,13 @@ export default function InitiativeTracker() {
                   )}
                 </div>
               </div>
+              {/* Condition Badges */}
+              <ConditionManager
+                combatant={combatant}
+                onAddCondition={addCondition}
+                onRemoveCondition={removeCondition}
+                isDM={isDM}
+              />
               {/* Monster Stat Block for NPCs */}
               {isDM && combatant.type === "npc" && combatant.max_hp && (
                 <MonsterStatBlock combatant={combatant} onRollDice={rollDice} />
@@ -385,14 +397,54 @@ export default function InitiativeTracker() {
             </button>
           )}
           <button
-            onClick={() => setShowAddNPC(!showAddNPC)}
+            onClick={() => {
+              setShowAddNPC(!showAddNPC);
+              setShowAddPC(false);
+            }}
             className="btn btn-secondary btn-sm"
           >
             + NPC
           </button>
+          {availableCharacters.filter(
+            (c) =>
+              !initiative.combatants.some((cb) => cb.character_id === c.id),
+          ).length > 0 && (
+            <button
+              onClick={() => {
+                setShowAddPC(!showAddPC);
+                setShowAddNPC(false);
+              }}
+              className="btn btn-secondary btn-sm"
+            >
+              + PC
+            </button>
+          )}
           <button onClick={endCombat} className="btn btn-danger btn-sm">
             End Combat
           </button>
+        </div>
+      )}
+
+      {/* Add PC selector */}
+      {showAddPC && isDM && (
+        <div className="add-npc-form">
+          {availableCharacters
+            .filter(
+              (c) =>
+                !initiative.combatants.some((cb) => cb.character_id === c.id),
+            )
+            .map((char) => (
+              <button
+                key={char.id}
+                onClick={() => {
+                  addPC(char.id);
+                  setShowAddPC(false);
+                }}
+                className="btn btn-primary btn-sm"
+              >
+                {char.name}
+              </button>
+            ))}
         </div>
       )}
 

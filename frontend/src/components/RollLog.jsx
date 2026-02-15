@@ -1,8 +1,10 @@
 import { useGame } from "../contexts/GameContext";
+import { useAuth } from "../contexts/AuthContext";
 import "./RollLog.css";
 
 export default function RollLog() {
   const { rollLog } = useGame();
+  const { user } = useAuth();
 
   // Parse simple markdown-like formatting in chat messages
   const formatChatMessage = (message) => {
@@ -67,11 +69,30 @@ export default function RollLog() {
   };
 
   const formatRollDetails = (roll) => {
-    const rollsStr = roll.rolls.join(" + ");
     const modStr =
       roll.modifier !== 0
         ? ` ${roll.modifier >= 0 ? "+" : ""}${roll.modifier}`
         : "";
+
+    // Advantage/disadvantage display
+    if (roll.advantage && roll.all_rolls && roll.all_rolls.length === 2) {
+      const [r1, r2] = roll.all_rolls;
+      const used = roll.rolls[0];
+      const dropped = r1 === used ? r2 : r1;
+      const advLabel = roll.advantage === "advantage" ? "ADV" : "DIS";
+      return (
+        <span>
+          2d{roll.dice_type}{" "}
+          <span className="adv-label" data-type={roll.advantage}>
+            {advLabel}
+          </span>{" "}
+          (<span className="roll-used">{used}</span>,{" "}
+          <span className="roll-dropped">{dropped}</span>){modStr}
+        </span>
+      );
+    }
+
+    const rollsStr = roll.rolls.join(" + ");
     return `${roll.num_dice}d${roll.dice_type} (${rollsStr})${modStr}`;
   };
 
@@ -88,8 +109,29 @@ export default function RollLog() {
           {rollLog.map((entry, index) => (
             <div
               key={index}
-              className={`log-entry ${entry.type === "chat" ? "chat-entry" : ""}`}
+              className={`log-entry ${entry.type === "chat" ? "chat-entry" : ""}${entry.whisper_to ? " whisper-entry" : ""}`}
             >
+              {entry.whisper_to && (
+                <div className="whisper-banner">
+                  <span className="whisper-icon-sm">&#128065;</span>
+                  {entry.whisper_to === "dm" ? (
+                    entry.user_id === user?.id ? (
+                      <span>whispered to DM</span>
+                    ) : (
+                      <span>
+                        whispered by{" "}
+                        <strong>
+                          {entry.character_name || entry.username}
+                        </strong>
+                      </span>
+                    )
+                  ) : (
+                    <span>
+                      whispered to <strong>you</strong>
+                    </span>
+                  )}
+                </div>
+              )}
               <div className="log-header">
                 <span className="character-name">
                   {entry.character_name || entry.username}

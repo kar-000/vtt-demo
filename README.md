@@ -1,10 +1,10 @@
 # D&D 5e Virtual Tabletop
 
-A real-time web application for remote D&D 5e sessions with character management, dice rolling, combat tracking, and shared game logs.
+A real-time web application for remote D&D 5e sessions with character management, dice rolling, combat tracking, battle maps, and shared game logs.
 
-## Current Status: Phase 3 In Progress
+## Current Status: Phase 4 In Progress
 
-**Phase 2 Complete** - 69 tests passing
+**226 tests passing** | **93% code coverage**
 
 ### Core Features (Phase 1)
 - Character creation and management with full D&D 5e stats
@@ -24,11 +24,17 @@ A real-time web application for remote D&D 5e sessions with character management
 - **Level-Up System**: Multi-step wizard with multiclass support, ASI handling
 - **UI Theming**: Three themes (Dark Medieval, Pink Pony Club, Boring)
 
-### Phase 3 Features (In Progress)
+### Content & Maps (Phase 3)
 - **Character Portraits**: Upload avatars, display on sheet and initiative tracker
 - **Monster Stat Blocks**: HP/AC/attacks tracking, SRD monster library, DM combat tools
-- Campaign Notes/Journal (planned)
-- Battle Maps/Grid (planned)
+- **Campaign Notes/Journal**: CRUD notes with public/private visibility, DM sees all
+- **Battle Maps/Grid**: Canvas grid, drag-and-drop tokens, fog of war, zoom/pan
+
+### Combat Automation (Phase 4 - In Progress)
+- **Conditions & Status Effects**: Apply/remove D&D conditions with duration tracking
+- **Advantage/Disadvantage**: Toggle for d20 rolls, shows both dice with used/dropped
+- **Whisper/Secret Rolls**: Private dice rolls and chat messages to DM or specific players
+- **PC Re-add to Initiative**: DM can re-add removed players to combat
 
 ## Tech Stack
 
@@ -42,6 +48,7 @@ A real-time web application for remote D&D 5e sessions with character management
 **Frontend:**
 - React with hooks and Context API
 - Vite (build tool)
+- HTML5 Canvas (battle maps)
 - WebSocket client with auto-reconnection
 - CSS custom properties for theming
 
@@ -109,17 +116,18 @@ vtt/
 │   ├── app/
 │   │   ├── core/          # Config, database, security, dependencies
 │   │   ├── models/        # SQLAlchemy models
-│   │   ├── routes/        # API endpoints
+│   │   ├── routes/        # API endpoints (auth, characters, dice, maps, notes, campaigns)
 │   │   ├── schemas/       # Pydantic schemas
-│   │   └── websocket/     # WebSocket handlers
-│   ├── tests/             # pytest tests (69+ tests)
+│   │   ├── services/      # Business logic services
+│   │   └── websocket/     # WebSocket manager
+│   ├── tests/             # pytest tests (226+ tests)
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── components/    # React components
 │   │   ├── contexts/      # Context providers (Auth, Game, Theme)
-│   │   ├── pages/         # Page components
-│   │   ├── data/          # SRD data files (spells, weapons, monsters)
+│   │   ├── pages/         # Page components (Dashboard, Game)
+│   │   ├── data/          # SRD data files (spells, weapons, monsters, class data)
 │   │   └── services/      # API and WebSocket services
 │   └── package.json
 ├── .github/
@@ -138,7 +146,7 @@ cd backend
 pytest -v
 
 # Run with coverage
-pytest --cov=app
+pytest --cov=app --cov-report=term-missing
 ```
 
 ## Legal

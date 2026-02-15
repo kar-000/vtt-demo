@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
+import conditionsData from "../data/srd-conditions.json";
 import "./BattleMap.css";
 
 export default function BattleMap({
@@ -94,6 +95,36 @@ export default function BattleMap({
     );
   };
 
+  // Build condition lookup by name (short labels for canvas rendering)
+  const conditionLookup = {};
+  conditionsData.forEach((c) => {
+    conditionLookup[c.name] = c;
+  });
+
+  // Short labels for canvas (emojis don't render reliably on canvas)
+  const CONDITION_LABELS = {
+    Blinded: "BL",
+    Charmed: "CH",
+    Deafened: "DE",
+    Frightened: "FR",
+    Grappled: "GR",
+    Incapacitated: "IN",
+    Invisible: "IV",
+    Paralyzed: "PA",
+    Petrified: "PE",
+    Poisoned: "PO",
+    Prone: "PR",
+    Restrained: "RE",
+    Stunned: "ST",
+    Unconscious: "UN",
+    Concentrating: "CO",
+    Dodging: "DO",
+    Raging: "RA",
+    Hexed: "HX",
+    Blessed: "BL",
+    "Hunter's Mark": "HM",
+  };
+
   // Draw the map
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -166,6 +197,28 @@ export default function BattleMap({
       }
     }
 
+    // Helper: match token to combatant
+    const findCombatant = (token) => {
+      if (!combatants || combatants.length === 0) return null;
+      // Direct match via combatant_id
+      if (token.combatant_id) {
+        const match = combatants.find((c) => c.id === token.combatant_id);
+        if (match) return match;
+      }
+      // Fallback: PC token via characterId
+      if (token.characterId) {
+        const match = combatants.find(
+          (c) => c.character_id && c.character_id === token.characterId,
+        );
+        if (match) return match;
+      }
+      // Fallback: NPC by name
+      const match = combatants.find(
+        (c) => !c.character_id && c.name === token.name,
+      );
+      return match || null;
+    };
+
     // Draw tokens
     tokens.forEach((token) => {
       const size = (token.size || 1) * gridSize;
@@ -196,11 +249,54 @@ export default function BattleMap({
         y = token.y * gridSize;
       }
 
+      const centerX = x + size / 2;
+      const centerY = y + size / 2;
+      const radius = size / 2 - 2;
+
+      // Find matched combatant for status overlays
+      const combatant = findCombatant(token);
+
+      // HP ring for combatants
+      // NPCs have HP in combatant data; PCs need character lookup
+      let hpCurrent = combatant?.current_hp;
+      let hpMax = combatant?.max_hp;
+      if (combatant?.character_id && characters) {
+        const char = characters.find((ch) => ch.id === combatant.character_id);
+        if (char) {
+          hpCurrent = char.current_hp;
+          hpMax = char.max_hp;
+        }
+      }
+      if (combatant && hpMax > 0 && hpCurrent != null) {
+        const hpPct = hpCurrent / hpMax;
+        let ringColor;
+        if (hpPct > 0.5) ringColor = "#2ecc71";
+        else if (hpPct > 0.25) ringColor = "#f1c40f";
+        else ringColor = "#e74c3c";
+
+        // Draw HP arc (full circle background + colored arc for remaining HP)
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius + 2, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0,0,0,0.4)";
+        ctx.lineWidth = 4 / zoom;
+        ctx.stroke();
+
+        if (hpPct > 0) {
+          ctx.beginPath();
+          const startAngle = -Math.PI / 2;
+          const endAngle = startAngle + Math.PI * 2 * hpPct;
+          ctx.arc(centerX, centerY, radius + 2, startAngle, endAngle);
+          ctx.strokeStyle = ringColor;
+          ctx.lineWidth = 4 / zoom;
+          ctx.stroke();
+        }
+      }
+
       // Token background
       ctx.fillStyle = token.color || "#3498db";
       ctx.globalAlpha = isDragging ? 0.7 : 1;
       ctx.beginPath();
-      ctx.arc(x + size / 2, y + size / 2, size / 2 - 2, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
       ctx.fill();
 
       // Token border
@@ -220,7 +316,79 @@ export default function BattleMap({
       if (label.length > 6) {
         label = label.substring(0, 5) + "...";
       }
-      ctx.fillText(label, x + size / 2, y + size / 2);
+      ctx.fillText(label, centerX, centerY);
+
+      // Condition badges (drawn below the token)
+      if (
+        combatant &&
+        combatant.conditions &&
+        combatant.conditions.length > 0
+      ) {
+        const conditions = combatant.conditions;
+        const maxBadges = 3;
+        const badgeW = Math.max(14, size / 3);
+        const badgeH = Math.max(10, size / 5);
+        const badgeGap = 2;
+        const badgeY = y + size + 2;
+        const totalBadges = Math.min(conditions.length, maxBadges);
+        const hasOverflow = conditions.length > maxBadges;
+        const itemCount = totalBadges + (hasOverflow ? 1 : 0);
+        const totalWidth = itemCount * badgeW + (itemCount - 1) * badgeGap;
+        const startX = centerX - totalWidth / 2;
+
+        for (let i = 0; i < totalBadges; i++) {
+          const cond = conditions[i];
+          const condInfo = conditionLookup[cond.name] || {};
+          const bx = startX + i * (badgeW + badgeGap);
+
+          // Badge rounded rect background
+          const br = 3;
+          ctx.beginPath();
+          ctx.roundRect(bx, badgeY, badgeW, badgeH, br);
+          ctx.fillStyle = condInfo.color || "#666";
+          ctx.globalAlpha = 0.9;
+          ctx.fill();
+          ctx.strokeStyle = "rgba(0,0,0,0.5)";
+          ctx.lineWidth = 1 / zoom;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+
+          // Short text label
+          const abbr =
+            CONDITION_LABELS[cond.name] ||
+            cond.name.substring(0, 2).toUpperCase();
+          ctx.font = `bold ${Math.max(7, badgeH * 0.7)}px Arial`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#fff";
+          ctx.fillText(abbr, bx + badgeW / 2, badgeY + badgeH / 2);
+        }
+
+        // Overflow indicator
+        if (hasOverflow) {
+          const bx = startX + totalBadges * (badgeW + badgeGap);
+          const br = 3;
+          ctx.beginPath();
+          ctx.roundRect(bx, badgeY, badgeW, badgeH, br);
+          ctx.fillStyle = "#555";
+          ctx.globalAlpha = 0.9;
+          ctx.fill();
+          ctx.strokeStyle = "rgba(0,0,0,0.5)";
+          ctx.lineWidth = 1 / zoom;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+
+          ctx.font = `bold ${Math.max(7, badgeH * 0.7)}px Arial`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#fff";
+          ctx.fillText(
+            `+${conditions.length - maxBadges}`,
+            bx + badgeW / 2,
+            badgeY + badgeH / 2,
+          );
+        }
+      }
     });
 
     ctx.restore();
@@ -228,6 +396,8 @@ export default function BattleMap({
     map,
     mapImage,
     tokens,
+    combatants,
+    characters,
     zoom,
     pan,
     gridSize,

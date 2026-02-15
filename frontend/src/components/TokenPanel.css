@@ -49,6 +49,7 @@
   transition: all 0.15s ease;
   text-align: left;
   width: 100%;
+  color: var(--color-text);
 }
 
 .token-add-btn:hover {

@@ -99,6 +99,32 @@ class ConnectionManager:
             logger.error(f"Error sending personal message: {e}")
             self.disconnect(websocket)
 
+    async def send_to_user(self, campaign_id: int, user_id: int, message: dict):
+        """Send a message to all connections of a specific user in a campaign."""
+        if campaign_id not in self.active_connections:
+            return
+
+        message_json = json.dumps(message)
+        disconnected = []
+
+        for connection in self.active_connections[campaign_id]:
+            info = self.connection_info.get(connection)
+            if info and info["user_id"] == user_id:
+                try:
+                    await connection.send_text(message_json)
+                except Exception as e:
+                    logger.error(f"Error sending message to user {user_id}: {e}")
+                    disconnected.append(connection)
+
+        for connection in disconnected:
+            self.disconnect(connection)
+
+    def get_dm_user_id(self, campaign_id: int) -> int | None:
+        """Find the DM's user_id among active connections in a campaign."""
+        # Note: This checks connection_info, not the DB. The DM must be connected.
+        # We don't store is_dm in connection_info, so caller must provide it.
+        return None
+
     def get_campaign_connections(self, campaign_id: int) -> int:
         """Get the number of active connections for a campaign."""
         return len(self.active_connections.get(campaign_id, set()))
