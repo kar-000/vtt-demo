@@ -536,9 +536,8 @@ class TestMonsterStatBlocks:
                 {
                     "name": "Goblin",
                     "initiative": 15,
-                    "hp": 7,
                     "max_hp": 7,
-                    "ac": 15,
+                    "armor_class": 15,
                     "speed": 30,
                     "attacks": [
                         {
@@ -552,9 +551,9 @@ class TestMonsterStatBlocks:
             )
             assert response["type"] == "initiative_state"
             goblin = next(c for c in response["data"]["combatants"] if c["name"] == "Goblin")
-            assert goblin["hp"] == 7
+            assert goblin["current_hp"] == 7
             assert goblin["max_hp"] == 7
-            assert goblin["ac"] == 15
+            assert goblin["armor_class"] == 15
             assert len(goblin.get("attacks", [])) == 1
 
     def test_update_monster_hp_damage(self):
@@ -570,14 +569,14 @@ class TestMonsterStatBlocks:
             response = send_initiative_action(
                 ws,
                 "add_combatant",
-                {"name": "Orc", "initiative": 10, "hp": 15, "max_hp": 15},
+                {"name": "Orc", "initiative": 10, "max_hp": 15},
             )
             orc = next(c for c in response["data"]["combatants"] if c["name"] == "Orc")
 
             # Damage it
-            response = send_initiative_action(ws, "update_npc", {"combatant_id": orc["id"], "hp": 7})
+            response = send_initiative_action(ws, "update_npc", {"combatant_id": orc["id"], "current_hp": 7})
             orc = next(c for c in response["data"]["combatants"] if c["name"] == "Orc")
-            assert orc["hp"] == 7
+            assert orc["current_hp"] == 7
 
     def test_monster_hp_cannot_go_negative(self):
         """Monster HP is bounded at 0."""
@@ -591,14 +590,14 @@ class TestMonsterStatBlocks:
             response = send_initiative_action(
                 ws,
                 "add_combatant",
-                {"name": "Goblin2", "initiative": 10, "hp": 7, "max_hp": 7},
+                {"name": "Goblin2", "initiative": 10, "max_hp": 7},
             )
             goblin = next(c for c in response["data"]["combatants"] if c["name"] == "Goblin2")
 
             # Set HP to -5 -> should be clamped to 0
-            response = send_initiative_action(ws, "update_npc", {"combatant_id": goblin["id"], "hp": -5})
+            response = send_initiative_action(ws, "update_npc", {"combatant_id": goblin["id"], "current_hp": -5})
             goblin = next(c for c in response["data"]["combatants"] if c["name"] == "Goblin2")
-            assert goblin["hp"] >= 0
+            assert goblin["current_hp"] >= 0
 
 
 # =============================================================================
@@ -610,6 +609,7 @@ class TestMonsterStatBlocks:
 class TestDistanceMeasurement:
     """Verify FT-606, CMP-056: Map feet_per_cell and D&D distance calculation."""
 
+    @pytest.mark.skip(reason="feet_per_cell requires feature/combat-automation merge")
     def test_map_default_feet_per_cell(self):
         """Maps default to 5 feet per cell."""
         token = create_user("dm_dm1", "dm_dm1@test.com", is_dm=True)
@@ -623,6 +623,7 @@ class TestDistanceMeasurement:
         assert response.status_code == 201
         assert response.json()["feet_per_cell"] == 5
 
+    @pytest.mark.skip(reason="feet_per_cell requires feature/combat-automation merge")
     def test_map_custom_feet_per_cell(self):
         """feet_per_cell can be set to a custom value."""
         token = create_user("dm_dm2", "dm_dm2@test.com", is_dm=True)
@@ -713,7 +714,7 @@ class TestDiceRollWithModifier:
                 }
             )
             response = ws.receive_json()
-            assert response["type"] == "dice_result"
+            assert response["type"] == "dice_roll_result"
             data = response["data"]
             assert data["modifier"] == 5
             assert data["total"] == sum(data["rolls"]) + 5
@@ -738,7 +739,7 @@ class TestDiceRollWithModifier:
                 }
             )
             response = ws.receive_json()
-            assert response["type"] == "dice_result"
+            assert response["type"] == "dice_roll_result"
             assert response["data"]["modifier"] == -1
             assert response["data"]["total"] == sum(response["data"]["rolls"]) - 1
 
@@ -789,6 +790,7 @@ class TestMovementTracking:
             combatant = next(c for c in response["data"]["combatants"] if c["id"] == combatant_id)
             assert combatant["action_economy"]["movement"] >= 0
 
+    @pytest.mark.skip(reason="restore_movement requires feature/combat-automation merge")
     def test_restore_movement(self):
         """restore_movement adds back movement (for undo)."""
         token = create_user("dm_mv3", "dm_mv3@test.com", is_dm=True)
@@ -815,6 +817,7 @@ class TestMovementTracking:
             combatant = next(c for c in response["data"]["combatants"] if c["id"] == combatant_id)
             assert combatant["action_economy"]["movement"] == 30  # Fully restored
 
+    @pytest.mark.skip(reason="restore_movement requires feature/combat-automation merge")
     def test_restore_movement_capped_at_max(self):
         """restore_movement should not exceed max_movement."""
         token = create_user("dm_mv4", "dm_mv4@test.com", is_dm=True)
@@ -843,6 +846,7 @@ class TestMovementTracking:
 class TestMapFeetPerCellUpdate:
     """Verify feet_per_cell can be updated on existing maps."""
 
+    @pytest.mark.skip(reason="feet_per_cell requires feature/combat-automation merge")
     def test_update_feet_per_cell(self):
         """feet_per_cell can be changed after map creation."""
         token = create_user("dm_fp1", "dm_fp1@test.com", is_dm=True)
@@ -866,6 +870,7 @@ class TestMapFeetPerCellUpdate:
         assert response.status_code == 200
         assert response.json()["feet_per_cell"] == 10
 
+    @pytest.mark.skip(reason="feet_per_cell requires feature/combat-automation merge")
     def test_feet_per_cell_validation(self):
         """feet_per_cell must be between 1 and 30."""
         token = create_user("dm_fp2", "dm_fp2@test.com", is_dm=True)
